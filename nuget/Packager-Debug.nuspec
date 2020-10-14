@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>Packager-Debug</id>
+    <version>1.0.0</version>
+    <authors>David Le Bansais</authors>
+    <description>A tool to package a project before deployment</description>
+    <copyright>Copyright © 2020 David Le Bansais</copyright>
+    <repository type="git" url="https://github.com/dlebansais/Packager" />
+    <dependencies>
+      <group targetFramework=".NETCoreApp3.1"/>
+    </dependencies>
+  </metadata>
+</package>
