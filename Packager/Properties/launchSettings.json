@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Packager": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Projects\\Contracts"
+    }
+  }
+}

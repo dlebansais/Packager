@@ -13,8 +13,8 @@
     <Product />
     <Description>A tool to package a project before deployment</Description>
     <Copyright>Copyright © 2020 David Le Bansais</Copyright>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
+    <AssemblyVersion>1.0.1.1</AssemblyVersion>
+    <FileVersion>1.0.1.1</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Packager</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -32,5 +32,9 @@
     <Exec Command="if not exist &quot;$(SolutionDir)nuget\lib\$(TargetFramework)&quot; mkdir &quot;$(SolutionDir)nuget\lib\$(TargetFramework)&quot;" />
     <Exec Command="if exist &quot;$(TargetPath)&quot; copy &quot;$(TargetDir)*&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot;" />
   </Target>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Build" />
+  </ItemGroup>
 
 </Project>
