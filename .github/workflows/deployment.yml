@@ -12,12 +12,12 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Get project version
+      - name: Execute deployment
         run: |
           [xml]$xml = Get-Content .\Packager\Packager.csproj
           $version = $xml.Project.PropertyGroup.Version
           set VERSION v$version
           echo "Deploying $VERSION ..."
-          echo git commit --allow-empty -m "$VERSION"
-          echo git fetch . master:deployment
-          echo git push origin deployment
+          git commit --allow-empty -m "$VERSION"
+          git fetch . master:deployment
+          git push origin deployment
