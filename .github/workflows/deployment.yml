@@ -16,9 +16,9 @@ jobs:
         run: |
           [xml]$xml = Get-Content .\Packager\Packager.csproj
           $version = $xml.Project.PropertyGroup.Version
-          echo "VERSION=v$version" >> $GITHUB_ENV
+          echo "V=v$version" >> $GITHUB_ENV
           echo "Deploying v$version ..."
-          echo "Deploying VERSION ..."
+          echo "Deploying $V ..."
 
       - name: Update deployment branch
-        run: echo "Deploying $VERSION ..."
+        run: echo "Deploying $V ..."
