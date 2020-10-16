@@ -21,7 +21,7 @@ jobs:
           echo "Deploying v$version ..."
           echo "Deploying $V ..."
           echo "Deploying ${{ env.V }} ..."
-          setx VV v$version
+          set VV v$version
           echo "Deploying $VV ..."
 
       - name: Update deployment branch
