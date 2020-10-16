@@ -20,7 +20,6 @@ jobs:
           echo "V=v$version" >> $GITHUB_ENV
           echo "Deploying v$version ..."
           echo "Deploying $V ..."
-          echo ${{ env.V }}
           echo "Deploying ${{ env.V }} ..."
           setx VV v$version
           echo "Deploying $VV ..."
