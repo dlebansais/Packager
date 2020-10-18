@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Packager-Debug</id>
-    <version>1.0.1</version>
+    <version>1.0.3</version>
     <authors>David Le Bansais</authors>
     <description>A tool to package a project before deployment</description>
     <copyright>Copyright © 2020 David Le Bansais</copyright>
