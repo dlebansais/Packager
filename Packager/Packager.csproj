@@ -13,9 +13,9 @@
     <Product />
     <Description>A tool to package a project before deployment</Description>
     <Copyright>Copyright © 2020 David Le Bansais</Copyright>
-    <Version>1.0.2</Version>
-    <AssemblyVersion>1.0.2.1</AssemblyVersion>
-    <FileVersion>1.0.2.1</FileVersion>
+    <Version>1.0.3</Version>
+    <AssemblyVersion>1.0.3.1</AssemblyVersion>
+    <FileVersion>1.0.3.1</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Packager</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
