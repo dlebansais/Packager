@@ -27,5 +27,5 @@ jobs:
           echo "Deploying $VERSION ..."
           git config --global user.name ${GITHUB_ACTOR}
           git config --global user.email ${GITHUB_ACTOR}@githubaction.io
-          git merge master -m "$VERSION"
+          git merge origin/master -m "$VERSION"
           git push
