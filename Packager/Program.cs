@@ -5,10 +5,19 @@
     using System.IO;
     using System.Text;
 
-    public class Program
+    /// <summary>
+    /// Generates a .nuspec file based on project .csproj content.
+    /// </summary>
+    public static class Program
     {
+        /// <summary>
+        /// Program entry point.
+        /// </summary>
+        /// <param name="arguments">Command-line arguments.</param>
         public static void Main(string[] arguments)
         {
+            bool IsDebug = arguments != null && arguments.Length > 0 && arguments[0] == "--debug";
+
             string CurrentDirectory = Environment.CurrentDirectory;
             Console.WriteLine($"Current Directory: {CurrentDirectory}");
 
@@ -75,7 +84,10 @@
 
                 Writer.WriteLine("<package>");
                 Writer.WriteLine("  <metadata>");
-                Writer.WriteLine($"    <id>{Item.ProjectName}-Debug</id>");
+
+                string DebugPrefix = IsDebug ? "-Debug" : string.Empty;
+
+                Writer.WriteLine($"    <id>{Item.ProjectName}{DebugPrefix}</id>");
                 Writer.WriteLine($"    <version>{Item.Version}</version>");
 
                 if (Item.Author.Length > 0)

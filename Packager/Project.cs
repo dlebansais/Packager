@@ -6,49 +6,108 @@
     using System.Reflection;
     using System.Xml.Linq;
 
+    /// <summary>
+    /// Reads and parses a project file.
+    /// </summary>
     [DebuggerDisplay("{ProjectName}, {RelativePath}, {ProjectGuid}")]
-    public class Project
+    internal class Project
     {
-        static readonly Type s_ProjectInSolution;
-        static readonly PropertyInfo s_ProjectInSolution_ProjectName;
-        static readonly PropertyInfo s_ProjectInSolution_RelativePath;
-        static readonly PropertyInfo s_ProjectInSolution_ProjectGuid;
-        static readonly PropertyInfo s_ProjectInSolution_ProjectType;
+        private static readonly Type ProjectInSolutionType = Type.GetType("Microsoft.Build.Construction.ProjectInSolution, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
+        private static readonly PropertyInfo ProjectInSolutionProjectName = ProjectInSolutionType.GetProperty("ProjectName", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly PropertyInfo ProjectInSolutionRelativePath = ProjectInSolutionType.GetProperty("RelativePath", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly PropertyInfo ProjectInSolutionProjectGuid = ProjectInSolutionType.GetProperty("ProjectGuid", BindingFlags.NonPublic | BindingFlags.Instance);
+        private static readonly PropertyInfo ProjectInSolutionProjectType = ProjectInSolutionType.GetProperty("ProjectType", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        static Project()
-        {
-            s_ProjectInSolution = Type.GetType("Microsoft.Build.Construction.ProjectInSolution, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
-            s_ProjectInSolution_ProjectName = s_ProjectInSolution.GetProperty("ProjectName", BindingFlags.NonPublic | BindingFlags.Instance);
-            s_ProjectInSolution_RelativePath = s_ProjectInSolution.GetProperty("RelativePath", BindingFlags.NonPublic | BindingFlags.Instance);
-            s_ProjectInSolution_ProjectGuid = s_ProjectInSolution.GetProperty("ProjectGuid", BindingFlags.NonPublic | BindingFlags.Instance);
-            s_ProjectInSolution_ProjectType = s_ProjectInSolution.GetProperty("ProjectType", BindingFlags.NonPublic | BindingFlags.Instance);
-        }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Project"/> class.
+        /// </summary>
+        /// <param name="solutionProject">The project as loaded from a solution.</param>
         public Project(object solutionProject)
         {
-            ProjectName = (string)s_ProjectInSolution_ProjectName.GetValue(solutionProject, null);
-            RelativePath = (string)s_ProjectInSolution_RelativePath.GetValue(solutionProject, null);
-            ProjectGuid = (string)s_ProjectInSolution_ProjectGuid.GetValue(solutionProject, null);
-            ProjectType = s_ProjectInSolution_ProjectType.GetValue(solutionProject, null).ToString();
+            ProjectName = (string)ProjectInSolutionProjectName.GetValue(solutionProject, null);
+            RelativePath = (string)ProjectInSolutionRelativePath.GetValue(solutionProject, null);
+            ProjectGuid = (string)ProjectInSolutionProjectGuid.GetValue(solutionProject, null);
+            ProjectType = ProjectInSolutionProjectType.GetValue(solutionProject, null).ToString();
         }
 
+        /// <summary>
+        /// Gets the project name.
+        /// </summary>
         public string ProjectName { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the project relative path.
+        /// </summary>
         public string RelativePath { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the project GUID.
+        /// </summary>
         public string ProjectGuid { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the project type.
+        /// </summary>
         public string ProjectType { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the project version.
+        /// </summary>
         public string Version { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets a value indicating whether the project has a version.
+        /// </summary>
         public bool HasVersion { get { return Version.Length > 0; } }
+
+        /// <summary>
+        /// Gets a value indicating whether the project has a valid assembly version.
+        /// </summary>
         public bool IsAssemblyVersionValid { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the project has a valid file version.
+        /// </summary>
         public bool IsFileVersionValid { get; private set; }
+
+        /// <summary>
+        /// Gets the project author.
+        /// </summary>
         public string Author { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the project description.
+        /// </summary>
         public string Description { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the project copyright text.
+        /// </summary>
         public string Copyright { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the project repository URL.
+        /// </summary>
         public string RepositoryUrl { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets a value indicating whether the project has a repository URL.
+        /// </summary>
         public bool HasRepositoryUrl { get { return RepositoryUrl.Length > 0; } }
-        public string TargetFrameworks { get; private set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the list of parsed project frameworks.
+        /// </summary>
         public List<Framework> FrameworkList { get; } = new List<Framework>();
+
+        /// <summary>
+        /// Gets a value indicating whether the project has target frameworks.
+        /// </summary>
         public bool HasTargetFrameworks { get { return FrameworkList.Count > 0; } }
 
+        /// <summary>
+        /// Parses a loaded project.
+        /// </summary>
         public void Parse()
         {
             XElement Root = XElement.Load(RelativePath);
@@ -62,21 +121,21 @@
                 if (VersionElement != null)
                 {
                     Version = VersionElement.Value;
-                    Console.WriteLine($"    Version: {Version}");
+                    ConsoleDebug($"    Version: {Version}");
                 }
 
                 XElement? AssemblyVersionElement = ProjectElement.Element("AssemblyVersion");
                 if (AssemblyVersionElement != null)
                 {
                     AssemblyVersion = AssemblyVersionElement.Value;
-                    Console.WriteLine($"    AssemblyVersion: {AssemblyVersion}");
+                    ConsoleDebug($"    AssemblyVersion: {AssemblyVersion}");
                 }
 
                 XElement? FileVersionElement = ProjectElement.Element("FileVersion");
                 if (FileVersionElement != null)
                 {
                     FileVersion = FileVersionElement.Value;
-                    Console.WriteLine($"    FileVersion: {FileVersion}");
+                    ConsoleDebug($"    FileVersion: {FileVersion}");
                 }
 
                 XElement? AuthorElement = ProjectElement.Element("Authors");
@@ -95,14 +154,14 @@
                 if (RepositoryUrlElement != null)
                 {
                     RepositoryUrl = RepositoryUrlElement.Value;
-                    Console.WriteLine($"    RepositoryUrl: {RepositoryUrl}");
+                    ConsoleDebug($"    RepositoryUrl: {RepositoryUrl}");
                 }
 
                 XElement? TargetFrameworkElement = ProjectElement.Element("TargetFramework");
                 if (TargetFrameworkElement != null)
                 {
                     TargetFrameworks = TargetFrameworkElement.Value;
-                    Console.WriteLine($"    TargetFramework: {TargetFrameworks}");
+                    ConsoleDebug($"    TargetFramework: {TargetFrameworks}");
                 }
                 else
                 {
@@ -110,7 +169,7 @@
                     if (TargetFrameworksElement != null)
                     {
                         TargetFrameworks = TargetFrameworksElement.Value;
-                        Console.WriteLine($"    TargetFrameworks: {TargetFrameworks}");
+                        ConsoleDebug($"    TargetFrameworks: {TargetFrameworks}");
                     }
                 }
             }
@@ -119,14 +178,14 @@
             {
                 IsAssemblyVersionValid = AssemblyVersion.StartsWith(Version, StringComparison.InvariantCulture);
                 if (!IsAssemblyVersionValid)
-                    Console.WriteLine($"    ERROR: {AssemblyVersion} not compatible with {Version}");
+                    ConsoleDebug($"    ERROR: {AssemblyVersion} not compatible with {Version}");
 
                 IsFileVersionValid = FileVersion.StartsWith(Version, StringComparison.InvariantCulture);
                 if (!IsAssemblyVersionValid)
-                    Console.WriteLine($"    ERROR: {FileVersion} not compatible with {Version}");
+                    ConsoleDebug($"    ERROR: {FileVersion} not compatible with {Version}");
             }
             else
-                Console.WriteLine($"    Ignored because no version");
+                ConsoleDebug("    Ignored because no version");
 
             if (TargetFrameworks.Length > 0)
             {
@@ -141,17 +200,22 @@
                     int Major;
                     int Minor;
 
-                    if (Framework.StartsWith(NetStandardPattern) && ParseNetVersion(Framework.Substring(NetStandardPattern.Length), out Major, out Minor))
+                    if (Framework.StartsWith(NetStandardPattern, StringComparison.InvariantCulture) && ParseNetVersion(Framework.Substring(NetStandardPattern.Length), out Major, out Minor))
                         NewFramework = new Framework(FrameworkType.NetStandard, Major, Minor);
-                    else if (Framework.StartsWith(NetCorePattern) && ParseNetVersion(Framework.Substring(NetCorePattern.Length), out Major, out Minor))
+                    else if (Framework.StartsWith(NetCorePattern, StringComparison.InvariantCulture) && ParseNetVersion(Framework.Substring(NetCorePattern.Length), out Major, out Minor))
                         NewFramework = new Framework(FrameworkType.NetCore, Major, Minor);
-                    else if (Framework.StartsWith(NetFrameworkPattern) && ParseNetVersion(Framework.Substring(NetFrameworkPattern.Length), out Major, out Minor))
+                    else if (Framework.StartsWith(NetFrameworkPattern, StringComparison.InvariantCulture) && ParseNetVersion(Framework.Substring(NetFrameworkPattern.Length), out Major, out Minor))
                         NewFramework = new Framework(FrameworkType.NetFramework, Major, Minor);
 
                     if (NewFramework != null)
                         FrameworkList.Add(NewFramework);
                 }
             }
+        }
+
+        private static void ConsoleDebug(string text)
+        {
+            Console.WriteLine(text);
         }
 
         private static bool ParseNetVersion(string text, out int major, out int minor)
@@ -174,5 +238,7 @@
 
             return false;
         }
+
+        private string TargetFrameworks = string.Empty;
     }
 }
