@@ -9,33 +9,26 @@ jobs:
     runs-on: windows-latest
     
     steps:
+      # Get repositiory
+      - uses: actions/checkout@v2
+
       - name: Configure Git
         run: |
           git config --global user.name ${GITHUB_ACTOR}
           git config --global user.email ${GITHUB_ACTOR}@githubaction.io
-          
-      # Checks-out master (to be able to merge it)
-      - uses: actions/checkout@v2
-        with:
-          ref: 'master'
-
-      - name: Update master
-        run: git pull
-
-      # Checks-out deployment
-      - uses: actions/checkout@v2
-        with:
-          ref: 'deployment'
-
-      - name: Update deployment
-        run: git pull
+          git checkout master
+          git pull
+          git checkout deployment
+          git pull
 
       - name: Deploy
         run: |
+          git status
+          git checkout master
           [xml]$xml = Get-Content .\Packager\Packager.csproj
           $version = $xml.Project.PropertyGroup.Version
           set VERSION v$version
           echo "Deploying $VERSION ..."
-          #git merge origin/master -m "$VERSION"
+          git checkout deployment
           git merge master -m "$VERSION"
           git push
