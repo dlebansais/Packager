@@ -29,10 +29,11 @@ jobs:
           $version = $xml.Project.PropertyGroup.Version
           set VERSION v$version
           echo "Deploying $VERSION ..."
+          git commit --alow-empty -m "$VERSION"
+          git push
           git checkout deployment
           ls
           git rebase origin/master
           git status
-          get pull
-          git commit --alow-empty -m "$VERSION"
+          git pull
           git push
