@@ -30,6 +30,7 @@ jobs:
           set VERSION v$version
           echo "Deploying $VERSION ..."
           git checkout deployment
+          ls
           git rebase origin/master
           git status
           git commit --alow-empty -m "$VERSION"
