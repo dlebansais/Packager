@@ -33,5 +33,6 @@ jobs:
           ls
           git rebase origin/master
           git status
+          get pull
           git commit --alow-empty -m "$VERSION"
           git push
