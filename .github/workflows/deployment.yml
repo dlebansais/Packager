@@ -30,11 +30,12 @@ jobs:
       - name: Update deployment
         run: git pull
 
-      - name: Execute deployment
+      - name: Deploy
         run: |
           [xml]$xml = Get-Content .\Packager\Packager.csproj
           $version = $xml.Project.PropertyGroup.Version
           set VERSION v$version
           echo "Deploying $VERSION ..."
-          git merge origin/master -m "$VERSION"
+          #git merge origin/master -m "$VERSION"
+          git merge master -m "$VERSION"
           git push
