@@ -12,11 +12,24 @@
     [DebuggerDisplay("{ProjectName}, {RelativePath}, {ProjectGuid}")]
     internal class Project
     {
-        private static readonly Type ProjectInSolutionType = Type.GetType("Microsoft.Build.Construction.ProjectInSolution, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
-        private static readonly PropertyInfo ProjectInSolutionProjectName = ProjectInSolutionType.GetProperty("ProjectName", BindingFlags.NonPublic | BindingFlags.Instance);
-        private static readonly PropertyInfo ProjectInSolutionRelativePath = ProjectInSolutionType.GetProperty("RelativePath", BindingFlags.NonPublic | BindingFlags.Instance);
-        private static readonly PropertyInfo ProjectInSolutionProjectGuid = ProjectInSolutionType.GetProperty("ProjectGuid", BindingFlags.NonPublic | BindingFlags.Instance);
-        private static readonly PropertyInfo ProjectInSolutionProjectType = ProjectInSolutionType.GetProperty("ProjectType", BindingFlags.NonPublic | BindingFlags.Instance);
+#pragma warning disable CA1810 // Initialize reference type static fields inline
+        static Project()
+#pragma warning restore CA1810 // Initialize reference type static fields inline
+        {
+            ConsoleDebug.Write("Loading ProjectInSolution assembly...");
+
+            ProjectInSolutionType = Type.GetType("Microsoft.Build.Construction.ProjectInSolution, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
+            ProjectInSolutionProjectName = ProjectInSolutionType.GetProperty("ProjectName", BindingFlags.NonPublic | BindingFlags.Instance);
+            ProjectInSolutionRelativePath = ProjectInSolutionType.GetProperty("RelativePath", BindingFlags.NonPublic | BindingFlags.Instance);
+            ProjectInSolutionProjectGuid = ProjectInSolutionType.GetProperty("ProjectGuid", BindingFlags.NonPublic | BindingFlags.Instance);
+            ProjectInSolutionProjectType = ProjectInSolutionType.GetProperty("ProjectType", BindingFlags.NonPublic | BindingFlags.Instance);
+        }
+
+        private static readonly Type ProjectInSolutionType;
+        private static readonly PropertyInfo ProjectInSolutionProjectName;
+        private static readonly PropertyInfo ProjectInSolutionRelativePath;
+        private static readonly PropertyInfo ProjectInSolutionProjectGuid;
+        private static readonly PropertyInfo ProjectInSolutionProjectType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Project"/> class.
@@ -121,21 +134,21 @@
                 if (VersionElement != null)
                 {
                     Version = VersionElement.Value;
-                    ConsoleDebug($"    Version: {Version}");
+                    ConsoleDebug.Write($"    Version: {Version}");
                 }
 
                 XElement? AssemblyVersionElement = ProjectElement.Element("AssemblyVersion");
                 if (AssemblyVersionElement != null)
                 {
                     AssemblyVersion = AssemblyVersionElement.Value;
-                    ConsoleDebug($"    AssemblyVersion: {AssemblyVersion}");
+                    ConsoleDebug.Write($"    AssemblyVersion: {AssemblyVersion}");
                 }
 
                 XElement? FileVersionElement = ProjectElement.Element("FileVersion");
                 if (FileVersionElement != null)
                 {
                     FileVersion = FileVersionElement.Value;
-                    ConsoleDebug($"    FileVersion: {FileVersion}");
+                    ConsoleDebug.Write($"    FileVersion: {FileVersion}");
                 }
 
                 XElement? AuthorElement = ProjectElement.Element("Authors");
@@ -154,14 +167,14 @@
                 if (RepositoryUrlElement != null)
                 {
                     RepositoryUrl = RepositoryUrlElement.Value;
-                    ConsoleDebug($"    RepositoryUrl: {RepositoryUrl}");
+                    ConsoleDebug.Write($"    RepositoryUrl: {RepositoryUrl}");
                 }
 
                 XElement? TargetFrameworkElement = ProjectElement.Element("TargetFramework");
                 if (TargetFrameworkElement != null)
                 {
                     TargetFrameworks = TargetFrameworkElement.Value;
-                    ConsoleDebug($"    TargetFramework: {TargetFrameworks}");
+                    ConsoleDebug.Write($"    TargetFramework: {TargetFrameworks}");
                 }
                 else
                 {
@@ -169,7 +182,7 @@
                     if (TargetFrameworksElement != null)
                     {
                         TargetFrameworks = TargetFrameworksElement.Value;
-                        ConsoleDebug($"    TargetFrameworks: {TargetFrameworks}");
+                        ConsoleDebug.Write($"    TargetFrameworks: {TargetFrameworks}");
                     }
                 }
             }
@@ -178,14 +191,14 @@
             {
                 IsAssemblyVersionValid = AssemblyVersion.StartsWith(Version, StringComparison.InvariantCulture);
                 if (!IsAssemblyVersionValid)
-                    ConsoleDebug($"    ERROR: {AssemblyVersion} not compatible with {Version}");
+                    ConsoleDebug.Write($"    ERROR: {AssemblyVersion} not compatible with {Version}");
 
                 IsFileVersionValid = FileVersion.StartsWith(Version, StringComparison.InvariantCulture);
                 if (!IsAssemblyVersionValid)
-                    ConsoleDebug($"    ERROR: {FileVersion} not compatible with {Version}");
+                    ConsoleDebug.Write($"    ERROR: {FileVersion} not compatible with {Version}");
             }
             else
-                ConsoleDebug("    Ignored because no version");
+                ConsoleDebug.Write("    Ignored because no version");
 
             if (TargetFrameworks.Length > 0)
             {
@@ -211,11 +224,6 @@
                         FrameworkList.Add(NewFramework);
                 }
             }
-        }
-
-        private static void ConsoleDebug(string text)
-        {
-            Console.WriteLine(text);
         }
 
         private static bool ParseNetVersion(string text, out int major, out int minor)

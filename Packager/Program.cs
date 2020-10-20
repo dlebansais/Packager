@@ -19,10 +19,10 @@
             bool IsDebug = arguments != null && arguments.Length > 0 && arguments[0] == "--debug";
 
             string CurrentDirectory = Environment.CurrentDirectory;
-            Console.WriteLine($"Current Directory: {CurrentDirectory}");
+            ConsoleDebug.Write($"Current Directory: {CurrentDirectory}");
 
             string[] Files = Directory.GetFiles(CurrentDirectory, "*.sln");
-            Console.WriteLine($"Found {Files.Length} solution file(s)");
+            ConsoleDebug.Write($"Found {Files.Length} solution file(s)");
 
             List<Solution> SolutionList = new List<Solution>();
             List<Project> ProjectList = new List<Project>();
@@ -30,7 +30,7 @@
 
             foreach (string SolutionFileName in Files)
             {
-                Console.WriteLine($"  Solution file: {SolutionFileName}");
+                ConsoleDebug.Write($"  Solution file: {SolutionFileName}");
                 Solution NewSolution = new Solution(SolutionFileName);
 
                 SolutionList.Add(NewSolution);
@@ -40,29 +40,29 @@
                     bool IsIgnored = Item.ProjectType != "Unknown";
                     string Operation = IsIgnored ? "Ignored" : "Parsed";
 
-                    Console.WriteLine($"    Project: {Item.ProjectName} ({Operation})");
+                    ConsoleDebug.Write($"    Project: {Item.ProjectName} ({Operation})");
 
                     if (!IsIgnored)
                         ProjectList.Add(Item);
                 }
             }
 
-            Console.WriteLine($"Found {ProjectList.Count} project file(s)");
+            ConsoleDebug.Write($"Found {ProjectList.Count} project file(s)");
 
             foreach (Project Item in ProjectList)
             {
-                Console.WriteLine($"  Project file: {Item.RelativePath}");
+                ConsoleDebug.Write($"  Project file: {Item.RelativePath}");
 
                 Item.Parse();
                 if (Item.HasVersion && Item.IsAssemblyVersionValid && Item.IsFileVersionValid && Item.HasRepositoryUrl && Item.HasTargetFrameworks)
                     ProcessedProjectList.Add(Item);
             }
 
-            Console.WriteLine($"Processing {ProcessedProjectList.Count} project file(s)");
+            ConsoleDebug.Write($"Processing {ProcessedProjectList.Count} project file(s)");
 
             foreach (Project Item in ProcessedProjectList)
             {
-                Console.WriteLine($"  Processing: {Item.RelativePath}");
+                ConsoleDebug.Write($"  Processing: {Item.RelativePath}");
 
                 string NugetDirectory = "nuget";
                 if (!Directory.Exists(NugetDirectory))
