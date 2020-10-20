@@ -18,4 +18,4 @@ jobs:
           type: now
           from_branch: master
           target_branch: deployment
-          github_token: ${{ github.token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
