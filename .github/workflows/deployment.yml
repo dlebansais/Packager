@@ -10,7 +10,7 @@ jobs:
     
     steps:
       # Get repository
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
 
       - name: Merge master -> deployment
         uses: devmasx/merge-branch@v1.3.0
