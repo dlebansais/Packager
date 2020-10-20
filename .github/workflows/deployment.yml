@@ -9,8 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # Get repository
+      - name: Get master
       - uses: actions/checkout@v1
+        with:
+          ref: master
+
+      - name: Get deployment
+        uses: actions/checkout@v1
+        with:
+          ref: deployment
 
       - name: Merge master -> deployment
         uses: devmasx/merge-branch@v1.3.0
