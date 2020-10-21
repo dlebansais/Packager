@@ -14,7 +14,7 @@
         /// Program entry point.
         /// </summary>
         /// <param name="arguments">Command-line arguments.</param>
-        public static void Main(string[] arguments)
+        public static int Main(string[] arguments)
         {
             bool IsDebug = arguments != null && arguments.Length > 0 && arguments[0] == "--debug";
 
@@ -49,11 +49,13 @@
 
             ConsoleDebug.Write($"Found {ProjectList.Count} project file(s)");
 
+            bool HasErrors = false;
+
             foreach (Project Item in ProjectList)
             {
                 ConsoleDebug.Write($"  Project file: {Item.RelativePath}");
 
-                Item.Parse();
+                Item.Parse(ref HasErrors);
                 if (Item.HasVersion && Item.IsAssemblyVersionValid && Item.IsFileVersionValid && Item.HasRepositoryUrl && Item.HasTargetFrameworks)
                     ProcessedProjectList.Add(Item);
             }
@@ -127,6 +129,8 @@
                 Writer.WriteLine("  </metadata>");
                 Writer.Write("</package>");
             }
+
+            return HasErrors ? -1 : 0;
         }
     }
 }

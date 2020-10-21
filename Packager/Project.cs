@@ -121,7 +121,8 @@
         /// <summary>
         /// Parses a loaded project.
         /// </summary>
-        public void Parse()
+        /// <param name="hasErrors">Set to true upon return if an error was found.</param>
+        public void Parse(ref bool hasErrors)
         {
             XElement Root = XElement.Load(RelativePath);
             Version = string.Empty;
@@ -191,11 +192,17 @@
             {
                 IsAssemblyVersionValid = AssemblyVersion.StartsWith(Version, StringComparison.InvariantCulture);
                 if (!IsAssemblyVersionValid)
-                    ConsoleDebug.Write($"    ERROR: {AssemblyVersion} not compatible with {Version}");
+                {
+                    hasErrors = true;
+                    ConsoleDebug.Write($"    ERROR: {AssemblyVersion} not compatible with {Version}", true);
+                }
 
                 IsFileVersionValid = FileVersion.StartsWith(Version, StringComparison.InvariantCulture);
                 if (!IsAssemblyVersionValid)
-                    ConsoleDebug.Write($"    ERROR: {FileVersion} not compatible with {Version}");
+                {
+                    hasErrors = true;
+                    ConsoleDebug.Write($"    ERROR: {FileVersion} not compatible with {Version}", true);
+                }
             }
             else
                 ConsoleDebug.Write("    Ignored because no version");
