@@ -14,6 +14,7 @@
         /// Program entry point.
         /// </summary>
         /// <param name="arguments">Command-line arguments.</param>
+        /// <returns>-1 in case of error; otherwise 0.</returns>
         public static int Main(string[] arguments)
         {
             bool IsDebug = arguments != null && arguments.Length > 0 && arguments[0] == "--debug";
@@ -66,11 +67,13 @@
             {
                 ConsoleDebug.Write($"  Processing: {Item.RelativePath}");
 
-                string NugetDirectory = "nuget";
+                string DebugPrefix = IsDebug ? "-Debug" : string.Empty;
+                string NugetDirectory = IsDebug ? "nuget-debug" : "nuget";
+
                 if (!Directory.Exists(NugetDirectory))
                     Directory.CreateDirectory(NugetDirectory);
 
-                string NuspecFileName = $"{Item.ProjectName}-Debug.nuspec";
+                string NuspecFileName = $"{Item.ProjectName}{DebugPrefix}.nuspec";
                 string NuspecPath = Path.Combine(NugetDirectory, NuspecFileName);
 
                 using (FileStream FirstStream = new FileStream(NuspecPath, FileMode.Create, FileAccess.Write))
@@ -86,8 +89,6 @@
 
                 Writer.WriteLine("<package>");
                 Writer.WriteLine("  <metadata>");
-
-                string DebugPrefix = IsDebug ? "-Debug" : string.Empty;
 
                 Writer.WriteLine($"    <id>{Item.ProjectName}{DebugPrefix}</id>");
                 Writer.WriteLine($"    <version>{Item.Version}</version>");

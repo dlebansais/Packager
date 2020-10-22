@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Packager</name>
+    </assembly>
+    <members>
+        <member name="T:Packager.ConsoleDebug">
+            <summary>
+            Writes text to the console.
+            </summary>
+        </member>
+        <member name="M:Packager.ConsoleDebug.Write(System.String,System.Boolean)">
+            <summary>
+            Writes text to the console.
+            </summary>
+            <param name="text">The text to write.</param>
+            <param name="isError">True if the text to write is an error message.</param>
+        </member>
+        <member name="T:Packager.Framework">
+            <summary>
+            Defines a framework supported by the project.
+            </summary>
+        </member>
+        <member name="M:Packager.Framework.#ctor(Packager.FrameworkType,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Packager.Framework"/> class.
+            </summary>
+            <param name="type">The framework type.</param>
+            <param name="major">The framework major version.</param>
+            <param name="minor">The framework minor version.</param>
+        </member>
+        <member name="P:Packager.Framework.Type">
+            <summary>
+            Gets the framework type.
+            </summary>
+        </member>
+        <member name="P:Packager.Framework.Major">
+            <summary>
+            Gets the framework major version.
+            </summary>
+        </member>
+        <member name="P:Packager.Framework.Minor">
+            <summary>
+            Gets the framework minor version.
+            </summary>
+        </member>
+        <member name="T:Packager.FrameworkType">
+            <summary>
+            One of the major framworks defined by Microsoft.
+            </summary>
+        </member>
+        <member name="F:Packager.FrameworkType.None">
+            <summary>
+            No framwork.
+            </summary>
+        </member>
+        <member name="F:Packager.FrameworkType.NetFramework">
+            <summary>
+            .NET Framework
+            </summary>
+        </member>
+        <member name="F:Packager.FrameworkType.NetStandard">
+            <summary>
+            .NET Standard
+            </summary>
+        </member>
+        <member name="F:Packager.FrameworkType.NetCore">
+            <summary>
+            .NET Core
+            </summary>
+        </member>
+        <member name="T:Packager.Program">
+            <summary>
+            Generates a .nuspec file based on project .csproj content.
+            </summary>
+        </member>
+        <member name="M:Packager.Program.Main(System.String[])">
+            <summary>
+            Program entry point.
+            </summary>
+            <param name="arguments">Command-line arguments.</param>
+            <returns>-1 in case of error; otherwise 0.</returns>
+        </member>
+        <member name="T:Packager.Project">
+            <summary>
+            Reads and parses a project file.
+            </summary>
+        </member>
+        <member name="M:Packager.Project.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Packager.Project"/> class.
+            </summary>
+            <param name="solutionProject">The project as loaded from a solution.</param>
+        </member>
+        <member name="P:Packager.Project.ProjectName">
+            <summary>
+            Gets the project name.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.RelativePath">
+            <summary>
+            Gets the project relative path.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.ProjectGuid">
+            <summary>
+            Gets the project GUID.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.ProjectType">
+            <summary>
+            Gets the project type.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.Version">
+            <summary>
+            Gets the project version.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.HasVersion">
+            <summary>
+            Gets a value indicating whether the project has a version.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.IsAssemblyVersionValid">
+            <summary>
+            Gets a value indicating whether the project has a valid assembly version.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.IsFileVersionValid">
+            <summary>
+            Gets a value indicating whether the project has a valid file version.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.Author">
+            <summary>
+            Gets the project author.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.Description">
+            <summary>
+            Gets the project description.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.Copyright">
+            <summary>
+            Gets the project copyright text.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.RepositoryUrl">
+            <summary>
+            Gets the project repository URL.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.HasRepositoryUrl">
+            <summary>
+            Gets a value indicating whether the project has a repository URL.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.FrameworkList">
+            <summary>
+            Gets the list of parsed project frameworks.
+            </summary>
+        </member>
+        <member name="P:Packager.Project.HasTargetFrameworks">
+            <summary>
+            Gets a value indicating whether the project has target frameworks.
+            </summary>
+        </member>
+        <member name="M:Packager.Project.Parse(System.Boolean@)">
+            <summary>
+            Parses a loaded project.
+            </summary>
+            <param name="hasErrors">Set to true upon return if an error was found.</param>
+        </member>
+        <member name="T:Packager.Solution">
+            <summary>
+            Reads and parses a solution file.
+            </summary>
+        </member>
+        <member name="M:Packager.Solution.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Packager.Solution"/> class.
+            </summary>
+            <param name="solutionFileName">The solution file name.</param>
+        </member>
+        <member name="P:Packager.Solution.SolutionFileName">
+            <summary>
+            Gets the solution file name.
+            </summary>
+        </member>
+        <member name="P:Packager.Solution.ProjectList">
+            <summary>
+            Gets the list of projects in the solution.
+            </summary>
+        </member>
+    </members>
+</doc>
