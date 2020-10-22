@@ -38,7 +38,7 @@
 
                 foreach (Project Item in NewSolution.ProjectList)
                 {
-                    bool IsIgnored = Item.ProjectType != "Unknown";
+                    bool IsIgnored = Item.ProjectType != "Unknown" && Item.ProjectType != "KnownToBeMSBuildFormat";
                     string Operation = IsIgnored ? "Ignored" : "Parsed";
 
                     ConsoleDebug.Write($"    Project: {Item.ProjectName} ({Operation})");
