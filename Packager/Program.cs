@@ -128,9 +128,12 @@
 
                 Writer.WriteLine("    </dependencies>");
 
-                Writer.WriteLine("    <contentFiles>");
-                Writer.WriteLine("      <files include=\"lib/**/*.pdb\"/>");
-                Writer.WriteLine("    </contentFiles>");
+                if (IsDebug)
+                {
+                    Writer.WriteLine("    <contentFiles>");
+                    Writer.WriteLine("      <files include=\"lib/**/*.pdb\"/>");
+                    Writer.WriteLine("    </contentFiles>");
+                }
 
                 Writer.WriteLine("  </metadata>");
                 Writer.Write("</package>");
