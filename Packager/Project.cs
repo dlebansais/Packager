@@ -198,7 +198,7 @@
                 }
 
                 IsFileVersionValid = FileVersion.StartsWith(Version, StringComparison.InvariantCulture);
-                if (!IsAssemblyVersionValid)
+                if (!IsFileVersionValid)
                 {
                     hasErrors = true;
                     ConsoleDebug.Write($"    ERROR: {FileVersion} not compatible with {Version}", true);
