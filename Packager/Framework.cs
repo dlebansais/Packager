@@ -11,11 +11,13 @@
         /// <param name="type">The framework type.</param>
         /// <param name="major">The framework major version.</param>
         /// <param name="minor">The framework minor version.</param>
-        public Framework(FrameworkType type, int major, int minor)
+        /// <param name="moniker">The target framework moniker (TFM).</param>
+        public Framework(FrameworkType type, int major, int minor, FrameworkMoniker moniker)
         {
             Type = type;
             Major = major;
             Minor = minor;
+            Moniker = moniker;
         }
 
         /// <summary>
@@ -32,5 +34,10 @@
         /// Gets the framework minor version.
         /// </summary>
         public int Minor { get; }
+
+        /// <summary>
+        /// Gets the target framework moniker (TFM).
+        /// </summary>
+        public FrameworkMoniker Moniker { get; }
     }
 }

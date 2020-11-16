@@ -210,8 +210,10 @@
             if (TargetFrameworks.Length > 0)
             {
                 string[] Frameworks = TargetFrameworks.Split(';');
-                foreach (string Framework in Frameworks)
+                foreach (string FrameworkValue in Frameworks)
                 {
+                    string FrameworkString = FrameworkValue;
+
                     string NetStandardPattern = "netstandard";
                     string NetCorePattern = "netcoreapp";
                     string NetFrameworkPattern = "net";
@@ -219,13 +221,29 @@
                     Framework? NewFramework = null;
                     int Major;
                     int Minor;
+                    FrameworkMoniker Moniker = FrameworkMoniker.none;
 
-                    if (Framework.StartsWith(NetStandardPattern, StringComparison.InvariantCulture) && ParseNetVersion(Framework.Substring(NetStandardPattern.Length), out Major, out Minor))
-                        NewFramework = new Framework(FrameworkType.NetStandard, Major, Minor);
-                    else if (Framework.StartsWith(NetCorePattern, StringComparison.InvariantCulture) && ParseNetVersion(Framework.Substring(NetCorePattern.Length), out Major, out Minor))
-                        NewFramework = new Framework(FrameworkType.NetCore, Major, Minor);
-                    else if (Framework.StartsWith(NetFrameworkPattern, StringComparison.InvariantCulture) && ParseNetVersion(Framework.Substring(NetFrameworkPattern.Length), out Major, out Minor))
-                        NewFramework = new Framework(FrameworkType.NetFramework, Major, Minor);
+                    foreach (FrameworkMoniker MonikerValue in typeof(FrameworkMoniker).GetEnumValues())
+                    {
+                        if (MonikerValue == FrameworkMoniker.none)
+                            continue;
+
+                        string MonikerName = MonikerValue.ToString();
+                        string MonikerPattern = $"-{MonikerName}";
+                        if (FrameworkString.EndsWith(MonikerPattern, StringComparison.InvariantCulture))
+                        {
+                            Moniker = MonikerValue;
+                            FrameworkString = FrameworkString.Substring(0, FrameworkString.Length - MonikerPattern.Length);
+                            break;
+                        }
+                    }
+
+                    if (FrameworkString.StartsWith(NetStandardPattern, StringComparison.InvariantCulture) && ParseNetVersion(FrameworkString.Substring(NetStandardPattern.Length), out Major, out Minor))
+                        NewFramework = new Framework(FrameworkType.NetStandard, Major, Minor, Moniker);
+                    else if (FrameworkString.StartsWith(NetCorePattern, StringComparison.InvariantCulture) && ParseNetVersion(FrameworkString.Substring(NetCorePattern.Length), out Major, out Minor))
+                        NewFramework = new Framework(FrameworkType.NetCore, Major, Minor, Moniker);
+                    else if (FrameworkString.StartsWith(NetFrameworkPattern, StringComparison.InvariantCulture) && ParseNetVersion(FrameworkString.Substring(NetFrameworkPattern.Length), out Major, out Minor))
+                        NewFramework = new Framework(FrameworkType.NetFramework, Major, Minor, Moniker);
 
                     if (NewFramework != null)
                         FrameworkList.Add(NewFramework);
