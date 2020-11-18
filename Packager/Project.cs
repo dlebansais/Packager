@@ -46,22 +46,22 @@
         /// <summary>
         /// Gets the project name.
         /// </summary>
-        public string ProjectName { get; private set; } = string.Empty;
+        public string ProjectName { get; }
 
         /// <summary>
         /// Gets the project relative path.
         /// </summary>
-        public string RelativePath { get; private set; } = string.Empty;
+        public string RelativePath { get; }
 
         /// <summary>
         /// Gets the project GUID.
         /// </summary>
-        public string ProjectGuid { get; private set; } = string.Empty;
+        public string ProjectGuid { get; }
 
         /// <summary>
         /// Gets the project type.
         /// </summary>
-        public string ProjectType { get; private set; } = string.Empty;
+        public string ProjectType { get; }
 
         /// <summary>
         /// Gets the project version.
@@ -124,10 +124,38 @@
         /// <param name="hasErrors">Set to true upon return if an error was found.</param>
         public void Parse(ref bool hasErrors)
         {
-            XElement Root = XElement.Load(RelativePath);
+            ParsePropertyGroupElements(out string AssemblyVersion, out string FileVersion);
+
+            if (HasVersion)
+            {
+                IsAssemblyVersionValid = AssemblyVersion.StartsWith(Version, StringComparison.InvariantCulture);
+                if (!IsAssemblyVersionValid)
+                {
+                    hasErrors = true;
+                    ConsoleDebug.Write($"    ERROR: {AssemblyVersion} not compatible with {Version}", true);
+                }
+
+                IsFileVersionValid = FileVersion.StartsWith(Version, StringComparison.InvariantCulture);
+                if (!IsFileVersionValid)
+                {
+                    hasErrors = true;
+                    ConsoleDebug.Write($"    ERROR: {FileVersion} not compatible with {Version}", true);
+                }
+            }
+            else
+                ConsoleDebug.Write("    Ignored because no version");
+
+            if (TargetFrameworks.Length > 0)
+                ParseTargetFrameworks();
+        }
+
+        private void ParsePropertyGroupElements(out string assemblyVersion, out string fileVersion)
+        {
             Version = string.Empty;
-            string AssemblyVersion = string.Empty;
-            string FileVersion = string.Empty;
+
+            XElement Root = XElement.Load(RelativePath);
+            assemblyVersion = string.Empty;
+            fileVersion = string.Empty;
 
             foreach (XElement ProjectElement in Root.Descendants("PropertyGroup"))
             {
@@ -141,15 +169,15 @@
                 XElement? AssemblyVersionElement = ProjectElement.Element("AssemblyVersion");
                 if (AssemblyVersionElement != null)
                 {
-                    AssemblyVersion = AssemblyVersionElement.Value;
-                    ConsoleDebug.Write($"    AssemblyVersion: {AssemblyVersion}");
+                    assemblyVersion = AssemblyVersionElement.Value;
+                    ConsoleDebug.Write($"    AssemblyVersion: {assemblyVersion}");
                 }
 
                 XElement? FileVersionElement = ProjectElement.Element("FileVersion");
                 if (FileVersionElement != null)
                 {
-                    FileVersion = FileVersionElement.Value;
-                    ConsoleDebug.Write($"    FileVersion: {FileVersion}");
+                    fileVersion = FileVersionElement.Value;
+                    ConsoleDebug.Write($"    FileVersion: {fileVersion}");
                 }
 
                 XElement? AuthorElement = ProjectElement.Element("Authors");
@@ -187,68 +215,53 @@
                     }
                 }
             }
+        }
 
-            if (HasVersion)
+        private void ParseTargetFrameworks()
+        {
+            string[] Frameworks = TargetFrameworks.Split(';');
+
+            foreach (string Framework in Frameworks)
+                ParseTargetFramework(Framework);
+        }
+
+        private void ParseTargetFramework(string framework)
+        {
+            string FrameworkString = framework;
+
+            string NetStandardPattern = "netstandard";
+            string NetCorePattern = "netcoreapp";
+            string NetFrameworkPattern = "net";
+
+            Framework? NewFramework = null;
+            int Major;
+            int Minor;
+            FrameworkMoniker Moniker = FrameworkMoniker.none;
+
+            foreach (FrameworkMoniker MonikerValue in typeof(FrameworkMoniker).GetEnumValues())
             {
-                IsAssemblyVersionValid = AssemblyVersion.StartsWith(Version, StringComparison.InvariantCulture);
-                if (!IsAssemblyVersionValid)
-                {
-                    hasErrors = true;
-                    ConsoleDebug.Write($"    ERROR: {AssemblyVersion} not compatible with {Version}", true);
-                }
+                if (MonikerValue == FrameworkMoniker.none)
+                    continue;
 
-                IsFileVersionValid = FileVersion.StartsWith(Version, StringComparison.InvariantCulture);
-                if (!IsFileVersionValid)
+                string MonikerName = MonikerValue.ToString();
+                string MonikerPattern = $"-{MonikerName}";
+                if (FrameworkString.EndsWith(MonikerPattern, StringComparison.InvariantCulture))
                 {
-                    hasErrors = true;
-                    ConsoleDebug.Write($"    ERROR: {FileVersion} not compatible with {Version}", true);
+                    Moniker = MonikerValue;
+                    FrameworkString = FrameworkString.Substring(0, FrameworkString.Length - MonikerPattern.Length);
+                    break;
                 }
             }
-            else
-                ConsoleDebug.Write("    Ignored because no version");
 
-            if (TargetFrameworks.Length > 0)
-            {
-                string[] Frameworks = TargetFrameworks.Split(';');
-                foreach (string FrameworkValue in Frameworks)
-                {
-                    string FrameworkString = FrameworkValue;
+            if (FrameworkString.StartsWith(NetStandardPattern, StringComparison.InvariantCulture) && ParseNetVersion(FrameworkString.Substring(NetStandardPattern.Length), out Major, out Minor))
+                NewFramework = new Framework(FrameworkType.NetStandard, Major, Minor, Moniker);
+            else if (FrameworkString.StartsWith(NetCorePattern, StringComparison.InvariantCulture) && ParseNetVersion(FrameworkString.Substring(NetCorePattern.Length), out Major, out Minor))
+                NewFramework = new Framework(FrameworkType.NetCore, Major, Minor, Moniker);
+            else if (FrameworkString.StartsWith(NetFrameworkPattern, StringComparison.InvariantCulture) && ParseNetVersion(FrameworkString.Substring(NetFrameworkPattern.Length), out Major, out Minor))
+                NewFramework = new Framework(FrameworkType.NetFramework, Major, Minor, Moniker);
 
-                    string NetStandardPattern = "netstandard";
-                    string NetCorePattern = "netcoreapp";
-                    string NetFrameworkPattern = "net";
-
-                    Framework? NewFramework = null;
-                    int Major;
-                    int Minor;
-                    FrameworkMoniker Moniker = FrameworkMoniker.none;
-
-                    foreach (FrameworkMoniker MonikerValue in typeof(FrameworkMoniker).GetEnumValues())
-                    {
-                        if (MonikerValue == FrameworkMoniker.none)
-                            continue;
-
-                        string MonikerName = MonikerValue.ToString();
-                        string MonikerPattern = $"-{MonikerName}";
-                        if (FrameworkString.EndsWith(MonikerPattern, StringComparison.InvariantCulture))
-                        {
-                            Moniker = MonikerValue;
-                            FrameworkString = FrameworkString.Substring(0, FrameworkString.Length - MonikerPattern.Length);
-                            break;
-                        }
-                    }
-
-                    if (FrameworkString.StartsWith(NetStandardPattern, StringComparison.InvariantCulture) && ParseNetVersion(FrameworkString.Substring(NetStandardPattern.Length), out Major, out Minor))
-                        NewFramework = new Framework(FrameworkType.NetStandard, Major, Minor, Moniker);
-                    else if (FrameworkString.StartsWith(NetCorePattern, StringComparison.InvariantCulture) && ParseNetVersion(FrameworkString.Substring(NetCorePattern.Length), out Major, out Minor))
-                        NewFramework = new Framework(FrameworkType.NetCore, Major, Minor, Moniker);
-                    else if (FrameworkString.StartsWith(NetFrameworkPattern, StringComparison.InvariantCulture) && ParseNetVersion(FrameworkString.Substring(NetFrameworkPattern.Length), out Major, out Minor))
-                        NewFramework = new Framework(FrameworkType.NetFramework, Major, Minor, Moniker);
-
-                    if (NewFramework != null)
-                        FrameworkList.Add(NewFramework);
-                }
-            }
+            if (NewFramework != null)
+                FrameworkList.Add(NewFramework);
         }
 
         private static bool ParseNetVersion(string text, out int major, out int minor)

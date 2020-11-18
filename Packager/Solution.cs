@@ -64,6 +64,6 @@
         /// <summary>
         /// Gets the list of projects in the solution.
         /// </summary>
-        public List<Project> ProjectList { get; private set; } = new List<Project>();
+        public List<Project> ProjectList { get; } = new List<Project>();
     }
 }
