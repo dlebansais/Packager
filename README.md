@@ -2,6 +2,8 @@
 
 A tool to package a project before deployment.
 
+[![Build status](https://ci.appveyor.com/api/projects/status/bo5s4x480tu8dr5x?svg=true)](https://ci.appveyor.com/project/dlebansais/packager) [![CodeFactor](https://www.codefactor.io/repository/github/dlebansais/packager/badge)](https://www.codefactor.io/repository/github/dlebansais/packager)
+
 ## Usage
 
 This tool is intended to be used in the context of Continuous Integration (CI). In your CI script:
