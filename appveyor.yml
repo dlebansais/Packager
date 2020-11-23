@@ -57,7 +57,7 @@ artifacts:
   - path: $(APPVEYOR_PROJECT_NAME)-Debug.*.nupkg
     name: $(APPVEYOR_PROJECT_NAME)-Package-Debug
     type: NuGetPackage
-  - path: $(APPVEYOR_PROJECT_NAME)/bin/x64/Release/$(APPVEYOR_PROJECT_NAME).*.nupkg
+  - path: $(APPVEYOR_PROJECT_NAME).*.nupkg
     name: $(APPVEYOR_PROJECT_NAME)-Package-Release
     type: NuGetPackage
 
