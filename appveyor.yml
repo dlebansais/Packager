@@ -66,11 +66,11 @@ deploy:
     description: 'Automatic deployment'
     auth_token:
       secure: dUpQSnUT5/m88z1BqHNnRjaxxZzz09CmyqFJr/cAyWjqKeLgnKunlIZlEKAXlNIm
-    artifact: $(APPVEYOR_PROJECT_NAME)
+    artifact: $(APPVEYOR_PROJECT_NAME)-Package-Release
     draft: false
     prerelease: false
     on:
-      branch: deployment
+      branch: master
   - provider: NuGet
     server: https://nuget.pkg.github.com/dlebansais/index.json
     symbol_server: https://nuget.pkg.github.com/dlebansais/index.json
