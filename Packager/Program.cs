@@ -46,8 +46,6 @@
             foreach (Nuspec Nuspec in NuspecList)
                 WriteNuspec(Nuspec, IsDebug);
 
-            ConsoleDebug.Close();
-
             return HasErrors ? -1 : 0;
         }
 
