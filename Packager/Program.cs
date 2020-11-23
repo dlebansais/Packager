@@ -34,7 +34,10 @@
                 MergeProjects(SolutionName, ProcessedProjectList, MergeName, NuspecDescription, out Nuspec mergedNuspec, ref HasErrors);
 
                 if (!HasErrors)
+                {
                     NuspecList.Add(mergedNuspec);
+                    ConsoleDebug.Write("All projects have been merged");
+                }
             }
             else
             {
@@ -57,6 +60,7 @@
                 if (Argument == "--debug")
                 {
                     isDebug = true;
+                    ConsoleDebug.Write("Debug output selected");
                     break;
                 }
         }
@@ -74,7 +78,13 @@
                     isMerge = true;
 
                     if (Argument.Length > Pattern.Length && Argument[Pattern.Length] == ':')
+                    {
                         mergeName = Argument.Substring(Pattern.Length + 1);
+                        ConsoleDebug.Write($"Merged output selected: '{mergeName}'");
+                    }
+                    else
+                        ConsoleDebug.Write("Merged output selected (no name)");
+
                     break;
                 }
         }
@@ -89,6 +99,7 @@
                 if (Argument.StartsWith(Pattern, StringComparison.InvariantCulture))
                 {
                     nugetDescription = Argument.Substring(Pattern.Length);
+                    ConsoleDebug.Write($"Output description: '{nugetDescription}'");
                     break;
                 }
         }
@@ -189,7 +200,10 @@
 
         private static void WriteNuspec(Nuspec nuspec, bool isDebug)
         {
-            ConsoleDebug.Write($"  Processing: {nuspec.RelativePath}");
+            if (nuspec.RelativePath.Length > 0)
+                ConsoleDebug.Write($"  Processing: {nuspec.RelativePath}");
+            else
+                ConsoleDebug.Write($"  Processing...");
 
             InitializeFile(nuspec, isDebug, out string NuspecPath);
 
@@ -221,6 +235,8 @@
             using FileStream FirstStream = new FileStream(nuspecPath, FileMode.Create, FileAccess.Write);
             using StreamWriter FirstWriter = new StreamWriter(FirstStream, Encoding.ASCII);
             FirstWriter.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+
+            ConsoleDebug.Write($"     Created: {nuspecPath}");
         }
 
         private static void WriteMiscellaneousInfo(StreamWriter writer, Nuspec nuspec, bool isDebug)
