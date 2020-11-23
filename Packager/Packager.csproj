@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
+    <TargetFrameworks>net48</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
@@ -15,8 +15,8 @@
     <Description>A tool to package a project before deployment</Description>
     <Copyright>Copyright © 2020 David Le Bansais</Copyright>
     <Version>1.0.14</Version>
-    <AssemblyVersion>1.0.14.14</AssemblyVersion>
-    <FileVersion>1.0.14.14</FileVersion>
+    <AssemblyVersion>1.0.14.16</AssemblyVersion>
+    <FileVersion>1.0.14.16</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Packager</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
