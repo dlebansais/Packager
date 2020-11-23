@@ -22,10 +22,10 @@
         {
             ConsoleDebug.Write("Loading SolutionParser assembly...");
 
-            SolutionParserType = Type.GetType("Microsoft.Build.Construction.SolutionParser, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
-            SolutionParserReader = SolutionParserType.GetProperty("SolutionReader", BindingFlags.NonPublic | BindingFlags.Instance);
-            SolutionParserProjects = SolutionParserType.GetProperty("Projects", BindingFlags.NonPublic | BindingFlags.Instance);
-            SolutionParserParseSolution = SolutionParserType.GetMethod("ParseSolution", BindingFlags.NonPublic | BindingFlags.Instance);
+            SolutionParserType = Type.GetType("Microsoft.Build.Construction.SolutionParser, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false) !;
+            SolutionParserReader = SolutionParserType.GetProperty("SolutionReader", BindingFlags.NonPublic | BindingFlags.Instance) !;
+            SolutionParserProjects = SolutionParserType.GetProperty("Projects", BindingFlags.NonPublic | BindingFlags.Instance) !;
+            SolutionParserParseSolution = SolutionParserType.GetMethod("ParseSolution", BindingFlags.NonPublic | BindingFlags.Instance) !;
         }
 
         private static readonly Type SolutionParserType;
@@ -49,10 +49,10 @@
             SolutionParserReader.SetValue(solutionParser, streamReader, null);
             SolutionParserParseSolution.Invoke(solutionParser, null);
 
-            var array = (Array)SolutionParserProjects.GetValue(solutionParser, null);
+            var array = (Array)SolutionParserProjects.GetValue(solutionParser, null) !;
             for (int i = 0; i < array.Length; i++)
             {
-                Project NewProject = new Project(array.GetValue(i));
+                Project NewProject = new Project(array.GetValue(i) !);
                 ProjectList.Add(NewProject);
             }
         }

@@ -18,11 +18,11 @@
         {
             ConsoleDebug.Write("Loading ProjectInSolution assembly...");
 
-            ProjectInSolutionType = Type.GetType("Microsoft.Build.Construction.ProjectInSolution, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
-            ProjectInSolutionProjectName = ProjectInSolutionType.GetProperty("ProjectName", BindingFlags.NonPublic | BindingFlags.Instance);
-            ProjectInSolutionRelativePath = ProjectInSolutionType.GetProperty("RelativePath", BindingFlags.NonPublic | BindingFlags.Instance);
-            ProjectInSolutionProjectGuid = ProjectInSolutionType.GetProperty("ProjectGuid", BindingFlags.NonPublic | BindingFlags.Instance);
-            ProjectInSolutionProjectType = ProjectInSolutionType.GetProperty("ProjectType", BindingFlags.NonPublic | BindingFlags.Instance);
+            ProjectInSolutionType = Type.GetType("Microsoft.Build.Construction.ProjectInSolution, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false) !;
+            ProjectInSolutionProjectName = ProjectInSolutionType.GetProperty("ProjectName", BindingFlags.NonPublic | BindingFlags.Instance) !;
+            ProjectInSolutionRelativePath = ProjectInSolutionType.GetProperty("RelativePath", BindingFlags.NonPublic | BindingFlags.Instance) !;
+            ProjectInSolutionProjectGuid = ProjectInSolutionType.GetProperty("ProjectGuid", BindingFlags.NonPublic | BindingFlags.Instance) !;
+            ProjectInSolutionProjectType = ProjectInSolutionType.GetProperty("ProjectType", BindingFlags.NonPublic | BindingFlags.Instance) !;
         }
 
         private static readonly Type ProjectInSolutionType;
@@ -37,10 +37,11 @@
         /// <param name="solutionProject">The project as loaded from a solution.</param>
         public Project(object solutionProject)
         {
-            ProjectName = (string)ProjectInSolutionProjectName.GetValue(solutionProject, null);
-            RelativePath = (string)ProjectInSolutionRelativePath.GetValue(solutionProject, null);
-            ProjectGuid = (string)ProjectInSolutionProjectGuid.GetValue(solutionProject, null);
-            ProjectType = ProjectInSolutionProjectType.GetValue(solutionProject, null).ToString();
+            ProjectName = (string)ProjectInSolutionProjectName.GetValue(solutionProject, null) !;
+            RelativePath = (string)ProjectInSolutionRelativePath.GetValue(solutionProject, null) !;
+            ProjectGuid = (string)ProjectInSolutionProjectGuid.GetValue(solutionProject, null) !;
+            var Type = ProjectInSolutionProjectType.GetValue(solutionProject, null) !;
+            ProjectType = Type.ToString() !;
         }
 
         /// <summary>
