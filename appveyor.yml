@@ -34,10 +34,10 @@ build:
   project: build_all.xml
 
 after_build:
-  - nuget install Packager -DependencyVersion Highest -OutputDirectory packages # Install Packager
+  - nuget install Packager -Version 1.0.12 -OutputDirectory packages # Install Packager
   - ps: $folder = Get-ChildItem -Path packages/Packager.* -Name | Out-String    # Get the installation folder (we don't know the actual version)
   - ps: $firstline = ($folder -split '\r\n')[0]                                 # Get rid of carriage-return
-  - ps: $fullpath = ".\packages\$firstline\lib\net48\win-64\Packager.exe"       # Build full path
+  - ps: $fullpath = ".\packages\$firstline\lib\net48\Packager.exe"              # Build full path
   - ps: '& $fullpath --debug'                                                   # Execute the packager: the output is nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
   - nuget pack nuget-debug\%APPVEYOR_PROJECT_NAME%-Debug.nuspec
   - dotnet pack --configuration Release /p:Platform=x64 %APPVEYOR_PROJECT_NAME%/%APPVEYOR_PROJECT_NAME%.csproj
