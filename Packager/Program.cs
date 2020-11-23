@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
+    using Contracts;
 
     /// <summary>
     /// Generates a .nuspec file based on project .csproj content.
@@ -17,19 +18,84 @@
         /// <returns>-1 in case of error; otherwise 0.</returns>
         public static int Main(string[] arguments)
         {
-            bool IsDebug = arguments != null && arguments.Length > 0 && arguments[0] == "--debug";
+            Contract.RequireNotNull(arguments, out string[] Arguments);
 
-            LoadSolutionAndProjectList(out List<Project> ProjectList);
+            ParseIsDebug(Arguments, out bool IsDebug);
+            ParseIsMerge(Arguments, out bool IsMerge, out string MergeName);
+            ParseDescription(Arguments, out string NuspecDescription);
+
+            LoadSolutionAndProjectList(out string SolutionName, out List<Project> ProjectList);
             FilterProcessedProjects(ProjectList, out List<Project> ProcessedProjectList, out bool HasErrors);
 
-            foreach (Project Project in ProcessedProjectList)
-                AnalyseProject(Project, IsDebug);
+            List<Nuspec> NuspecList = new List<Nuspec>();
+
+            if (IsMerge)
+            {
+                MergeProjects(SolutionName, ProcessedProjectList, MergeName, NuspecDescription, out Nuspec mergedNuspec, ref HasErrors);
+
+                if (!HasErrors)
+                    NuspecList.Add(mergedNuspec);
+            }
+            else
+            {
+                NuspecList = new List<Nuspec>();
+                foreach (Project Project in ProcessedProjectList)
+                    NuspecList.Add(Project.ToNuspec());
+            }
+
+            foreach (Nuspec Nuspec in NuspecList)
+                WriteNuspec(Nuspec, IsDebug);
 
             return HasErrors ? -1 : 0;
         }
 
-        private static void LoadSolutionAndProjectList(out List<Project> projectList)
+        private static void ParseIsDebug(string[] arguments, out bool isDebug)
         {
+            isDebug = false;
+
+            foreach (string Argument in arguments)
+                if (Argument == "--debug")
+                {
+                    isDebug = true;
+                    break;
+                }
+        }
+
+        private static void ParseIsMerge(string[] arguments, out bool isMerge, out string mergeName)
+        {
+            isMerge = false;
+            mergeName = string.Empty;
+
+            string Pattern = "--merge";
+
+            foreach (string Argument in arguments)
+                if (Argument.StartsWith(Pattern, StringComparison.InvariantCulture))
+                {
+                    isMerge = true;
+
+                    if (Argument.Length > Pattern.Length && Argument[Pattern.Length] == ':')
+                        mergeName = Argument.Substring(Pattern.Length + 1);
+                    break;
+                }
+        }
+
+        private static void ParseDescription(string[] arguments, out string nugetDescription)
+        {
+            nugetDescription = string.Empty;
+
+            string Pattern = "--description:";
+
+            foreach (string Argument in arguments)
+                if (Argument.StartsWith(Pattern, StringComparison.InvariantCulture))
+                {
+                    nugetDescription = Argument.Substring(Pattern.Length);
+                    break;
+                }
+        }
+
+        private static void LoadSolutionAndProjectList(out string solutionName, out List<Project> projectList)
+        {
+            solutionName = string.Empty;
             projectList = new List<Project>();
 
             string CurrentDirectory = Environment.CurrentDirectory;
@@ -42,6 +108,8 @@
             {
                 ConsoleDebug.Write($"  Solution file: {SolutionFileName}");
                 Solution NewSolution = new Solution(SolutionFileName);
+
+                solutionName = NewSolution.Name;
 
                 foreach (Project Item in NewSolution.ProjectList)
                 {
@@ -75,11 +143,55 @@
             ConsoleDebug.Write($"Processing {processedProjectList.Count} project file(s)");
         }
 
-        private static void AnalyseProject(Project project, bool isDebug)
+        private static void MergeProjects(string solutionName, List<Project> projectList, string mergeName, string nuspecDescription, out Nuspec mergedNuspec, ref bool hasErrors)
         {
-            ConsoleDebug.Write($"  Processing: {project.RelativePath}");
+            mergedNuspec = Nuspec.Empty;
 
-            InitializeFile(project, isDebug, out string NuspecPath);
+            Project? SelectedProject = null;
+
+            foreach (Project Project in projectList)
+                if (Project.ProjectName == mergeName)
+                    SelectedProject = Project;
+
+            if (SelectedProject == null)
+            {
+                if (solutionName.Length == 0 || projectList.Count == 0)
+                {
+                    hasErrors = true;
+                    return;
+                }
+
+                SelectedProject = projectList[0];
+            }
+
+            string Description = nuspecDescription.Length > 0 ? nuspecDescription : SelectedProject.Description;
+            mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, SelectedProject.RepositoryUrl!, SelectedProject.FrameworkList);
+
+            foreach (Project Project in projectList)
+                if (Project.Version != mergedNuspec.Version || Project.Author != mergedNuspec.Author || Project.Copyright != mergedNuspec.Copyright || Project.RepositoryUrl != mergedNuspec.RepositoryUrl || !IsFrameworkListEqual(Project.FrameworkList, mergedNuspec.FrameworkList))
+                {
+                    hasErrors = true;
+                    return;
+                }
+        }
+
+        private static bool IsFrameworkListEqual(List<Framework> list1, List<Framework> list2)
+        {
+            if (list1.Count != list2.Count)
+                return false;
+
+            for (int i = 0; i < list1.Count; i++)
+                if (list1[i].Type != list2[i].Type || list1[i].Major != list2[i].Major || list1[i].Minor != list2[i].Minor || list1[i].Moniker != list2[i].Moniker)
+                    return false;
+
+            return true;
+        }
+
+        private static void WriteNuspec(Nuspec nuspec, bool isDebug)
+        {
+            ConsoleDebug.Write($"  Processing: {nuspec.RelativePath}");
+
+            InitializeFile(nuspec, isDebug, out string NuspecPath);
 
             using FileStream Stream = new FileStream(NuspecPath, FileMode.Append, FileAccess.Write);
             using StreamWriter Writer = new StreamWriter(Stream, Encoding.UTF8);
@@ -87,15 +199,15 @@
             Writer.WriteLine("<package>");
             Writer.WriteLine("  <metadata>");
 
-            WriteMiscellaneousInfo(Writer, project, isDebug);
-            WriteDependencies(Writer, project);
+            WriteMiscellaneousInfo(Writer, nuspec, isDebug);
+            WriteDependencies(Writer, nuspec);
             WriteExtraContentFiles(Writer, isDebug);
 
             Writer.WriteLine("  </metadata>");
             Writer.Write("</package>");
         }
 
-        private static void InitializeFile(Project project, bool isDebug, out string nuspecPath)
+        private static void InitializeFile(Nuspec nuspec, bool isDebug, out string nuspecPath)
         {
             string DebugSuffix = GetDebugSuffix(isDebug);
             string NugetDirectory = isDebug ? "nuget-debug" : "nuget";
@@ -103,7 +215,7 @@
             if (!Directory.Exists(NugetDirectory))
                 Directory.CreateDirectory(NugetDirectory);
 
-            string NuspecFileName = $"{project.ProjectName}{DebugSuffix}.nuspec";
+            string NuspecFileName = $"{nuspec.Name}{DebugSuffix}.nuspec";
             nuspecPath = Path.Combine(NugetDirectory, NuspecFileName);
 
             using FileStream FirstStream = new FileStream(nuspecPath, FileMode.Create, FileAccess.Write);
@@ -111,29 +223,29 @@
             FirstWriter.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         }
 
-        private static void WriteMiscellaneousInfo(StreamWriter writer, Project project, bool isDebug)
+        private static void WriteMiscellaneousInfo(StreamWriter writer, Nuspec nuspec, bool isDebug)
         {
             string DebugSuffix = GetDebugSuffix(isDebug);
-            writer.WriteLine($"    <id>{project.ProjectName}{DebugSuffix}</id>");
-            writer.WriteLine($"    <version>{project.Version}</version>");
+            writer.WriteLine($"    <id>{nuspec.Name}{DebugSuffix}</id>");
+            writer.WriteLine($"    <version>{nuspec.Version}</version>");
 
-            if (project.Author.Length > 0)
-                writer.WriteLine($"    <authors>{project.Author}</authors>");
+            if (nuspec.Author.Length > 0)
+                writer.WriteLine($"    <authors>{nuspec.Author}</authors>");
 
-            if (project.Description.Length > 0)
-                writer.WriteLine($"    <description>{project.Description}</description>");
+            if (nuspec.Description.Length > 0)
+                writer.WriteLine($"    <description>{nuspec.Description}</description>");
 
-            if (project.Copyright.Length > 0)
-                writer.WriteLine($"    <copyright>{project.Copyright}</copyright>");
+            if (nuspec.Copyright.Length > 0)
+                writer.WriteLine($"    <copyright>{nuspec.Copyright}</copyright>");
 
-            writer.WriteLine($"    <repository type=\"git\" url=\"{project.RepositoryUrl}\"/>");
+            writer.WriteLine($"    <repository type=\"git\" url=\"{nuspec.RepositoryUrl}\"/>");
         }
 
-        private static void WriteDependencies(StreamWriter writer, Project project)
+        private static void WriteDependencies(StreamWriter writer, Nuspec nuspec)
         {
             writer.WriteLine("    <dependencies>");
 
-            foreach (Framework Framework in project.FrameworkList)
+            foreach (Framework Framework in nuspec.FrameworkList)
             {
                 string FrameworkName = string.Empty;
 

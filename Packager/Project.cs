@@ -101,12 +101,12 @@
         /// <summary>
         /// Gets the project repository URL.
         /// </summary>
-        public string RepositoryUrl { get; private set; } = string.Empty;
+        public Uri? RepositoryUrl { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether the project has a repository URL.
         /// </summary>
-        public bool HasRepositoryUrl { get { return RepositoryUrl.Length > 0; } }
+        public bool HasRepositoryUrl { get { return RepositoryUrl != null; } }
 
         /// <summary>
         /// Gets the list of parsed project frameworks.
@@ -147,6 +147,15 @@
 
             if (TargetFrameworks.Length > 0)
                 ParseTargetFrameworks();
+        }
+
+        /// <summary>
+        /// Returns a nuspec from this project.
+        /// </summary>
+        /// <returns>The created nuspec.</returns>
+        public Nuspec ToNuspec()
+        {
+            return new Nuspec(ProjectName, RelativePath, Version, Author, Description, Copyright, RepositoryUrl !, FrameworkList);
         }
 
         private void ParsePropertyGroupElements(out string assemblyVersion, out string fileVersion)
@@ -195,7 +204,7 @@
                 XElement? RepositoryUrlElement = ProjectElement.Element("RepositoryUrl");
                 if (RepositoryUrlElement != null)
                 {
-                    RepositoryUrl = RepositoryUrlElement.Value;
+                    RepositoryUrl = new Uri(RepositoryUrlElement.Value);
                     ConsoleDebug.Write($"    RepositoryUrl: {RepositoryUrl}");
                 }
 

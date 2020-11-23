@@ -40,6 +40,7 @@
         public Solution(string solutionFileName)
         {
             SolutionFileName = solutionFileName;
+            Name = Path.GetFileNameWithoutExtension(solutionFileName);
 
             ConstructorInfo[] Constructors = SolutionParserType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
             var solutionParser = Constructors[0].Invoke(null);
@@ -60,6 +61,11 @@
         /// Gets the solution file name.
         /// </summary>
         public string SolutionFileName { get; }
+
+        /// <summary>
+        /// Gets the solution name.
+        /// </summary>
+        public string Name { get; }
 
         /// <summary>
         /// Gets the list of projects in the solution.
