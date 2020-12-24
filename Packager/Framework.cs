@@ -23,21 +23,21 @@
         /// <summary>
         /// Gets the framework type.
         /// </summary>
-        public FrameworkType Type { get; }
+        public FrameworkType Type { get; init; }
 
         /// <summary>
         /// Gets the framework major version.
         /// </summary>
-        public int Major { get; }
+        public int Major { get; init; }
 
         /// <summary>
         /// Gets the framework minor version.
         /// </summary>
-        public int Minor { get; }
+        public int Minor { get; init; }
 
         /// <summary>
         /// Gets the target framework moniker (TFM).
         /// </summary>
-        public FrameworkMoniker Moniker { get; }
+        public FrameworkMoniker Moniker { get; init; }
     }
 }

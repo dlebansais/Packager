@@ -4,28 +4,25 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
+    using Contracts;
 
     /// <summary>
     /// Reads and parses a solution file.
     /// </summary>
     internal class Solution
     {
-        /*
-         * Internal class SolutionParser
-         * Name: Microsoft.Build.Construction.SolutionParser
-         * Assembly: Microsoft.Build, Version=4.0.0.0
-         */
-
+        #region Init
 #pragma warning disable CA1810 // Initialize reference type static fields inline
         static Solution()
 #pragma warning restore CA1810 // Initialize reference type static fields inline
         {
             ConsoleDebug.Write("Loading SolutionParser assembly...");
 
-            SolutionParserType = Type.GetType("Microsoft.Build.Construction.SolutionParser, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false) !;
-            SolutionParserReader = SolutionParserType.GetProperty("SolutionReader", BindingFlags.NonPublic | BindingFlags.Instance) !;
-            SolutionParserProjects = SolutionParserType.GetProperty("Projects", BindingFlags.NonPublic | BindingFlags.Instance) !;
-            SolutionParserParseSolution = SolutionParserType.GetMethod("ParseSolution", BindingFlags.NonPublic | BindingFlags.Instance) !;
+            SolutionParserType = ReflectionTools.GetProjectInSolutionType("SolutionParser");
+
+            SolutionParserReader = ReflectionTools.GetTypeProperty(SolutionParserType, "SolutionReader");
+            SolutionParserProjects = ReflectionTools.GetTypeProperty(SolutionParserType, "Projects");
+            SolutionParserParseSolution = ReflectionTools.GetTypeMethod(SolutionParserType, "ParseSolution");
         }
 
         private static readonly Type SolutionParserType;
@@ -42,34 +39,40 @@
             SolutionFileName = solutionFileName;
             Name = Path.GetFileNameWithoutExtension(solutionFileName);
 
-            ConstructorInfo[] Constructors = SolutionParserType.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
-            var solutionParser = Constructors[0].Invoke(null);
+            ConstructorInfo Constructor = ReflectionTools.GetFirstTypeConstructor(SolutionParserType);
+            var solutionParser = Constructor.Invoke(null);
 
             using StreamReader streamReader = new StreamReader(solutionFileName);
             SolutionParserReader.SetValue(solutionParser, streamReader, null);
             SolutionParserParseSolution.Invoke(solutionParser, null);
 
-            var array = (Array)SolutionParserProjects.GetValue(solutionParser, null) !;
+            ProjectList = new List<Project>();
+            Array array = (Array)ReflectionTools.GetPropertyValue(SolutionParserProjects, solutionParser);
             for (int i = 0; i < array.Length; i++)
             {
-                Project NewProject = new Project(array.GetValue(i) !);
+                Contract.RequireNotNull(array.GetValue(i), out object SolutionProject);
+                Project NewProject = new Project(SolutionProject);
+
                 ProjectList.Add(NewProject);
             }
         }
+        #endregion
 
+        #region Properties
         /// <summary>
         /// Gets the solution file name.
         /// </summary>
-        public string SolutionFileName { get; }
+        public string SolutionFileName { get; init; }
 
         /// <summary>
         /// Gets the solution name.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; init; }
 
         /// <summary>
         /// Gets the list of projects in the solution.
         /// </summary>
-        public List<Project> ProjectList { get; } = new List<Project>();
+        public List<Project> ProjectList { get; init; }
+        #endregion
     }
 }

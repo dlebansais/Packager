@@ -20,20 +20,35 @@
         {
             Contract.RequireNotNull(arguments, out string[] Arguments);
 
-            ParseIsDebug(Arguments, out bool IsDebug);
-            ParseIsMerge(Arguments, out bool IsMerge, out string MergeName);
-            ParseDescription(Arguments, out string NuspecDescription);
+            try
+            {
+                CommandLineOptions.ParseIsDebug(Arguments, out bool IsDebug);
+                CommandLineOptions.ParseIsMerge(Arguments, out bool IsMerge, out string MergeName);
+                CommandLineOptions.ParseDescription(Arguments, out string NuspecDescription);
 
+                ExecuteProgram(IsDebug, IsMerge, MergeName, NuspecDescription, out bool HasErrors);
+
+                return HasErrors ? -1 : 0;
+            }
+            catch (Exception e)
+            {
+                PrintException(e);
+                return -1;
+            }
+        }
+
+        private static void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, out bool hasErrors)
+        {
             LoadSolutionAndProjectList(out string SolutionName, out List<Project> ProjectList);
-            FilterProcessedProjects(ProjectList, out List<Project> ProcessedProjectList, out bool HasErrors);
+            FilterProcessedProjects(ProjectList, out List<Project> ProcessedProjectList, out hasErrors);
 
             List<Nuspec> NuspecList = new List<Nuspec>();
 
-            if (IsMerge)
+            if (isMerge)
             {
-                MergeProjects(SolutionName, ProcessedProjectList, MergeName, NuspecDescription, out Nuspec mergedNuspec, ref HasErrors);
+                MergeProjects(SolutionName, ProcessedProjectList, mergeName, nuspecDescription, out Nuspec mergedNuspec, ref hasErrors);
 
-                if (!HasErrors)
+                if (!hasErrors)
                 {
                     NuspecList.Add(mergedNuspec);
                     ConsoleDebug.Write("All projects have been merged");
@@ -47,61 +62,25 @@
             }
 
             foreach (Nuspec Nuspec in NuspecList)
-                WriteNuspec(Nuspec, IsDebug);
-
-            return HasErrors ? -1 : 0;
+                WriteNuspec(Nuspec, isDebug);
         }
 
-        private static void ParseIsDebug(string[] arguments, out bool isDebug)
+        private static void PrintException(Exception e)
         {
-            isDebug = false;
+            Exception? CurrentException = e;
 
-            foreach (string Argument in arguments)
-                if (Argument == "--debug")
-                {
-                    isDebug = true;
-                    ConsoleDebug.Write("Debug output selected");
-                    break;
-                }
-        }
+            do
+            {
+                ConsoleDebug.Write("***************");
+                ConsoleDebug.Write(CurrentException.Message);
 
-        private static void ParseIsMerge(string[] arguments, out bool isMerge, out string mergeName)
-        {
-            isMerge = false;
-            mergeName = string.Empty;
+                string? StackTrace = CurrentException.StackTrace;
+                if (StackTrace != null)
+                    ConsoleDebug.Write(StackTrace);
 
-            string Pattern = "--merge";
-
-            foreach (string Argument in arguments)
-                if (Argument.StartsWith(Pattern, StringComparison.InvariantCulture))
-                {
-                    isMerge = true;
-
-                    if (Argument.Length > Pattern.Length && Argument[Pattern.Length] == ':')
-                    {
-                        mergeName = Argument.Substring(Pattern.Length + 1);
-                        ConsoleDebug.Write($"Merged output selected: '{mergeName}'");
-                    }
-                    else
-                        ConsoleDebug.Write("Merged output selected (no name)");
-
-                    break;
-                }
-        }
-
-        private static void ParseDescription(string[] arguments, out string nugetDescription)
-        {
-            nugetDescription = string.Empty;
-
-            string Pattern = "--description:";
-
-            foreach (string Argument in arguments)
-                if (Argument.StartsWith(Pattern, StringComparison.InvariantCulture))
-                {
-                    nugetDescription = Argument.Substring(Pattern.Length);
-                    ConsoleDebug.Write($"Output description: '{nugetDescription}'");
-                    break;
-                }
+                CurrentException = CurrentException.InnerException;
+            }
+            while (CurrentException != null);
         }
 
         private static void LoadSolutionAndProjectList(out string solutionName, out List<Project> projectList)
@@ -176,7 +155,9 @@
             }
 
             string Description = nuspecDescription.Length > 0 ? nuspecDescription : SelectedProject.Description;
-            mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, SelectedProject.RepositoryUrl!, SelectedProject.FrameworkList);
+            Contract.RequireNotNull(SelectedProject.RepositoryUrl, out Uri RepositoryUrl);
+
+            mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, RepositoryUrl, SelectedProject.FrameworkList);
 
             foreach (Project Project in projectList)
                 if (Project.Version != mergedNuspec.Version || Project.Author != mergedNuspec.Author || Project.Copyright != mergedNuspec.Copyright || Project.RepositoryUrl != mergedNuspec.RepositoryUrl || !IsFrameworkListEqual(Project.FrameworkList, mergedNuspec.FrameworkList))
@@ -186,7 +167,7 @@
                 }
         }
 
-        private static bool IsFrameworkListEqual(List<Framework> list1, List<Framework> list2)
+        private static bool IsFrameworkListEqual(IReadOnlyList<Framework> list1, IReadOnlyList<Framework> list2)
         {
             if (list1.Count != list2.Count)
                 return false;

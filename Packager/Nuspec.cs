@@ -39,7 +39,7 @@
         /// <param name="copyright">The nuspec copyright text.</param>
         /// <param name="repositoryUrl">The nuspec repository URL.</param>
         /// <param name="frameworkList">The list of nuspec frameworks.</param>
-        public Nuspec(string name, string relativePath, string version, string author, string description, string copyright, Uri repositoryUrl, List<Framework> frameworkList)
+        public Nuspec(string name, string relativePath, string version, string author, string description, string copyright, Uri repositoryUrl, IReadOnlyList<Framework> frameworkList)
         {
             Name = name;
             RelativePath = relativePath;
@@ -54,41 +54,41 @@
         /// <summary>
         /// Gets the nuspec name.
         /// </summary>
-        public string Name { get; }
+        public string Name { get; init; }
 
         /// <summary>
         /// Gets the nuspec relative path.
         /// </summary>
-        public string RelativePath { get; }
+        public string RelativePath { get; init; }
 
         /// <summary>
         /// Gets the nuspec version.
         /// </summary>
-        public string Version { get; }
+        public string Version { get; init; }
 
         /// <summary>
         /// Gets the nuspec author.
         /// </summary>
-        public string Author { get; }
+        public string Author { get; init; }
 
         /// <summary>
         /// Gets the nuspec description.
         /// </summary>
-        public string Description { get; }
+        public string Description { get; init; }
 
         /// <summary>
         /// Gets the nuspec copyright text.
         /// </summary>
-        public string Copyright { get; }
+        public string Copyright { get; init; }
 
         /// <summary>
         /// Gets the nuspec repository URL.
         /// </summary>
-        public Uri? RepositoryUrl { get; }
+        public Uri? RepositoryUrl { get; init; }
 
         /// <summary>
         /// Gets the list of nuspec frameworks.
         /// </summary>
-        public List<Framework> FrameworkList { get; }
+        public IReadOnlyList<Framework> FrameworkList { get; init; }
     }
 }

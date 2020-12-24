@@ -5,6 +5,7 @@
     using System.Diagnostics;
     using System.Reflection;
     using System.Xml.Linq;
+    using Contracts;
 
     /// <summary>
     /// Reads and parses a project file.
@@ -12,17 +13,19 @@
     [DebuggerDisplay("{ProjectName}, {RelativePath}, {ProjectGuid}")]
     internal class Project
     {
+        #region Init
 #pragma warning disable CA1810 // Initialize reference type static fields inline
         static Project()
 #pragma warning restore CA1810 // Initialize reference type static fields inline
         {
             ConsoleDebug.Write("Loading ProjectInSolution assembly...");
 
-            ProjectInSolutionType = Type.GetType("Microsoft.Build.Construction.ProjectInSolution, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false) !;
-            ProjectInSolutionProjectName = ProjectInSolutionType.GetProperty("ProjectName", BindingFlags.NonPublic | BindingFlags.Instance) !;
-            ProjectInSolutionRelativePath = ProjectInSolutionType.GetProperty("RelativePath", BindingFlags.NonPublic | BindingFlags.Instance) !;
-            ProjectInSolutionProjectGuid = ProjectInSolutionType.GetProperty("ProjectGuid", BindingFlags.NonPublic | BindingFlags.Instance) !;
-            ProjectInSolutionProjectType = ProjectInSolutionType.GetProperty("ProjectType", BindingFlags.NonPublic | BindingFlags.Instance) !;
+            ProjectInSolutionType = ReflectionTools.GetProjectInSolutionType("ProjectInSolution");
+
+            ProjectInSolutionProjectName = ReflectionTools.GetTypeProperty(ProjectInSolutionType, nameof(ProjectName));
+            ProjectInSolutionRelativePath = ReflectionTools.GetTypeProperty(ProjectInSolutionType, nameof(RelativePath));
+            ProjectInSolutionProjectGuid = ReflectionTools.GetTypeProperty(ProjectInSolutionType, nameof(ProjectGuid));
+            ProjectInSolutionProjectType = ReflectionTools.GetTypeProperty(ProjectInSolutionType, nameof(ProjectType));
         }
 
         private static readonly Type ProjectInSolutionType;
@@ -37,32 +40,36 @@
         /// <param name="solutionProject">The project as loaded from a solution.</param>
         public Project(object solutionProject)
         {
-            ProjectName = (string)ProjectInSolutionProjectName.GetValue(solutionProject, null) !;
-            RelativePath = (string)ProjectInSolutionRelativePath.GetValue(solutionProject, null) !;
-            ProjectGuid = (string)ProjectInSolutionProjectGuid.GetValue(solutionProject, null) !;
-            var Type = ProjectInSolutionProjectType.GetValue(solutionProject, null) !;
-            ProjectType = Type.ToString() !;
-        }
+            ProjectName = (string)ReflectionTools.GetPropertyValue(ProjectInSolutionProjectName, solutionProject);
+            RelativePath = (string)ReflectionTools.GetPropertyValue(ProjectInSolutionRelativePath, solutionProject);
+            ProjectGuid = (string)ReflectionTools.GetPropertyValue(ProjectInSolutionProjectGuid, solutionProject);
 
+            object Type = ReflectionTools.GetPropertyValue(ProjectInSolutionProjectType, solutionProject);
+            Contract.RequireNotNull(Type.ToString(), out string ProjectTypeName);
+            ProjectType = ProjectTypeName;
+        }
+        #endregion
+
+        #region Properties
         /// <summary>
         /// Gets the project name.
         /// </summary>
-        public string ProjectName { get; }
+        public string ProjectName { get; init; }
 
         /// <summary>
         /// Gets the project relative path.
         /// </summary>
-        public string RelativePath { get; }
+        public string RelativePath { get; init; }
 
         /// <summary>
         /// Gets the project GUID.
         /// </summary>
-        public string ProjectGuid { get; }
+        public string ProjectGuid { get; init; }
 
         /// <summary>
         /// Gets the project type.
         /// </summary>
-        public string ProjectType { get; }
+        public string ProjectType { get; init; }
 
         /// <summary>
         /// Gets the project version.
@@ -112,13 +119,15 @@
         /// <summary>
         /// Gets the list of parsed project frameworks.
         /// </summary>
-        public List<Framework> FrameworkList { get; } = new List<Framework>();
+        public IReadOnlyList<Framework> FrameworkList { get; private set; } = new List<Framework>().AsReadOnly();
 
         /// <summary>
         /// Gets a value indicating whether the project has target frameworks.
         /// </summary>
         public bool HasTargetFrameworks { get { return FrameworkList.Count > 0; } }
+        #endregion
 
+        #region Client Interface
         /// <summary>
         /// Parses a loaded project.
         /// </summary>
@@ -146,8 +155,12 @@
             else
                 ConsoleDebug.Write("    Ignored because no version");
 
+            List<Framework> ParsedFrameworkList = new List<Framework>();
+
             if (TargetFrameworks.Length > 0)
-                ParseTargetFrameworks();
+                ParseTargetFrameworks(ParsedFrameworkList);
+
+            FrameworkList = ParsedFrameworkList.AsReadOnly();
         }
 
         /// <summary>
@@ -156,86 +169,107 @@
         /// <returns>The created nuspec.</returns>
         public Nuspec ToNuspec()
         {
-            return new Nuspec(ProjectName, RelativePath, Version, Author, Description, Copyright, RepositoryUrl !, FrameworkList);
-        }
+            Contract.RequireNotNull(RepositoryUrl, out Uri ParsedUrl);
 
+            return new Nuspec(ProjectName, RelativePath, Version, Author, Description, Copyright, ParsedUrl, FrameworkList);
+        }
+        #endregion
+
+        #region Implementation
         private void ParsePropertyGroupElements(out string assemblyVersion, out string fileVersion)
         {
             Version = string.Empty;
 
-            XElement Root = XElement.Load(RelativePath);
             assemblyVersion = string.Empty;
             fileVersion = string.Empty;
 
+            XElement Root = XElement.Load(RelativePath);
+
             foreach (XElement ProjectElement in Root.Descendants("PropertyGroup"))
+                ParseProjectElement(ProjectElement, ref assemblyVersion, ref fileVersion);
+        }
+
+        private void ParseProjectElement(XElement projectElement, ref string assemblyVersion, ref string fileVersion)
+        {
+            ParseProjectElementVersion(projectElement, ref assemblyVersion, ref fileVersion);
+            ParseProjectElementInfo(projectElement);
+            ParseProjectElementFrameworks(projectElement);
+        }
+
+        private void ParseProjectElementVersion(XElement projectElement, ref string assemblyVersion, ref string fileVersion)
+        {
+            XElement? VersionElement = projectElement.Element("Version");
+            if (VersionElement != null)
             {
-                XElement? VersionElement = ProjectElement.Element("Version");
-                if (VersionElement != null)
+                Version = VersionElement.Value;
+                ConsoleDebug.Write($"    Version: {Version}");
+            }
+
+            XElement? AssemblyVersionElement = projectElement.Element("AssemblyVersion");
+            if (AssemblyVersionElement != null)
+            {
+                assemblyVersion = AssemblyVersionElement.Value;
+                ConsoleDebug.Write($"    AssemblyVersion: {assemblyVersion}");
+            }
+
+            XElement? FileVersionElement = projectElement.Element("FileVersion");
+            if (FileVersionElement != null)
+            {
+                fileVersion = FileVersionElement.Value;
+                ConsoleDebug.Write($"    FileVersion: {fileVersion}");
+            }
+        }
+
+        private void ParseProjectElementInfo(XElement projectElement)
+        {
+            XElement? AuthorElement = projectElement.Element("Authors");
+            if (AuthorElement != null)
+                Author = AuthorElement.Value;
+
+            XElement? DescriptionElement = projectElement.Element("Description");
+            if (DescriptionElement != null)
+                Description = DescriptionElement.Value;
+
+            XElement? CopyrightElement = projectElement.Element("Copyright");
+            if (CopyrightElement != null)
+                Copyright = CopyrightElement.Value;
+
+            XElement? RepositoryUrlElement = projectElement.Element("RepositoryUrl");
+            if (RepositoryUrlElement != null)
+            {
+                RepositoryUrl = new Uri(RepositoryUrlElement.Value);
+                ConsoleDebug.Write($"    RepositoryUrl: {RepositoryUrl}");
+            }
+        }
+
+        private void ParseProjectElementFrameworks(XElement projectElement)
+        {
+            XElement? TargetFrameworkElement = projectElement.Element("TargetFramework");
+            if (TargetFrameworkElement != null)
+            {
+                TargetFrameworks = TargetFrameworkElement.Value;
+                ConsoleDebug.Write($"    TargetFramework: {TargetFrameworks}");
+            }
+            else
+            {
+                XElement? TargetFrameworksElement = projectElement.Element("TargetFrameworks");
+                if (TargetFrameworksElement != null)
                 {
-                    Version = VersionElement.Value;
-                    ConsoleDebug.Write($"    Version: {Version}");
-                }
-
-                XElement? AssemblyVersionElement = ProjectElement.Element("AssemblyVersion");
-                if (AssemblyVersionElement != null)
-                {
-                    assemblyVersion = AssemblyVersionElement.Value;
-                    ConsoleDebug.Write($"    AssemblyVersion: {assemblyVersion}");
-                }
-
-                XElement? FileVersionElement = ProjectElement.Element("FileVersion");
-                if (FileVersionElement != null)
-                {
-                    fileVersion = FileVersionElement.Value;
-                    ConsoleDebug.Write($"    FileVersion: {fileVersion}");
-                }
-
-                XElement? AuthorElement = ProjectElement.Element("Authors");
-                if (AuthorElement != null)
-                    Author = AuthorElement.Value;
-
-                XElement? DescriptionElement = ProjectElement.Element("Description");
-                if (DescriptionElement != null)
-                    Description = DescriptionElement.Value;
-
-                XElement? CopyrightElement = ProjectElement.Element("Copyright");
-                if (CopyrightElement != null)
-                    Copyright = CopyrightElement.Value;
-
-                XElement? RepositoryUrlElement = ProjectElement.Element("RepositoryUrl");
-                if (RepositoryUrlElement != null)
-                {
-                    RepositoryUrl = new Uri(RepositoryUrlElement.Value);
-                    ConsoleDebug.Write($"    RepositoryUrl: {RepositoryUrl}");
-                }
-
-                XElement? TargetFrameworkElement = ProjectElement.Element("TargetFramework");
-                if (TargetFrameworkElement != null)
-                {
-                    TargetFrameworks = TargetFrameworkElement.Value;
-                    ConsoleDebug.Write($"    TargetFramework: {TargetFrameworks}");
-                }
-                else
-                {
-                    XElement? TargetFrameworksElement = ProjectElement.Element("TargetFrameworks");
-                    if (TargetFrameworksElement != null)
-                    {
-                        TargetFrameworks = TargetFrameworksElement.Value;
-                        ConsoleDebug.Write($"    TargetFrameworks: {TargetFrameworks}");
-                    }
+                    TargetFrameworks = TargetFrameworksElement.Value;
+                    ConsoleDebug.Write($"    TargetFrameworks: {TargetFrameworks}");
                 }
             }
         }
 
-        private void ParseTargetFrameworks()
+        private void ParseTargetFrameworks(List<Framework> parsedFrameworkList)
         {
             string[] Frameworks = TargetFrameworks.Split(';');
 
             foreach (string Framework in Frameworks)
-                ParseTargetFramework(Framework);
+                ParseTargetFramework(parsedFrameworkList, Framework);
         }
 
-        private void ParseTargetFramework(string framework)
+        private void ParseTargetFramework(List<Framework> parsedFrameworkList, string framework)
         {
             string FrameworkString = framework;
 
@@ -271,7 +305,7 @@
                 NewFramework = new Framework(FrameworkType.NetFramework, Major, Minor, Moniker);
 
             if (NewFramework != null)
-                FrameworkList.Add(NewFramework);
+                parsedFrameworkList.Add(NewFramework);
         }
 
         private static bool ParseNetVersion(string text, out int major, out int minor)
@@ -296,5 +330,6 @@
         }
 
         private string TargetFrameworks = string.Empty;
+        #endregion
     }
 }
