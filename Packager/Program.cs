@@ -227,13 +227,13 @@
             writer.WriteLine($"    <version>{nuspec.Version}</version>");
 
             if (nuspec.Author.Length > 0)
-                writer.WriteLine($"    <authors>{nuspec.Author}</authors>");
+                writer.WriteLine($"    <authors>{HtmlEncoded(nuspec.Author)}</authors>");
 
             if (nuspec.Description.Length > 0)
-                writer.WriteLine($"    <description>{nuspec.Description}</description>");
+                writer.WriteLine($"    <description>{HtmlEncoded(nuspec.Description)}</description>");
 
             if (nuspec.Copyright.Length > 0)
-                writer.WriteLine($"    <copyright>{nuspec.Copyright}</copyright>");
+                writer.WriteLine($"    <copyright>{HtmlEncoded(nuspec.Copyright)}</copyright>");
 
             writer.WriteLine($"    <repository type=\"git\" url=\"{nuspec.RepositoryUrl}\"/>");
         }
@@ -273,6 +273,16 @@
                 writer.WriteLine("      <files include=\"lib/**/*.pdb\"/>");
                 writer.WriteLine("    </contentFiles>");
             }
+        }
+
+        private static string HtmlEncoded(string s)
+        {
+            s = s.Replace("\"", "&quot;");
+            s = s.Replace("?", "&amp;");
+            s = s.Replace("<", "&lt;");
+            s = s.Replace(">", "&gt;");
+
+            return s;
         }
 
         private static string GetDebugSuffix(bool isDebug)
