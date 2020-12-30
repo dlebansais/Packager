@@ -79,7 +79,7 @@
         /// <summary>
         /// Gets a value indicating whether the project has a version.
         /// </summary>
-        public bool HasVersion { get { return Version.Length > 0; } }
+        public bool HasVersion => Version.Length > 0;
 
         /// <summary>
         /// Gets a value indicating whether the project has a valid assembly version.
@@ -114,7 +114,7 @@
         /// <summary>
         /// Gets a value indicating whether the project has a repository URL.
         /// </summary>
-        public bool HasRepositoryUrl { get { return RepositoryUrl != null; } }
+        public bool HasRepositoryUrl => RepositoryUrl != null;
 
         /// <summary>
         /// Gets the list of parsed project frameworks.
@@ -124,7 +124,7 @@
         /// <summary>
         /// Gets a value indicating whether the project has target frameworks.
         /// </summary>
-        public bool HasTargetFrameworks { get { return FrameworkList.Count > 0; } }
+        public bool HasTargetFrameworks => FrameworkList.Count > 0;
         #endregion
 
         #region Client Interface

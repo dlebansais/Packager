@@ -11,17 +11,17 @@
         None,
 
         /// <summary>
-        /// .NET Framework
+        /// .NET Framework.
         /// </summary>
         NetFramework,
 
         /// <summary>
-        /// .NET Standard
+        /// .NET Standard.
         /// </summary>
         NetStandard,
 
         /// <summary>
-        /// .NET Core
+        /// .NET Core.
         /// </summary>
         NetCore,
     }
