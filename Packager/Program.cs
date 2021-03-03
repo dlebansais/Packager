@@ -9,35 +9,9 @@
     /// <summary>
     /// Generates a .nuspec file based on project .csproj content.
     /// </summary>
-    public static class Program
+    public partial class Program
     {
-        /// <summary>
-        /// Program entry point.
-        /// </summary>
-        /// <param name="arguments">Command-line arguments.</param>
-        /// <returns>-1 in case of error; otherwise 0.</returns>
-        public static int Main(string[] arguments)
-        {
-            Contract.RequireNotNull(arguments, out string[] Arguments);
-
-            try
-            {
-                CommandLineOptions.ParseIsDebug(Arguments, out bool IsDebug);
-                CommandLineOptions.ParseIsMerge(Arguments, out bool IsMerge, out string MergeName);
-                CommandLineOptions.ParseDescription(Arguments, out string NuspecDescription);
-
-                ExecuteProgram(IsDebug, IsMerge, MergeName, NuspecDescription, out bool HasErrors);
-
-                return HasErrors ? -1 : 0;
-            }
-            catch (Exception e)
-            {
-                PrintException(e);
-                return -1;
-            }
-        }
-
-        private static void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, out bool hasErrors)
+        private void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, out bool hasErrors)
         {
             LoadSolutionAndProjectList(out string SolutionName, out List<Project> ProjectList);
             FilterProcessedProjects(ProjectList, out List<Project> ProcessedProjectList, out hasErrors);
@@ -63,24 +37,6 @@
 
             foreach (Nuspec Nuspec in NuspecList)
                 WriteNuspec(Nuspec, isDebug);
-        }
-
-        private static void PrintException(Exception e)
-        {
-            Exception? CurrentException = e;
-
-            do
-            {
-                ConsoleDebug.Write("***************");
-                ConsoleDebug.Write(CurrentException.Message);
-
-                string? StackTrace = CurrentException.StackTrace;
-                if (StackTrace != null)
-                    ConsoleDebug.Write(StackTrace);
-
-                CurrentException = CurrentException.InnerException;
-            }
-            while (CurrentException != null);
         }
 
         private static void LoadSolutionAndProjectList(out string solutionName, out List<Project> projectList)
