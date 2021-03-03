@@ -12,9 +12,7 @@
     internal class Solution
     {
         #region Init
-#pragma warning disable CA1810 // Initialize reference type static fields inline
         static Solution()
-#pragma warning restore CA1810 // Initialize reference type static fields inline
         {
             ConsoleDebug.Write("Loading SolutionParser assembly...");
 
@@ -40,17 +38,17 @@
             Name = Path.GetFileNameWithoutExtension(solutionFileName);
 
             ConstructorInfo Constructor = ReflectionTools.GetFirstTypeConstructor(SolutionParserType);
-            var solutionParser = Constructor.Invoke(null);
+            var SolutionParser = Constructor.Invoke(null);
 
-            using StreamReader streamReader = new StreamReader(solutionFileName);
-            SolutionParserReader.SetValue(solutionParser, streamReader, null);
-            SolutionParserParseSolution.Invoke(solutionParser, null);
+            using StreamReader Reader = new StreamReader(solutionFileName);
+            SolutionParserReader.SetValue(SolutionParser, Reader, null);
+            SolutionParserParseSolution.Invoke(SolutionParser, null);
 
             ProjectList = new List<Project>();
-            Array array = (Array)ReflectionTools.GetPropertyValue(SolutionParserProjects, solutionParser);
-            for (int i = 0; i < array.Length; i++)
+            Array ProjetctArray = (Array)ReflectionTools.GetPropertyValue(SolutionParserProjects, SolutionParser);
+            for (int i = 0; i < ProjetctArray.Length; i++)
             {
-                Contract.RequireNotNull(array.GetValue(i), out object SolutionProject);
+                Contract.RequireNotNull(ProjetctArray.GetValue(i), out object SolutionProject);
                 Project NewProject = new Project(SolutionProject);
 
                 ProjectList.Add(NewProject);

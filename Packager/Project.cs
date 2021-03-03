@@ -14,9 +14,7 @@
     internal class Project
     {
         #region Init
-#pragma warning disable CA1810 // Initialize reference type static fields inline
         static Project()
-#pragma warning restore CA1810 // Initialize reference type static fields inline
         {
             ConsoleDebug.Write("Loading ProjectInSolution assembly...");
 
