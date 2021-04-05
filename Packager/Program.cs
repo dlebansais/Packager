@@ -11,7 +11,7 @@
     /// </summary>
     public partial class Program
     {
-        private void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, out bool hasErrors)
+        private void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, out bool hasErrors)
         {
             LoadSolutionAndProjectList(out string SolutionName, out List<Project> ProjectList);
             FilterProcessedProjects(ProjectList, out List<Project> ProcessedProjectList, out hasErrors);
@@ -36,7 +36,7 @@
             }
 
             foreach (Nuspec Nuspec in NuspecList)
-                WriteNuspec(Nuspec, isDebug);
+                WriteNuspec(Nuspec, isDebug, nuspecIcon);
         }
 
         private static void LoadSolutionAndProjectList(out string solutionName, out List<Project> projectList)
@@ -135,7 +135,7 @@
             return true;
         }
 
-        private static void WriteNuspec(Nuspec nuspec, bool isDebug)
+        private static void WriteNuspec(Nuspec nuspec, bool isDebug, string nuspecIcon)
         {
             if (nuspec.RelativePath.Length > 0)
                 ConsoleDebug.Write($"  Processing: {nuspec.RelativePath}");
@@ -150,7 +150,7 @@
             Writer.WriteLine("<package>");
             Writer.WriteLine("  <metadata>");
 
-            WriteMiscellaneousInfo(Writer, nuspec, isDebug);
+            WriteMiscellaneousInfo(Writer, nuspec, isDebug, nuspecIcon);
             WriteDependencies(Writer, nuspec);
             WriteExtraContentFiles(Writer, isDebug);
 
@@ -176,7 +176,7 @@
             ConsoleDebug.Write($"     Created: {nuspecPath}");
         }
 
-        private static void WriteMiscellaneousInfo(StreamWriter writer, Nuspec nuspec, bool isDebug)
+        private static void WriteMiscellaneousInfo(StreamWriter writer, Nuspec nuspec, bool isDebug, string nuspecIcon)
         {
             string DebugSuffix = GetDebugSuffix(isDebug);
             writer.WriteLine($"    <id>{nuspec.Name}{DebugSuffix}</id>");
@@ -191,6 +191,10 @@
             if (nuspec.Copyright.Length > 0)
                 writer.WriteLine($"    <copyright>{HtmlEncoded(nuspec.Copyright)}</copyright>");
 
+            if (nuspecIcon.Length > 0)
+                writer.WriteLine($"    <icon>{nuspecIcon}</icon>");
+
+            writer.WriteLine($"    <projectUrl>{nuspec.RepositoryUrl}</projectUrl>");
             writer.WriteLine($"    <repository type=\"git\" url=\"{nuspec.RepositoryUrl}\"/>");
         }
 
