@@ -4,8 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <LangVersion>9.0</LangVersion>
-    <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
+    <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>David Le Bansais</Authors>
     <Product />
