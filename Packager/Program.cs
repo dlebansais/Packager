@@ -13,6 +13,14 @@
     {
         private void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, out bool hasErrors)
         {
+            CheckOutputDirectory(isDebug, out bool IsDirectoryExisting, out string NugetDirectory);
+            if (!IsDirectoryExisting)
+            {
+                ConsoleDebug.Write($"WARNING: output folder {NugetDirectory} does not exist");
+                hasErrors = false;
+                return;
+            }
+
             LoadSolutionAndProjectList(out string SolutionName, out List<Project> ProjectList);
             FilterProcessedProjects(ProjectList, out List<Project> ProcessedProjectList, out hasErrors);
 
@@ -37,6 +45,14 @@
 
             foreach (Nuspec Nuspec in NuspecList)
                 WriteNuspec(Nuspec, isDebug, nuspecIcon);
+        }
+
+        private void CheckOutputDirectory(bool isDebug, out bool isDirectoryExisting, out string nugetDirectory)
+        {
+            string DebugSuffix = GetDebugSuffix(isDebug);
+            nugetDirectory = isDebug ? "nuget-debug" : "nuget";
+
+            isDirectoryExisting = Directory.Exists(nugetDirectory);
         }
 
         private static void LoadSolutionAndProjectList(out string solutionName, out List<Project> projectList)
@@ -162,10 +178,6 @@
         {
             string DebugSuffix = GetDebugSuffix(isDebug);
             string NugetDirectory = isDebug ? "nuget-debug" : "nuget";
-
-            if (!Directory.Exists(NugetDirectory))
-                Directory.CreateDirectory(NugetDirectory);
-
             string NuspecFileName = $"{nuspec.Name}{DebugSuffix}.nuspec";
             nuspecPath = Path.Combine(NugetDirectory, NuspecFileName);
 
