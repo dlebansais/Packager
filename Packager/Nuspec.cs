@@ -2,12 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using Contracts;
+    using SlnExplorer;
 
     /// <summary>
     /// Represents the content of a nuspec file.
     /// </summary>
     internal class Nuspec
     {
+        #region Init
         /// <summary>
         /// Gets the empty nuspec.
         /// </summary>
@@ -52,6 +55,20 @@
         }
 
         /// <summary>
+        /// Creates a new instance of the <see cref="Nuspec"/> class from a project.
+        /// </summary>
+        /// <param name="project">The project.</param>
+        /// <returns>The created instance.</returns>
+        public static Nuspec FromProject(Project project)
+        {
+            Contract.RequireNotNull(project.RepositoryUrl, out Uri ParsedUrl);
+
+            return new Nuspec(project.ProjectName, project.RelativePath, project.Version, project.Author, project.Description, project.Copyright, ParsedUrl, project.FrameworkList);
+        }
+        #endregion
+
+        #region Properties
+        /// <summary>
         /// Gets the nuspec name.
         /// </summary>
         public string Name { get; init; }
@@ -90,5 +107,6 @@
         /// Gets the list of nuspec frameworks.
         /// </summary>
         public IReadOnlyList<Framework> FrameworkList { get; init; }
+        #endregion
     }
 }

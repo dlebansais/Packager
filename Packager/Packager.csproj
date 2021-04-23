@@ -11,9 +11,9 @@
     <Product />
     <Description>A tool to package a project before deployment</Description>
     <Copyright>Copyright © 2020 David Le Bansais</Copyright>
-    <Version>1.1.2</Version>
-    <AssemblyVersion>1.1.2.30</AssemblyVersion>
-    <FileVersion>1.1.2.30</FileVersion>
+    <Version>1.1.3</Version>
+    <AssemblyVersion>1.1.3.31</AssemblyVersion>
+    <FileVersion>1.1.3.31</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Packager</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -36,6 +36,8 @@
     </PackageReference>
     <PackageReference Include="Contracts-Debug" Version="1.0.11" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <PackageReference Include="Contracts" Version="1.0.11" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+    <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="1.0.3" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <PackageReference Include="VisualStudioSolutionExplorer" Version="1.0.3" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
   </ItemGroup>
 
   <Target Name="_ResolveCopyLocalNuGetPackagePdbsAndXml" Condition="$(CopyLocalLockFileAssemblies) == true" AfterTargets="ResolveReferences">
@@ -53,11 +55,13 @@
     <Exec Command="copy &quot;$(TargetDir)$(ProjectName).xml&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <Exec Command="copy &quot;$(TargetDir)$(ProjectName).pdb&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <Exec Command="copy &quot;$(TargetDir)Contracts*&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <Exec Command="copy &quot;$(TargetDir)VisualStudioSolutionExplorer*&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <Exec Command="copy &quot;$(TargetDir)McMaster*&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <Exec Command="if not exist &quot;$(SolutionDir)nuget\lib\$(TargetFramework)&quot; mkdir &quot;$(SolutionDir)nuget\lib\$(TargetFramework)&quot;" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <Exec Command="copy &quot;$(TargetDir)$(ProjectName).xml&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <Exec Command="copy &quot;$(TargetDir)Contracts*&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <Exec Command="copy &quot;$(TargetDir)VisualStudioSolutionExplorer*&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <Exec Command="copy &quot;$(TargetDir)McMaster*&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   </Target>
 

@@ -5,6 +5,7 @@
     using System.IO;
     using System.Text;
     using Contracts;
+    using SlnExplorer;
 
     /// <summary>
     /// Generates a .nuspec file based on project .csproj content.
@@ -13,6 +14,8 @@
     {
         private void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, out bool hasErrors)
         {
+            ConsoleDebug.Write($"Current Directory: {Environment.CurrentDirectory}");
+
             CheckOutputDirectory(isDebug, out bool IsDirectoryExisting, out string NugetDirectory);
             if (!IsDirectoryExisting)
             {
@@ -40,7 +43,7 @@
             {
                 NuspecList = new List<Nuspec>();
                 foreach (Project Project in ProcessedProjectList)
-                    NuspecList.Add(Project.ToNuspec());
+                    NuspecList.Add(Nuspec.FromProject(Project));
             }
 
             foreach (Nuspec Nuspec in NuspecList)
@@ -60,10 +63,7 @@
             solutionName = string.Empty;
             projectList = new List<Project>();
 
-            string CurrentDirectory = Environment.CurrentDirectory;
-            ConsoleDebug.Write($"Current Directory: {CurrentDirectory}");
-
-            string[] Files = Directory.GetFiles(CurrentDirectory, "*.sln");
+            string[] Files = Directory.GetFiles(Environment.CurrentDirectory, "*.sln");
             ConsoleDebug.Write($"Found {Files.Length} solution file(s)");
 
             foreach (string SolutionFileName in Files)
@@ -94,15 +94,50 @@
             hasErrors = false;
 
             foreach (Project Item in projectList)
-            {
-                ConsoleDebug.Write($"  Project file: {Item.RelativePath}");
-
-                Item.Parse(ref hasErrors);
-                if (Item.HasVersion && Item.IsAssemblyVersionValid && Item.IsFileVersionValid && Item.HasRepositoryUrl && Item.HasTargetFrameworks)
-                    processedProjectList.Add(Item);
-            }
+                FilterProcessedProject(Item, processedProjectList, ref hasErrors);
 
             ConsoleDebug.Write($"Processing {processedProjectList.Count} project file(s)");
+        }
+
+        private static void FilterProcessedProject(Project project, List<Project> processedProjectList, ref bool hasErrors)
+        {
+            ConsoleDebug.Write($"  Project file: {project.RelativePath}");
+
+            bool ProjectHasErrors = project.Parse(out string WarningOrErrorText);
+            hasErrors |= ProjectHasErrors;
+
+            if (WarningOrErrorText.Length > 0)
+                if (ProjectHasErrors)
+                    ConsoleDebug.Write($"    ERROR: {WarningOrErrorText}", true);
+                else
+                    ConsoleDebug.Write($"    {WarningOrErrorText}", false);
+            else
+            {
+                if (project.Version.Length > 0)
+                    ConsoleDebug.Write($"    Version: {project.Version}");
+                if (project.AssemblyVersion.Length > 0)
+                    ConsoleDebug.Write($"    Assembly Version: {project.AssemblyVersion}");
+                if (project.FileVersion.Length > 0)
+                    ConsoleDebug.Write($"    File Version: {project.FileVersion}");
+                if (project.RepositoryUrl != null)
+                    ConsoleDebug.Write($"    Repository Url: {project.RepositoryUrl}");
+                if (project.FrameworkList.Count > 0)
+                {
+                    string TargetFrameworks = string.Empty;
+
+                    foreach (Framework Item in project.FrameworkList)
+                    {
+                        if (TargetFrameworks.Length > 0)
+                            TargetFrameworks += ";";
+                        TargetFrameworks += Item.Name;
+                    }
+
+                    ConsoleDebug.Write($"    Target Framework(s): {TargetFrameworks}");
+                }
+
+                if (project.HasVersion && project.IsAssemblyVersionValid && project.IsFileVersionValid && project.HasRepositoryUrl && project.HasTargetFrameworks)
+                    processedProjectList.Add(project);
+            }
         }
 
         private static void MergeProjects(string solutionName, List<Project> projectList, string mergeName, string nuspecDescription, out Nuspec mergedNuspec, ref bool hasErrors)
