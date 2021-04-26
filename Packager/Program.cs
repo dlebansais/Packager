@@ -75,7 +75,7 @@
 
                 foreach (Project Item in NewSolution.ProjectList)
                 {
-                    bool IsIgnored = Item.ProjectType != "Unknown" && Item.ProjectType != "KnownToBeMSBuildFormat";
+                    bool IsIgnored = Item.ProjectType > ProjectType.KnownToBeMSBuildFormat;
                     string Operation = IsIgnored ? "Ignored" : "Parsed";
 
                     ConsoleDebug.Write($"    Project: {Item.ProjectName} ({Operation})");
@@ -103,7 +103,8 @@
         {
             ConsoleDebug.Write($"  Project file: {project.RelativePath}");
 
-            bool ProjectHasErrors = project.Parse(out string WarningOrErrorText);
+            project.LoadDetails(project.RelativePath);
+            bool ProjectHasErrors = project.CheckVersionConsistency(out string WarningOrErrorText);
             hasErrors |= ProjectHasErrors;
 
             if (WarningOrErrorText.Length > 0)
