@@ -113,32 +113,35 @@
                 else
                     ConsoleDebug.Write($"    {WarningOrErrorText}", false);
             else
+                FilterProcessedProjectNoWarning(project, processedProjectList);
+        }
+
+        private static void FilterProcessedProjectNoWarning(Project project, List<Project> processedProjectList)
+        {
+            if (project.Version.Length > 0)
+                ConsoleDebug.Write($"    Version: {project.Version}");
+            if (project.AssemblyVersion.Length > 0)
+                ConsoleDebug.Write($"    Assembly Version: {project.AssemblyVersion}");
+            if (project.FileVersion.Length > 0)
+                ConsoleDebug.Write($"    File Version: {project.FileVersion}");
+            if (project.RepositoryUrl != null)
+                ConsoleDebug.Write($"    Repository Url: {project.RepositoryUrl}");
+            if (project.FrameworkList.Count > 0)
             {
-                if (project.Version.Length > 0)
-                    ConsoleDebug.Write($"    Version: {project.Version}");
-                if (project.AssemblyVersion.Length > 0)
-                    ConsoleDebug.Write($"    Assembly Version: {project.AssemblyVersion}");
-                if (project.FileVersion.Length > 0)
-                    ConsoleDebug.Write($"    File Version: {project.FileVersion}");
-                if (project.RepositoryUrl != null)
-                    ConsoleDebug.Write($"    Repository Url: {project.RepositoryUrl}");
-                if (project.FrameworkList.Count > 0)
+                string TargetFrameworks = string.Empty;
+
+                foreach (Framework Item in project.FrameworkList)
                 {
-                    string TargetFrameworks = string.Empty;
-
-                    foreach (Framework Item in project.FrameworkList)
-                    {
-                        if (TargetFrameworks.Length > 0)
-                            TargetFrameworks += ";";
-                        TargetFrameworks += Item.Name;
-                    }
-
-                    ConsoleDebug.Write($"    Target Framework(s): {TargetFrameworks}");
+                    if (TargetFrameworks.Length > 0)
+                        TargetFrameworks += ";";
+                    TargetFrameworks += Item.Name;
                 }
 
-                if (project.HasVersion && project.IsAssemblyVersionValid && project.IsFileVersionValid && project.HasRepositoryUrl && project.HasTargetFrameworks)
-                    processedProjectList.Add(project);
+                ConsoleDebug.Write($"    Target Framework(s): {TargetFrameworks}");
             }
+
+            if (project.HasVersion && project.IsAssemblyVersionValid && project.IsFileVersionValid && project.HasRepositoryUrl && project.HasTargetFrameworks)
+                processedProjectList.Add(project);
         }
 
         private static void MergeProjects(string solutionName, List<Project> projectList, string mergeName, string nuspecDescription, out Nuspec mergedNuspec, ref bool hasErrors)
