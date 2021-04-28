@@ -60,7 +60,7 @@ Use either the first project from the solution, or merge all projects into one .
                 ConsoleDebug.Write("Debug output selected");
 
             if (Merge.HasValue)
-                if (Merge.Name.Length > 0)
+                if (Merge.Name != null && Merge.Name.Length > 0)
                     ConsoleDebug.Write($"Merged output selected: '{Merge.Name}'");
                 else
                     ConsoleDebug.Write("Merged output selected (no name)");
