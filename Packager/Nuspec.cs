@@ -28,7 +28,9 @@
             Description = string.Empty;
             Copyright = string.Empty;
             RepositoryUrl = null;
+            ApplicationIcon = string.Empty;
             FrameworkList = new List<Framework>();
+            PackageDependencies = new List<PackageReference>();
         }
 
         /// <summary>
@@ -41,8 +43,10 @@
         /// <param name="description">The nuspec description.</param>
         /// <param name="copyright">The nuspec copyright text.</param>
         /// <param name="repositoryUrl">The nuspec repository URL.</param>
+        /// <param name="applicationIcon">The nuspec application icon.</param>
         /// <param name="frameworkList">The list of nuspec frameworks.</param>
-        public Nuspec(string name, string relativePath, string version, string author, string description, string copyright, Uri repositoryUrl, IReadOnlyList<Framework> frameworkList)
+        /// <param name="packageDependencies">The list of nuspec package dependencies.</param>
+        public Nuspec(string name, string relativePath, string version, string author, string description, string copyright, Uri repositoryUrl, string applicationIcon, IReadOnlyList<Framework> frameworkList, List<PackageReference> packageDependencies)
         {
             Name = name;
             RelativePath = relativePath;
@@ -51,19 +55,44 @@
             Description = description;
             Copyright = copyright;
             RepositoryUrl = repositoryUrl;
+            ApplicationIcon = applicationIcon;
             FrameworkList = frameworkList;
+            PackageDependencies = packageDependencies;
         }
 
         /// <summary>
         /// Creates a new instance of the <see cref="Nuspec"/> class from a project.
         /// </summary>
+        /// <param name="isDebug">If true, gets debug dependencies; otherwise, get release dependencies.</param>
         /// <param name="project">The project.</param>
         /// <returns>The created instance.</returns>
-        public static Nuspec FromProject(Project project)
+        public static Nuspec FromProject(bool isDebug, Project project)
         {
             Contract.RequireNotNull(project.RepositoryUrl, out Uri ParsedUrl);
 
-            return new Nuspec(project.ProjectName, project.RelativePath, project.Version, project.Author, project.Description, project.Copyright, ParsedUrl, project.FrameworkList);
+            List<PackageReference> PackageDependencies = GetPackageDependencies(isDebug, project);
+
+            return new Nuspec(project.ProjectName, project.RelativePath, project.Version, project.Author, project.Description, project.Copyright, ParsedUrl, project.ApplicationIcon, project.FrameworkList, PackageDependencies);
+        }
+
+        /// <summary>
+        /// Gets package dependencies in a project.
+        /// </summary>
+        /// <param name="isDebug">If true, gets debug dependencies; otherwise, get release dependencies.</param>
+        /// <param name="project">The project.</param>
+        public static List<PackageReference> GetPackageDependencies(bool isDebug, Project project)
+        {
+            List<PackageReference> Result = new();
+
+            foreach (PackageReference Item in project.PackageReferenceList)
+            {
+                if (isDebug && Item.Condition == "'$(Configuration)|$(Platform)'=='Debug|x64'")
+                    Result.Add(Item);
+                else if (!isDebug && Item.Condition == "'$(Configuration)|$(Platform)'!='Debug|x64'")
+                    Result.Add(Item);
+            }
+
+            return Result;
         }
         #endregion
 
@@ -104,9 +133,19 @@
         public Uri? RepositoryUrl { get; init; }
 
         /// <summary>
+        /// Gets the nuspec application icon.
+        /// </summary>
+        public string ApplicationIcon { get; init; }
+
+        /// <summary>
         /// Gets the list of nuspec frameworks.
         /// </summary>
         public IReadOnlyList<Framework> FrameworkList { get; init; }
+
+        /// <summary>
+        /// Gets the list of nuspec package dependencies.
+        /// </summary>
+        public List<PackageReference> PackageDependencies { get; init; }
         #endregion
     }
 }

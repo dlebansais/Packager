@@ -31,7 +31,7 @@
 
             if (isMerge)
             {
-                MergeProjects(SolutionName, ProcessedProjectList, mergeName, nuspecDescription, out Nuspec mergedNuspec, ref hasErrors);
+                MergeProjects(isDebug, SolutionName, ProcessedProjectList, mergeName, nuspecDescription, out Nuspec mergedNuspec, ref hasErrors);
 
                 if (!hasErrors)
                 {
@@ -43,7 +43,7 @@
             {
                 NuspecList = new List<Nuspec>();
                 foreach (Project Project in ProcessedProjectList)
-                    NuspecList.Add(Nuspec.FromProject(Project));
+                    NuspecList.Add(Nuspec.FromProject(isDebug, Project));
             }
 
             foreach (Nuspec Nuspec in NuspecList)
@@ -52,9 +52,7 @@
 
         private void CheckOutputDirectory(bool isDebug, out bool isDirectoryExisting, out string nugetDirectory)
         {
-            string DebugSuffix = GetDebugSuffix(isDebug);
             nugetDirectory = isDebug ? "nuget-debug" : "nuget";
-
             isDirectoryExisting = Directory.Exists(nugetDirectory);
         }
 
@@ -144,7 +142,7 @@
                 processedProjectList.Add(project);
         }
 
-        private static void MergeProjects(string solutionName, List<Project> projectList, string mergeName, string nuspecDescription, out Nuspec mergedNuspec, ref bool hasErrors)
+        private static void MergeProjects(bool isDebug, string solutionName, List<Project> projectList, string mergeName, string nuspecDescription, out Nuspec mergedNuspec, ref bool hasErrors)
         {
             mergedNuspec = Nuspec.Empty;
 
@@ -168,7 +166,9 @@
             string Description = nuspecDescription.Length > 0 ? nuspecDescription : SelectedProject.Description;
             Contract.RequireNotNull(SelectedProject.RepositoryUrl, out Uri RepositoryUrl);
 
-            mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, RepositoryUrl, SelectedProject.FrameworkList);
+            List<PackageReference> PackageDependencies = Nuspec.GetPackageDependencies(isDebug, SelectedProject);
+
+            mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, RepositoryUrl, SelectedProject.ApplicationIcon, SelectedProject.FrameworkList, PackageDependencies);
 
             foreach (Project Project in projectList)
                 if (Project.Version != mergedNuspec.Version || Project.Author != mergedNuspec.Author || Project.Copyright != mergedNuspec.Copyright || Project.RepositoryUrl != mergedNuspec.RepositoryUrl || !IsFrameworkListEqual(Project.FrameworkList, mergedNuspec.FrameworkList))
@@ -202,10 +202,12 @@
             using FileStream Stream = new FileStream(NuspecPath, FileMode.Append, FileAccess.Write);
             using StreamWriter Writer = new StreamWriter(Stream, Encoding.UTF8);
 
-            Writer.WriteLine("<package>");
+            Writer.WriteLine("<package xmlns=\"http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd\">");
             Writer.WriteLine("  <metadata>");
 
-            WriteMiscellaneousInfo(Writer, nuspec, isDebug, nuspecIcon);
+            string ApplicationIcon = nuspecIcon.Length > 0 ? nuspecIcon : nuspec.ApplicationIcon;
+
+            WriteMiscellaneousInfo(Writer, nuspec, isDebug, ApplicationIcon);
             WriteDependencies(Writer, nuspec);
             WriteExtraContentFiles(Writer, isDebug);
 
@@ -230,8 +232,11 @@
         private static void WriteMiscellaneousInfo(StreamWriter writer, Nuspec nuspec, bool isDebug, string nuspecIcon)
         {
             string DebugSuffix = GetDebugSuffix(isDebug);
+            string DebugTitle = GetDebugTitle(isDebug);
+
             writer.WriteLine($"    <id>{nuspec.Name}{DebugSuffix}</id>");
             writer.WriteLine($"    <version>{nuspec.Version}</version>");
+            writer.WriteLine($"    <title>{nuspec.Name}{DebugTitle}</title>");
 
             if (nuspec.Author.Length > 0)
                 writer.WriteLine($"    <authors>{HtmlEncoded(nuspec.Author)}</authors>");
@@ -270,7 +275,17 @@
                         break;
                 }
 
-                writer.WriteLine($"      <group targetFramework=\"{FrameworkName}{Framework.Major}.{Framework.Minor}\"/>");
+                if (nuspec.FrameworkList.Count > 0 && nuspec.PackageDependencies.Count > 0)
+                {
+                    writer.WriteLine($"      <group targetFramework=\"{FrameworkName}{Framework.Major}.{Framework.Minor}\">");
+
+                    foreach (PackageReference Item in nuspec.PackageDependencies)
+                        writer.WriteLine($"        <dependency id=\"{Item.Name}\" version=\"{Item.Version}\"/>");
+
+                    writer.WriteLine($"      </group>");
+                }
+                else
+                    writer.WriteLine($"      <group targetFramework=\"{FrameworkName}{Framework.Major}.{Framework.Minor}\"/>");
             }
 
             writer.WriteLine("    </dependencies>");
@@ -299,6 +314,11 @@
         private static string GetDebugSuffix(bool isDebug)
         {
             return isDebug ? "-Debug" : string.Empty;
+        }
+
+        private static string GetDebugTitle(bool isDebug)
+        {
+            return isDebug ? " (Debug)" : string.Empty;
         }
     }
 }
