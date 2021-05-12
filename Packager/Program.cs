@@ -166,9 +166,15 @@
             string Description = nuspecDescription.Length > 0 ? nuspecDescription : SelectedProject.Description;
             Contract.RequireNotNull(SelectedProject.RepositoryUrl, out Uri RepositoryUrl);
 
-            List<PackageReference> PackageDependencies = Nuspec.GetPackageDependencies(isDebug, SelectedProject);
+            List<PackageReference> MergedPackageDependencies = new();
 
-            mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, RepositoryUrl, SelectedProject.ApplicationIcon, SelectedProject.FrameworkList, PackageDependencies);
+            foreach (Project Project in projectList)
+            {
+                List<PackageReference> ProjectPackageDependencies = Nuspec.GetPackageDependencies(isDebug, Project);
+                MergePackageDependencies(MergedPackageDependencies, ProjectPackageDependencies);
+            }
+
+            mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, RepositoryUrl, SelectedProject.ApplicationIcon, SelectedProject.FrameworkList, MergedPackageDependencies);
 
             foreach (Project Project in projectList)
                 if (Project.Version != mergedNuspec.Version || Project.Author != mergedNuspec.Author || Project.Copyright != mergedNuspec.Copyright || Project.RepositoryUrl != mergedNuspec.RepositoryUrl || !IsFrameworkListEqual(Project.FrameworkList, mergedNuspec.FrameworkList))
@@ -188,6 +194,29 @@
                     return false;
 
             return true;
+        }
+
+        private static void MergePackageDependencies(List<PackageReference> mergedList, List<PackageReference> list)
+        {
+            foreach (PackageReference Package1 in list)
+            {
+                bool IsFound = false;
+
+                foreach (PackageReference Package2 in mergedList)
+                    if (IsPackageReferenceEqual(Package1, Package2))
+                    {
+                        IsFound = true;
+                        break;
+                    }
+
+                if (!IsFound)
+                    mergedList.Add(Package1);
+            }
+        }
+
+        private static bool IsPackageReferenceEqual(PackageReference package1, PackageReference package2)
+        {
+            return package1.Name == package2.Name && package1.Version == package2.Version;
         }
 
         private static void WriteNuspec(Nuspec nuspec, bool isDebug, string nuspecIcon)
