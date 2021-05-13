@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
+    using System.Windows.Media.Imaging;
     using Contracts;
     using SlnExplorer;
 
@@ -236,7 +237,7 @@
 
             string ApplicationIcon = nuspecIcon.Length > 0 ? nuspecIcon : nuspec.ApplicationIcon;
 
-            WriteMiscellaneousInfo(Writer, nuspec, isDebug, ApplicationIcon);
+            WriteMiscellaneousInfo(Writer, nuspec, isDebug, NuspecPath, ApplicationIcon);
             WriteDependencies(Writer, nuspec);
             WriteExtraContentFiles(Writer, isDebug);
 
@@ -258,7 +259,7 @@
             ConsoleDebug.Write($"     Created: {nuspecPath}");
         }
 
-        private static void WriteMiscellaneousInfo(StreamWriter writer, Nuspec nuspec, bool isDebug, string nuspecIcon)
+        private static void WriteMiscellaneousInfo(StreamWriter writer, Nuspec nuspec, bool isDebug, string nuspecPath, string nuspecIcon)
         {
             string DebugSuffix = GetDebugSuffix(isDebug);
             string DebugTitle = GetDebugTitle(isDebug);
@@ -277,7 +278,10 @@
                 writer.WriteLine($"    <copyright>{HtmlEncoded(nuspec.Copyright)}</copyright>");
 
             if (nuspecIcon.Length > 0)
+            {
+                ConvertIcoToPng(nuspecPath, ref nuspecIcon);
                 writer.WriteLine($"    <icon>{nuspecIcon}</icon>");
+            }
 
             writer.WriteLine($"    <projectUrl>{nuspec.RepositoryUrl}</projectUrl>");
             writer.WriteLine($"    <repository type=\"git\" url=\"{nuspec.RepositoryUrl}\"/>");
@@ -348,6 +352,36 @@
         private static string GetDebugTitle(bool isDebug)
         {
             return isDebug ? " (Debug)" : string.Empty;
+        }
+
+        private static void ConvertIcoToPng(string nuspecPath, ref string fileName)
+        {
+            if (Path.GetExtension(fileName) != ".ico")
+                return;
+
+            string NuspecFolder = Path.GetDirectoryName(nuspecPath)!;
+            string IconFileName = Path.Combine(NuspecFolder, Path.GetFileName(fileName));
+            string PngFileName = Path.ChangeExtension(IconFileName, ".png");
+
+            if (!File.Exists(IconFileName) || File.Exists(PngFileName))
+                return;
+
+            ConvertIcoToPng(IconFileName, PngFileName);
+
+            File.Delete(IconFileName);
+
+            fileName = Path.ChangeExtension(fileName, ".png");
+        }
+
+        private static void ConvertIcoToPng(string iconFileName, string pngFileName)
+        {
+            using FileStream IconStream = new FileStream(iconFileName, FileMode.Open, FileAccess.Read);
+            using FileStream PngStream = new FileStream(pngFileName, FileMode.Create, FileAccess.Write);
+
+            IconBitmapDecoder Decoder = new IconBitmapDecoder(IconStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
+            PngBitmapEncoder Encoder = new PngBitmapEncoder();
+            Encoder.Frames.Add(Decoder.Frames[0]);
+            Encoder.Save(PngStream);
         }
     }
 }

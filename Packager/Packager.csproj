@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net48;net5.0</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
+    <UseWPF>true</UseWPF>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
@@ -12,9 +13,9 @@
     <Product />
     <Description>A tool to package a project before deployment</Description>
     <Copyright>Copyright © 2020 David Le Bansais</Copyright>
-    <Version>1.1.6</Version>
-    <AssemblyVersion>1.1.6.32</AssemblyVersion>
-    <FileVersion>1.1.6.32</FileVersion>
+    <Version>1.1.7</Version>
+    <AssemblyVersion>1.1.7.32</AssemblyVersion>
+    <FileVersion>1.1.7.32</FileVersion>
     <RepositoryUrl>https://github.com/dlebansais/Packager</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -40,6 +41,11 @@
     <PackageReference Include="Contracts" Version="1.0.12" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="1.2.7" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <PackageReference Include="VisualStudioSolutionExplorer" Version="1.2.7" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net48'">
+    <Reference Include="PresentationCore" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
 
   <Target Name="_ResolveCopyLocalNuGetPackagePdbsAndXml" Condition="$(CopyLocalLockFileAssemblies) == true" AfterTargets="ResolveReferences">
