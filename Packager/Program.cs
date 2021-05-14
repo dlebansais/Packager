@@ -363,8 +363,13 @@
             string IconFileName = Path.Combine(NuspecFolder, Path.GetFileName(fileName));
             string PngFileName = Path.ChangeExtension(IconFileName, ".png");
 
-            if (!File.Exists(IconFileName) || File.Exists(PngFileName))
+            if (!File.Exists(IconFileName))
+            {
+                if (File.Exists(PngFileName))
+                    fileName = Path.ChangeExtension(fileName, ".png");
+
                 return;
+            }
 
             ConvertIcoToPng(IconFileName, PngFileName);
 
