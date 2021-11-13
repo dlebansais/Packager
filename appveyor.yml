@@ -74,7 +74,7 @@ deploy:
     release: $(VERSION_TAG)
     description: 'Automatic deployment'
     auth_token:
-      secure: rICJyZFx5ejL3OOw1IgzSG9AL8qKZGi79bSvkoqxLje7HWRckXTyr4Y24hVNno6t
+      secure: KbDEwWE4UywuT0ZzvguZUw6jh44+YJ9KSk92qwnPX2z+QGzkuLO0AokyktIWmiFI
     artifact: $(APPVEYOR_PROJECT_NAME)
     draft: false
     prerelease: false
