@@ -304,7 +304,10 @@
                         FrameworkName = ".NETCoreApp";
                         break;
                     case FrameworkType.NetFramework:
-                        FrameworkName = ".NETFramework";
+                        if (Framework.Major < 5)
+                            FrameworkName = ".NETFramework";
+                        else
+                            FrameworkName = "net";
                         break;
                 }
 
