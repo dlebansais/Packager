@@ -293,10 +293,13 @@
 
             foreach (Framework Framework in nuspec.FrameworkList)
             {
-                string FrameworkName = string.Empty;
+                string FrameworkName;
 
                 switch (Framework.Type)
                 {
+                    default:
+                        FrameworkName = string.Empty;
+                        break;
                     case FrameworkType.NetStandard:
                         FrameworkName = ".NETStandard";
                         break;
@@ -311,9 +314,33 @@
                         break;
                 }
 
+                string MonikerName;
+
+                switch (Framework.Moniker)
+                {
+                    default:
+                        MonikerName = string.Empty;
+                        break;
+                    case FrameworkMoniker.android:
+                    case FrameworkMoniker.ios:
+                    case FrameworkMoniker.macos:
+                    case FrameworkMoniker.tvos:
+                    case FrameworkMoniker.watchos:
+                        MonikerName = $"-{Framework.Moniker}";
+                        break;
+                    case FrameworkMoniker.windows:
+                        if (Framework.MonikerMajor >= 0 && Framework.MonikerMinor >= 0)
+                            MonikerName = $"-{Framework.Moniker}{Framework.MonikerMajor}.{Framework.MonikerMinor}";
+                        else
+                            MonikerName = $"-{Framework.Moniker}";
+                        break;
+                }
+
+                string TargetFrameworkName = $"{FrameworkName}{Framework.Major}.{Framework.Minor}{MonikerName}";
+
                 if (nuspec.FrameworkList.Count > 0 && nuspec.PackageDependencies.Count > 0)
                 {
-                    writer.WriteLine($"      <group targetFramework=\"{FrameworkName}{Framework.Major}.{Framework.Minor}\">");
+                    writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\">");
 
                     foreach (PackageReference Item in nuspec.PackageDependencies)
                         writer.WriteLine($"        <dependency id=\"{Item.Name}\" version=\"{Item.Version}\"/>");
@@ -321,7 +348,7 @@
                     writer.WriteLine($"      </group>");
                 }
                 else
-                    writer.WriteLine($"      <group targetFramework=\"{FrameworkName}{Framework.Major}.{Framework.Minor}\"/>");
+                    writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\"/>");
             }
 
             writer.WriteLine("    </dependencies>");
