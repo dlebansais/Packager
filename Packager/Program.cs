@@ -294,66 +294,45 @@
             writer.WriteLine("    <dependencies>");
 
             foreach (Framework Framework in nuspec.FrameworkList)
-            {
-                string FrameworkName;
-
-                switch (Framework.Type)
-                {
-                    default:
-                        FrameworkName = string.Empty;
-                        break;
-                    case FrameworkType.NetStandard:
-                        FrameworkName = ".NETStandard";
-                        break;
-                    case FrameworkType.NetCore:
-                        FrameworkName = ".NETCoreApp";
-                        break;
-                    case FrameworkType.NetFramework:
-                        if (Framework.Major < 5)
-                            FrameworkName = ".NETFramework";
-                        else
-                            FrameworkName = "net";
-                        break;
-                }
-
-                string MonikerName;
-
-                switch (Framework.Moniker)
-                {
-                    default:
-                        MonikerName = string.Empty;
-                        break;
-                    case FrameworkMoniker.android:
-                    case FrameworkMoniker.ios:
-                    case FrameworkMoniker.macos:
-                    case FrameworkMoniker.tvos:
-                    case FrameworkMoniker.watchos:
-                        MonikerName = $"-{Framework.Moniker}";
-                        break;
-                    case FrameworkMoniker.windows:
-                        if (Framework.MonikerMajor >= 0 && Framework.MonikerMinor >= 0)
-                            MonikerName = $"-{Framework.Moniker}{Framework.MonikerMajor}.{Framework.MonikerMinor}";
-                        else
-                            MonikerName = $"-{Framework.Moniker}";
-                        break;
-                }
-
-                string TargetFrameworkName = $"{FrameworkName}{Framework.Major}.{Framework.Minor}{MonikerName}";
-
-                if (nuspec.FrameworkList.Count > 0 && nuspec.PackageDependencies.Count > 0)
-                {
-                    writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\">");
-
-                    foreach (PackageReference Item in nuspec.PackageDependencies)
-                        writer.WriteLine($"        <dependency id=\"{Item.Name}\" version=\"{Item.Version}\"/>");
-
-                    writer.WriteLine($"      </group>");
-                }
-                else
-                    writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\"/>");
-            }
+                WriteFrameworkDependency(writer, nuspec, Framework);
 
             writer.WriteLine("    </dependencies>");
+        }
+
+        private static void WriteFrameworkDependency(StreamWriter writer, Nuspec nuspec, Framework framework)
+        {
+            string FrameworkName = framework.Type switch
+            {
+                FrameworkType.NetStandard => ".NETStandard",
+                FrameworkType.NetCore => ".NETCoreApp",
+                FrameworkType.NetFramework => (framework.Major < 5) ? ".NETFramework" : "net",
+                _ => string.Empty,
+            };
+
+            string MonikerName = framework.Moniker switch
+            {
+                FrameworkMoniker.android or
+                FrameworkMoniker.ios or
+                FrameworkMoniker.macos or
+                FrameworkMoniker.tvos or
+                FrameworkMoniker.watchos => $"-{framework.Moniker}",
+                FrameworkMoniker.windows => (framework.MonikerMajor >= 0 && framework.MonikerMinor >= 0) ? $"-{framework.Moniker}{framework.MonikerMajor}.{framework.MonikerMinor}" : $"-{framework.Moniker}",
+                _ => string.Empty,
+            };
+
+            string TargetFrameworkName = $"{FrameworkName}{framework.Major}.{framework.Minor}{MonikerName}";
+
+            if (nuspec.FrameworkList.Count > 0 && nuspec.PackageDependencies.Count > 0)
+            {
+                writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\">");
+
+                foreach (PackageReference Item in nuspec.PackageDependencies)
+                    writer.WriteLine($"        <dependency id=\"{Item.Name}\" version=\"{Item.Version}\"/>");
+
+                writer.WriteLine($"      </group>");
+            }
+            else
+                writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\"/>");
         }
 
         private static void WriteExtraContentFiles(StreamWriter writer, bool isDebug)
