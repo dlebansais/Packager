@@ -18,7 +18,7 @@ init:
 
 environment:
   package_token:
-    secure: MvF+AGj2M3nN6iIqDZHxHsDOr6QcqKPhf6xaLwzWpukS+UFiaRDnjum5Rui0AiyF
+    secure: PTQKv7f2BGNT8I1SUx4ErllBziAj7gs+VDcm2h3c8mJ5jtRuGognMEIPm2hPn1NI
 
 matrix:
   fast_finish: true     # set this flag to immediately finish build once one of the jobs fails.
@@ -53,7 +53,7 @@ after_build:
         $xml = [xml](Get-Content .\$env:APPVEYOR_PROJECT_NAME\$env:APPVEYOR_PROJECT_NAME.csproj)
   - ps: $version = $xml.Project.PropertyGroup.Version
   - ps: set version_tag v$version
-  - ps: $version_tag = $version_tag -replace ' ',''
+  - ps: $version_tag = $version_tag.Trim()
   - ps: $env:VERSION_TAG=$version_tag
   - echo "Version is %VERSION_TAG%"
 
@@ -86,7 +86,7 @@ deploy:
     artifact: $(APPVEYOR_PROJECT_NAME)-Package-Debug
     username: dlebansais
     api_key:
-      secure: GJOgNQLOuHBXfW2wXBaMXudFnnJDNI3od5hh9LFi1brPRK81RiLcbEW9hFbT8rIN
+      secure: mknFmVMr6KwG8AMwKaSrDH30g+usOXvXQMqEKDES4g4X+dBDLDk3g3/x3Al3vcDl
     on:
       branch: deployment
   - provider: NuGet
@@ -95,6 +95,6 @@ deploy:
     skip_symbols: true
     username: dlebansais
     api_key:
-      secure: GJOgNQLOuHBXfW2wXBaMXudFnnJDNI3od5hh9LFi1brPRK81RiLcbEW9hFbT8rIN
+      secure: mknFmVMr6KwG8AMwKaSrDH30g+usOXvXQMqEKDES4g4X+dBDLDk3g3/x3Al3vcDl
     on:
       branch: deployment

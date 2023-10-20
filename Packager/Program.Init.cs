@@ -32,6 +32,9 @@ Use either the first project from the solution, or merge all projects into one .
         [Option(CommandOptionType.SingleValue, Description = "Relative path to to icon to insert in the output.", ShortName = "i", LongName = "icon", ValueName = "Icon Path")]
         private string NuspecIcon { get; set; } = string.Empty;
 
+        [Option(CommandOptionType.SingleValue, Description = "A prefix in front of the output package file name.", ShortName = "p", LongName = "prefix", ValueName = "Package prefix")]
+        private string NuspecPrefix { get; set; } = string.Empty;
+
         private static int RunAndSetResult(int ignored)
         {
             return ExecuteResult;
@@ -44,7 +47,7 @@ Use either the first project from the solution, or merge all projects into one .
             try
             {
                 ShowCommandLineArguments();
-                ExecuteProgram(IsDebug, Merge.HasValue, Merge.Name, NuspecDescription, NuspecIcon, out bool HasErrors);
+                ExecuteProgram(IsDebug, Merge.HasValue, Merge.Name, NuspecDescription, NuspecIcon, NuspecPrefix, out bool HasErrors);
 
                 ExecuteResult = HasErrors ? -1 : 0;
             }

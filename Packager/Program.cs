@@ -13,7 +13,7 @@
     /// </summary>
     public partial class Program
     {
-        private void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, out bool hasErrors)
+        private void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, string nuspecPrefix, out bool hasErrors)
         {
             ConsoleDebug.Write($"Current Directory: {Environment.CurrentDirectory}");
 
@@ -48,7 +48,7 @@
             }
 
             foreach (Nuspec Nuspec in NuspecList)
-                WriteNuspec(Nuspec, isDebug, nuspecIcon);
+                WriteNuspec(Nuspec, isDebug, nuspecIcon, nuspecPrefix);
         }
 
         private void CheckOutputDirectory(bool isDebug, out bool isDirectoryExisting, out string nugetDirectory)
@@ -220,14 +220,14 @@
             return package1.Name == package2.Name && package1.Version == package2.Version;
         }
 
-        private static void WriteNuspec(Nuspec nuspec, bool isDebug, string nuspecIcon)
+        private static void WriteNuspec(Nuspec nuspec, bool isDebug, string nuspecIcon, string nuspecPrefix)
         {
             if (nuspec.RelativePath.Length > 0)
                 ConsoleDebug.Write($"  Processing: {nuspec.RelativePath}");
             else
                 ConsoleDebug.Write($"  Processing...");
 
-            InitializeFile(nuspec, isDebug, out string NuspecPath);
+            InitializeFile(nuspec, isDebug, nuspecPrefix, out string NuspecPath);
 
             using FileStream Stream = new FileStream(NuspecPath, FileMode.Append, FileAccess.Write);
             using StreamWriter Writer = new StreamWriter(Stream, Encoding.UTF8);
@@ -237,7 +237,7 @@
 
             string ApplicationIcon = nuspecIcon.Length > 0 ? nuspecIcon : nuspec.ApplicationIcon;
 
-            WriteMiscellaneousInfo(Writer, nuspec, isDebug, NuspecPath, ApplicationIcon);
+            WriteMiscellaneousInfo(Writer, nuspec, isDebug, NuspecPath, ApplicationIcon, nuspecPrefix);
             WriteDependencies(Writer, nuspec);
             WriteExtraContentFiles(Writer, isDebug);
 
@@ -245,11 +245,12 @@
             Writer.Write("</package>");
         }
 
-        private static void InitializeFile(Nuspec nuspec, bool isDebug, out string nuspecPath)
+        private static void InitializeFile(Nuspec nuspec, bool isDebug, string nuspecPrefix, out string nuspecPath)
         {
             string DebugSuffix = GetDebugSuffix(isDebug);
             string NugetDirectory = isDebug ? "nuget-debug" : "nuget";
-            string NuspecFileName = $"{nuspec.Name}{DebugSuffix}.nuspec";
+            string Prefix = nuspecPrefix == string.Empty ? string.Empty : $"{nuspecPrefix}.";
+            string NuspecFileName = $"{Prefix}{nuspec.Name}{DebugSuffix}.nuspec";
             nuspecPath = Path.Combine(NugetDirectory, NuspecFileName);
 
             using FileStream FirstStream = new FileStream(nuspecPath, FileMode.Create, FileAccess.Write);
@@ -259,12 +260,13 @@
             ConsoleDebug.Write($"     Created: {nuspecPath}");
         }
 
-        private static void WriteMiscellaneousInfo(StreamWriter writer, Nuspec nuspec, bool isDebug, string nuspecPath, string nuspecIcon)
+        private static void WriteMiscellaneousInfo(StreamWriter writer, Nuspec nuspec, bool isDebug, string nuspecPath, string nuspecIcon, string nuspecPrefix)
         {
+            string Prefix = nuspecPrefix == string.Empty ? string.Empty : $"{nuspecPrefix}.";
             string DebugSuffix = GetDebugSuffix(isDebug);
             string DebugTitle = GetDebugTitle(isDebug);
 
-            writer.WriteLine($"    <id>{nuspec.Name}{DebugSuffix}</id>");
+            writer.WriteLine($"    <id>{Prefix}{nuspec.Name}{DebugSuffix}</id>");
             writer.WriteLine($"    <version>{nuspec.Version}</version>");
             writer.WriteLine($"    <title>{nuspec.Name}{DebugTitle}</title>");
 
