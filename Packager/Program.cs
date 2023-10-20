@@ -301,24 +301,8 @@
 
         private static void WriteFrameworkDependency(StreamWriter writer, Nuspec nuspec, Framework framework)
         {
-            string FrameworkName = framework.Type switch
-            {
-                FrameworkType.NetStandard => ".NETStandard",
-                FrameworkType.NetCore => ".NETCoreApp",
-                FrameworkType.NetFramework => (framework.Major < 5) ? ".NETFramework" : "net",
-                _ => string.Empty,
-            };
-
-            string MonikerName = framework.Moniker switch
-            {
-                FrameworkMoniker.android or
-                FrameworkMoniker.ios or
-                FrameworkMoniker.macos or
-                FrameworkMoniker.tvos or
-                FrameworkMoniker.watchos => $"-{framework.Moniker}",
-                FrameworkMoniker.windows => (framework.MonikerMajor >= 0 && framework.MonikerMinor >= 0) ? $"-{framework.Moniker}{framework.MonikerMajor}.{framework.MonikerMinor}" : $"-{framework.Moniker}",
-                _ => string.Empty,
-            };
+            string FrameworkName = FrameworkTypeToName(framework);
+            string MonikerName = FrameworkMonikerToName(framework);
 
             string TargetFrameworkName = $"{FrameworkName}{framework.Major}.{framework.Minor}{MonikerName}";
 
@@ -334,6 +318,25 @@
             else
                 writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\"/>");
         }
+
+        private static string FrameworkTypeToName(Framework framework) => framework.Type switch
+        {
+            FrameworkType.NetStandard => ".NETStandard",
+            FrameworkType.NetCore => ".NETCoreApp",
+            FrameworkType.NetFramework => (framework.Major < 5) ? ".NETFramework" : "net",
+            _ => string.Empty,
+        };
+
+        private static string FrameworkMonikerToName(Framework framework) => framework.Moniker switch
+        {
+            FrameworkMoniker.android or
+            FrameworkMoniker.ios or
+            FrameworkMoniker.macos or
+            FrameworkMoniker.tvos or
+            FrameworkMoniker.watchos => $"-{framework.Moniker}",
+            FrameworkMoniker.windows => (framework.MonikerMajor >= 0 && framework.MonikerMinor >= 0) ? $"-{framework.Moniker}{framework.MonikerMajor}.{framework.MonikerMinor}" : $"-{framework.Moniker}",
+            _ => string.Empty,
+        };
 
         private static void WriteExtraContentFiles(StreamWriter writer, bool isDebug)
         {
