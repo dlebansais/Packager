@@ -70,6 +70,9 @@ Use either the first project from the solution, or merge all projects into one .
 
             if (NuspecDescription.Length > 0)
                 ConsoleDebug.Write($"Output description: '{NuspecDescription}'");
+
+            if (NuspecPrefix.Length > 0)
+                ConsoleDebug.Write($"Prefix: '{NuspecPrefix}'");
         }
 
         private static void PrintException(Exception e)
