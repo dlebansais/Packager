@@ -153,7 +153,7 @@
                 if (Project.ProjectName == mergeName)
                     SelectedProject = Project;
 
-            if (SelectedProject == null)
+            if (SelectedProject is null)
             {
                 if (solutionName.Length == 0 || projectList.Count == 0)
                 {
