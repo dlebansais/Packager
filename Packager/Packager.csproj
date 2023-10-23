@@ -14,12 +14,16 @@
         <Description>A tool to package a project before deployment</Description>
         <Copyright>Copyright © 2020 David Le Bansais</Copyright>
         <Version>1.1.11</Version>
-        <AssemblyVersion>1.1.11.40</AssemblyVersion>
-        <FileVersion>1.1.11.40</FileVersion>
+        <AssemblyVersion>1.1.11.41</AssemblyVersion>
+        <FileVersion>1.1.11.41</FileVersion>
         <RepositoryUrl>https://github.com/dlebansais/Packager</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <NeutralLanguage>en-US</NeutralLanguage>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <AnalysisLevel>latest-all</AnalysisLevel>
+        <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+        <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     </PropertyGroup>
 
     <ItemGroup>

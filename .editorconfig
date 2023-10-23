@@ -59,3 +59,15 @@ dotnet_diagnostic.SA1615.severity = silent
 
 # SA1633: File should have header
 dotnet_diagnostic.SA1633.severity = silent
+
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = silent
+
+# CA1820: Test for empty strings using string length
+dotnet_diagnostic.CA1820.severity = silent
+
+# CA1852: Seal internal types
+dotnet_diagnostic.CA1852.severity = silent
+
+# IDE0090: Use 'new(...)'
+dotnet_diagnostic.IDE0090.severity = warning

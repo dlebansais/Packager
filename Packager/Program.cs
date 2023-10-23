@@ -13,7 +13,7 @@
     /// </summary>
     public partial class Program
     {
-        private void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, string nuspecPrefix, out bool hasErrors)
+        private static void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, string nuspecPrefix, out bool hasErrors)
         {
             ConsoleDebug.Write($"Current Directory: {Environment.CurrentDirectory}");
 
@@ -28,7 +28,7 @@
             LoadSolutionAndProjectList(out string SolutionName, out List<Project> ProjectList);
             FilterProcessedProjects(ProjectList, out List<Project> ProcessedProjectList, out hasErrors);
 
-            List<Nuspec> NuspecList = new List<Nuspec>();
+            List<Nuspec> NuspecList = new();
 
             if (isMerge)
             {
@@ -51,7 +51,7 @@
                 WriteNuspec(Nuspec, isDebug, nuspecIcon, nuspecPrefix);
         }
 
-        private void CheckOutputDirectory(bool isDebug, out bool isDirectoryExisting, out string nugetDirectory)
+        private static void CheckOutputDirectory(bool isDebug, out bool isDirectoryExisting, out string nugetDirectory)
         {
             nugetDirectory = isDebug ? "nuget-debug" : "nuget";
             isDirectoryExisting = Directory.Exists(nugetDirectory);
@@ -68,7 +68,7 @@
             foreach (string SolutionFileName in Files)
             {
                 ConsoleDebug.Write($"  Solution file: {SolutionFileName}");
-                Solution NewSolution = new Solution(SolutionFileName);
+                Solution NewSolution = new(SolutionFileName);
 
                 solutionName = NewSolution.Name;
 
@@ -229,8 +229,8 @@
 
             InitializeFile(nuspec, isDebug, nuspecPrefix, out string NuspecPath);
 
-            using FileStream Stream = new FileStream(NuspecPath, FileMode.Append, FileAccess.Write);
-            using StreamWriter Writer = new StreamWriter(Stream, Encoding.UTF8);
+            using FileStream Stream = new(NuspecPath, FileMode.Append, FileAccess.Write);
+            using StreamWriter Writer = new(Stream, Encoding.UTF8);
 
             Writer.WriteLine("<package xmlns=\"http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd\">");
             Writer.WriteLine("  <metadata>");
@@ -253,8 +253,8 @@
             string NuspecFileName = $"{Prefix}{nuspec.Name}{DebugSuffix}.nuspec";
             nuspecPath = Path.Combine(NugetDirectory, NuspecFileName);
 
-            using FileStream FirstStream = new FileStream(nuspecPath, FileMode.Create, FileAccess.Write);
-            using StreamWriter FirstWriter = new StreamWriter(FirstStream, Encoding.ASCII);
+            using FileStream FirstStream = new(nuspecPath, FileMode.Create, FileAccess.Write);
+            using StreamWriter FirstWriter = new(FirstStream, Encoding.ASCII);
             FirstWriter.WriteLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 
             ConsoleDebug.Write($"     Created: {nuspecPath}");
@@ -350,12 +350,21 @@
 
         private static string HtmlEncoded(string s)
         {
-            s = s.Replace("\"", "&quot;");
-            s = s.Replace("?", "&amp;");
-            s = s.Replace("<", "&lt;");
-            s = s.Replace(">", "&gt;");
+            Replace(ref s, "\"", "&quot;");
+            Replace(ref s, "?", "&amp;");
+            Replace(ref s, "<", "&lt;");
+            Replace(ref s, ">", "&gt;");
 
             return s;
+        }
+
+        private static void Replace(ref string s, string oldValue, string newValue)
+        {
+#if NET5_0_OR_GREATER
+            s = s.Replace(oldValue, newValue, StringComparison.InvariantCulture);
+#else
+            s = s.Replace(oldValue, newValue);
+#endif
         }
 
         private static string GetDebugSuffix(bool isDebug)
@@ -394,11 +403,11 @@
 
         private static void ConvertIcoToPng(string iconFileName, string pngFileName)
         {
-            using FileStream IconStream = new FileStream(iconFileName, FileMode.Open, FileAccess.Read);
-            using FileStream PngStream = new FileStream(pngFileName, FileMode.Create, FileAccess.Write);
+            using FileStream IconStream = new(iconFileName, FileMode.Open, FileAccess.Read);
+            using FileStream PngStream = new(pngFileName, FileMode.Create, FileAccess.Write);
 
-            IconBitmapDecoder Decoder = new IconBitmapDecoder(IconStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
-            PngBitmapEncoder Encoder = new PngBitmapEncoder();
+            IconBitmapDecoder Decoder = new(IconStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
+            PngBitmapEncoder Encoder = new();
             Encoder.Frames.Add(Decoder.Frames[0]);
             Encoder.Save(PngStream);
         }
