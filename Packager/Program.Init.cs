@@ -63,7 +63,7 @@ Use either the first project from the solution, or merge all projects into one .
                 ConsoleDebug.Write("Debug output selected");
 
             if (Merge.HasValue)
-                if (Merge.Name != null && Merge.Name.Length > 0)
+                if (Merge.Name is not null && Merge.Name.Length > 0)
                     ConsoleDebug.Write($"Merged output selected: '{Merge.Name}'");
                 else
                     ConsoleDebug.Write("Merged output selected (no name)");
@@ -85,12 +85,12 @@ Use either the first project from the solution, or merge all projects into one .
                 ConsoleDebug.Write(CurrentException.Message);
 
                 string? StackTrace = CurrentException.StackTrace;
-                if (StackTrace != null)
+                if (StackTrace is not null)
                     ConsoleDebug.Write(StackTrace);
 
                 CurrentException = CurrentException.InnerException;
             }
-            while (CurrentException != null);
+            while (CurrentException is not null);
         }
     }
 }

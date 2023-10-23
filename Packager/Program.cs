@@ -123,7 +123,7 @@
                 ConsoleDebug.Write($"    Assembly Version: {project.AssemblyVersion}");
             if (project.FileVersion.Length > 0)
                 ConsoleDebug.Write($"    File Version: {project.FileVersion}");
-            if (project.RepositoryUrl != null)
+            if (project.RepositoryUrl is not null)
                 ConsoleDebug.Write($"    Repository Url: {project.RepositoryUrl}");
             if (project.FrameworkList.Count > 0)
             {
