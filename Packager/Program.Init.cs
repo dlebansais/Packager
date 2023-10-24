@@ -1,96 +1,97 @@
-﻿namespace Packager
-{
-    using System;
-    using McMaster.Extensions.CommandLineUtils;
+﻿namespace Packager;
 
-    /// <summary>
-    /// Generates a .nuspec file based on project .csproj content.
-    /// </summary>
-    [Command(ExtendedHelpText = @"
+using System;
+using McMaster.Extensions.CommandLineUtils;
+
+/// <summary>
+/// Generates a .nuspec file based on project .csproj content.
+/// </summary>
+[Command(ExtendedHelpText = @"
 Generate the .nuspec file from .csproj project(s) to package a solution before deployment.
 Use the first solution file in the current directory as input.
 Use either the first project from the solution, or merge all projects into one .nuspec file.
 ")]
-    public partial class Program
+public partial class Program
+{
+    /// <summary>
+    /// Program entry point.
+    /// </summary>
+    /// <param name="arguments">Command-line arguments.</param>
+    /// <returns>-1 in case of error; otherwise 0.</returns>
+    public static int Main(string[] arguments) => RunAndSetResult(CommandLineApplication.Execute<Program>(arguments));
+
+    [Option(Description = "Create a file intended for Debug configurations.", ShortName = "d", LongName = "debug")]
+    private bool IsDebug { get; set; }
+
+    [Option(CommandOptionType.SingleOrNoValue, Description = "Merge into one file. If no name is specified, use the solution file name.", ShortName = "m", LongName = "merge", ValueName = "Merged file name")]
+    private (bool HasValue, string Name) Merge { get; set; }
+
+    [Option(CommandOptionType.SingleValue, Description = "The description to insert in the output.", ShortName = "n", LongName = "description", ValueName = "Description Text")]
+    private string NuspecDescription { get; set; } = string.Empty;
+
+    [Option(CommandOptionType.SingleValue, Description = "Relative path to to icon to insert in the output.", ShortName = "i", LongName = "icon", ValueName = "Icon Path")]
+    private string NuspecIcon { get; set; } = string.Empty;
+
+    [Option(CommandOptionType.SingleValue, Description = "A prefix in front of the output package file name.", ShortName = "p", LongName = "prefix", ValueName = "Package prefix")]
+    private string NuspecPrefix { get; set; } = string.Empty;
+
+    private static int RunAndSetResult(int ignored)
     {
-        /// <summary>
-        /// Program entry point.
-        /// </summary>
-        /// <param name="arguments">Command-line arguments.</param>
-        /// <returns>-1 in case of error; otherwise 0.</returns>
-        public static int Main(string[] arguments) => RunAndSetResult(CommandLineApplication.Execute<Program>(arguments));
+        return ExecuteResult;
+    }
 
-        [Option(Description = "Create a file intended for Debug configurations.", ShortName = "d", LongName = "debug")]
-        private bool IsDebug { get; set; }
+    private static int ExecuteResult = -1;
 
-        [Option(CommandOptionType.SingleOrNoValue, Description = "Merge into one file. If no name is specified, use the solution file name.", ShortName = "m", LongName = "merge", ValueName = "Merged file name")]
-        private (bool HasValue, string Name) Merge { get; set; }
-
-        [Option(CommandOptionType.SingleValue, Description = "The description to insert in the output.", ShortName = "n", LongName = "description", ValueName = "Description Text")]
-        private string NuspecDescription { get; set; } = string.Empty;
-
-        [Option(CommandOptionType.SingleValue, Description = "Relative path to to icon to insert in the output.", ShortName = "i", LongName = "icon", ValueName = "Icon Path")]
-        private string NuspecIcon { get; set; } = string.Empty;
-
-        [Option(CommandOptionType.SingleValue, Description = "A prefix in front of the output package file name.", ShortName = "p", LongName = "prefix", ValueName = "Package prefix")]
-        private string NuspecPrefix { get; set; } = string.Empty;
-
-        private static int RunAndSetResult(int ignored)
+#pragma warning disable IDE0051 // Remove unused private members: this member is called through reflection from the McMaster.Extensions.CommandLineUtils tool.
+    private void OnExecute()
+#pragma warning restore IDE0051 // Remove unused private members
+    {
+        try
         {
-            return ExecuteResult;
+            ShowCommandLineArguments();
+            ExecuteProgram(IsDebug, Merge.HasValue, Merge.Name, NuspecDescription, NuspecIcon, NuspecPrefix, out bool HasErrors);
+
+            ExecuteResult = HasErrors ? -1 : 0;
         }
-
-        private static int ExecuteResult = -1;
-
-        private void OnExecute()
+        catch (Exception e)
         {
-            try
-            {
-                ShowCommandLineArguments();
-                ExecuteProgram(IsDebug, Merge.HasValue, Merge.Name, NuspecDescription, NuspecIcon, NuspecPrefix, out bool HasErrors);
-
-                ExecuteResult = HasErrors ? -1 : 0;
-            }
-            catch (Exception e)
-            {
-                PrintException(e);
-            }
+            PrintException(e);
         }
+    }
 
-        private void ShowCommandLineArguments()
+    private void ShowCommandLineArguments()
+    {
+        if (IsDebug)
+            ConsoleDebug.Write("Debug output selected");
+
+        if (Merge.HasValue)
+            if (Merge.Name is not null && Merge.Name.Length > 0)
+                ConsoleDebug.Write($"Merged output selected: '{Merge.Name}'");
+            else
+                ConsoleDebug.Write("Merged output selected (no name)");
+
+        if (NuspecDescription.Length > 0)
+            ConsoleDebug.Write($"Output description: '{NuspecDescription}'");
+
+        if (NuspecPrefix.Length > 0)
+            ConsoleDebug.Write($"Prefix: '{NuspecPrefix}'");
+    }
+
+    private static void PrintException(Exception e)
+    {
+        Exception? CurrentException = e;
+
+        do
         {
-            if (IsDebug)
-                ConsoleDebug.Write("Debug output selected");
+            ConsoleDebug.Write("***************");
+            ConsoleDebug.Write(CurrentException.Message);
 
-            if (Merge.HasValue)
-                if (Merge.Name is not null && Merge.Name.Length > 0)
-                    ConsoleDebug.Write($"Merged output selected: '{Merge.Name}'");
-                else
-                    ConsoleDebug.Write("Merged output selected (no name)");
+            string? StackTrace = CurrentException.StackTrace;
+            if (StackTrace is not null)
+                ConsoleDebug.Write(StackTrace);
 
-            if (NuspecDescription.Length > 0)
-                ConsoleDebug.Write($"Output description: '{NuspecDescription}'");
-
-            if (NuspecPrefix.Length > 0)
-                ConsoleDebug.Write($"Prefix: '{NuspecPrefix}'");
+            CurrentException = CurrentException.InnerException;
         }
-
-        private static void PrintException(Exception e)
-        {
-            Exception? CurrentException = e;
-
-            do
-            {
-                ConsoleDebug.Write("***************");
-                ConsoleDebug.Write(CurrentException.Message);
-
-                string? StackTrace = CurrentException.StackTrace;
-                if (StackTrace is not null)
-                    ConsoleDebug.Write(StackTrace);
-
-                CurrentException = CurrentException.InnerException;
-            }
-            while (CurrentException is not null);
-        }
+        while (CurrentException is not null);
     }
 }
