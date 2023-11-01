@@ -303,8 +303,9 @@ public partial class Program
     {
         string FrameworkName = FrameworkTypeToName(framework);
         string MonikerName = FrameworkMonikerToName(framework);
+        string VersionString = FrameworkToVersion(framework);
 
-        string TargetFrameworkName = $"{FrameworkName}{framework.Major}.{framework.Minor}{MonikerName}";
+        string TargetFrameworkName = $"{FrameworkName}{VersionString}{MonikerName}";
 
         if (nuspec.FrameworkList.Count > 0 && nuspec.PackageDependencies.Count > 0)
         {
@@ -339,6 +340,26 @@ public partial class Program
         _ or
         FrameworkMoniker.none => string.Empty,
     };
+
+    private static string FrameworkToVersion(Framework framework)
+    {
+        Dictionary<string, string> ThreeVersionFrameworks = new()
+        {
+            { "net403", "4.0.3" },
+            { "net451", "4.5.1" },
+            { "net452", "4.5.2" },
+            { "net461", "4.6.1" },
+            { "net462", "4.6.2" },
+            { "net471", "4.7.1" },
+            { "net472", "4.7.2" },
+            { "net481", "4.8.1" },
+        };
+
+        if (ThreeVersionFrameworks.TryGetValue(framework.Name, out var Value))
+            return Value;
+        else
+            return $"{framework.Major}.{framework.Minor}";
+    }
 
     private static void WriteExtraContentFiles(StreamWriter writer, bool isDebug)
     {
