@@ -40,10 +40,10 @@ build:
   project: build_all.xml
 
 after_build:
-  - nuget install Packager -Version 1.1.11 -OutputDirectory packages # Install Packager
+  - nuget install Packager -DependencyVersion Highest -OutputDirectory packages # Install Packager
   - ps: $folder = Get-ChildItem -Path packages/Packager.* -Name | Out-String    # Get the installation folder (we don't know the actual version)
   - ps: $firstline = ($folder -split '\r\n')[0]                                 # Get rid of carriage-return
-  - ps: $fullpath = ".\packages\$firstline\lib\net48\Packager.exe"              # Build full path
+  - ps: $fullpath = ".\packages\$firstline\lib\net481\Packager.exe"              # Build full path
   - ps: $env:PACKAGER_PATH=$fullpath
   - '%PACKAGER_PATH% %CUSTOM_PACKAGER_OPTIONS%'                                 # Execute the packager: the output is nuget\%APPVEYOR_PROJECT_NAME%.nuspec
   - if exist nuget\%APPVEYOR_PROJECT_NAME%.nuspec nuget pack nuget\%APPVEYOR_PROJECT_NAME%.nuspec
@@ -57,17 +57,15 @@ after_build:
   - ps: $env:VERSION_TAG=$version_tag
   - echo "Version is %VERSION_TAG%"
 
-test: off
+test: false
 
 artifacts:
-  - path: $(APPVEYOR_PROJECT_NAME)/bin/x64/Release/net48/win-x64/$(APPVEYOR_PROJECT_NAME).exe
+  - path: $(APPVEYOR_PROJECT_NAME)/bin/x64/Release/net481/win-x64/$(APPVEYOR_PROJECT_NAME).exe
     name: $(APPVEYOR_PROJECT_NAME)
   - path: $(APPVEYOR_PROJECT_NAME)-Debug.*.nupkg
     name: $(APPVEYOR_PROJECT_NAME)-Package-Debug
-    type: NuGetPackage
   - path: $(APPVEYOR_PROJECT_NAME).*.nupkg
     name: $(APPVEYOR_PROJECT_NAME)-Package-Release
-    type: NuGetPackage
 
 deploy:
   - provider: GitHub
