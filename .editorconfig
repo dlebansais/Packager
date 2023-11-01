@@ -1,5 +1,30 @@
 ﻿[*.cs]
 
+#### CA
+
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = silent
+
+# CA1707: Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity = silent
+
+# CA1711: Identifiers should not have incorrect suffix
+dotnet_diagnostic.CA1711.severity = silent
+
+# CA1716: Identifiers should not match keywords
+dotnet_diagnostic.CA1716.severity = silent
+
+# CA1820: Test for empty strings using string length
+dotnet_diagnostic.CA1820.severity = silent
+
+# CA1846: Prefer AsSpan over Substring
+dotnet_diagnostic.CA1846.severity = silent
+
+# CA1852: Seal internal types
+dotnet_diagnostic.CA1852.severity = silent
+
+#### SA
+
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.SA1101.severity = none
 
@@ -60,14 +85,7 @@ dotnet_diagnostic.SA1615.severity = silent
 # SA1633: File should have header
 dotnet_diagnostic.SA1633.severity = silent
 
-# CA1031: Do not catch general exception types
-dotnet_diagnostic.CA1031.severity = silent
-
-# CA1820: Test for empty strings using string length
-dotnet_diagnostic.CA1820.severity = silent
-
-# CA1852: Seal internal types
-dotnet_diagnostic.CA1852.severity = silent
+#### IDE
 
 # IDE0001: Simplify name
 dotnet_diagnostic.IDE0001.severity = warning
