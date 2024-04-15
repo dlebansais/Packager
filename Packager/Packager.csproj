@@ -10,9 +10,9 @@
         <UseWPF>true</UseWPF>
 
         <RootNamespace>Packager</RootNamespace>
-        <Version>1.1.14</Version>
-        <AssemblyVersion>1.1.14.45</AssemblyVersion>
-        <FileVersion>1.1.14.45</FileVersion>
+        <Version>1.1.15</Version>
+        <AssemblyVersion>1.1.15.46</AssemblyVersion>
+        <FileVersion>1.1.15.46</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Product />
         <Description>A tool to package a project before deployment</Description>
@@ -49,8 +49,8 @@
         </PackageReference>
 
         <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
-        <PackageReference Include="Method.Contracts-Debug" Version="1.1.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="Method.Contracts" Version="1.1.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="Method.Contracts-Debug" Version="1.2.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="Method.Contracts" Version="1.2.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
         <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="1.4.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="VisualStudioSolutionExplorer" Version="1.4.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
