@@ -12,7 +12,7 @@ using SlnExplorer;
 /// </summary>
 public partial class Program
 {
-    private static void WriteNuspec(Nuspec nuspec, bool isDebug, string nuspecIcon, string nuspecPrefix)
+    private static void WriteNuspec(Nuspec nuspec, bool isDebug, bool isAnalyzer, string nuspecIcon, string nuspecPrefix)
     {
         if (nuspec.RelativePath.Length > 0)
             ConsoleDebug.Write($"  Processing: {nuspec.RelativePath}");
@@ -31,7 +31,7 @@ public partial class Program
 
         WriteMiscellaneousInfo(Writer, nuspec, isDebug, NuspecPath, ApplicationIcon, nuspecPrefix);
         WriteDependencies(Writer, nuspec);
-        WriteExtraContentFiles(Writer, isDebug);
+        WriteExtraContentFiles(Writer, isDebug, isAnalyzer);
 
         Writer.WriteLine("  </metadata>");
         Writer.Write("</package>");
@@ -153,12 +153,17 @@ public partial class Program
             return $"{framework.Major}.{framework.Minor}";
     }
 
-    private static void WriteExtraContentFiles(StreamWriter writer, bool isDebug)
+    private static void WriteExtraContentFiles(StreamWriter writer, bool isDebug, bool isAnalyzer)
     {
         if (isDebug)
         {
             writer.WriteLine("    <contentFiles>");
-            writer.WriteLine("      <files include=\"lib/**/*.pdb\"/>");
+
+            if (isAnalyzer)
+                writer.WriteLine("      <files include=\"analyzers/**/*.pdb\"/>");
+            else
+                writer.WriteLine("      <files include=\"lib/**/*.pdb\"/>");
+
             writer.WriteLine("    </contentFiles>");
         }
     }

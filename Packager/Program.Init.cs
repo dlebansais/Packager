@@ -23,6 +23,9 @@ public partial class Program
     [Option(Description = "Create a file intended for Debug configurations.", ShortName = "d", LongName = "debug")]
     private bool IsDebug { get; set; }
 
+    [Option(Description = "The package is for an analyzer.", ShortName = "a", LongName = "analyzer")]
+    private bool IsAnalyzer { get; set; }
+
     [Option(CommandOptionType.SingleOrNoValue, Description = "Merge into one file. If no name is specified, use the solution file name.", ShortName = "m", LongName = "merge", ValueName = "Merged file name")]
     private (bool HasValue, string Name) Merge { get; set; }
 
@@ -49,7 +52,7 @@ public partial class Program
         try
         {
             ShowCommandLineArguments();
-            ExecuteProgram(IsDebug, Merge.HasValue, Merge.Name, NuspecDescription, NuspecIcon, NuspecPrefix, out bool HasErrors);
+            ExecuteProgram(IsDebug, IsAnalyzer, Merge.HasValue, Merge.Name, NuspecDescription, NuspecIcon, NuspecPrefix, out bool HasErrors);
 
             ExecuteResult = HasErrors ? -1 : 0;
         }
@@ -62,19 +65,22 @@ public partial class Program
     private void ShowCommandLineArguments()
     {
         if (IsDebug)
-            ConsoleDebug.Write("Debug output selected");
+            ConsoleDebug.Write("Debug output selected.");
+
+        if (IsAnalyzer)
+            ConsoleDebug.Write("The package is for an analyzer.");
 
         if (Merge.HasValue)
             if (Merge.Name is not null && Merge.Name.Length > 0)
-                ConsoleDebug.Write($"Merged output selected: '{Merge.Name}'");
+                ConsoleDebug.Write($"Merged output selected: '{Merge.Name}'.");
             else
-                ConsoleDebug.Write("Merged output selected (no name)");
+                ConsoleDebug.Write("Merged output selected (no name).");
 
         if (NuspecDescription.Length > 0)
-            ConsoleDebug.Write($"Output description: '{NuspecDescription}'");
+            ConsoleDebug.Write($"Output description: '{NuspecDescription}'.");
 
         if (NuspecPrefix.Length > 0)
-            ConsoleDebug.Write($"Prefix: '{NuspecPrefix}'");
+            ConsoleDebug.Write($"Prefix: '{NuspecPrefix}'.");
     }
 
     private static void PrintException(Exception e)

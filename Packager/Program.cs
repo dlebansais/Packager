@@ -12,7 +12,7 @@ using SlnExplorer;
 /// </summary>
 public partial class Program
 {
-    private static void ExecuteProgram(bool isDebug, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, string nuspecPrefix, out bool hasErrors)
+    private static void ExecuteProgram(bool isDebug, bool isAnalyzer, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, string nuspecPrefix, out bool hasErrors)
     {
         ConsoleDebug.Write($"Current Directory: {Environment.CurrentDirectory}");
 
@@ -47,7 +47,7 @@ public partial class Program
         }
 
         foreach (Nuspec Nuspec in NuspecList)
-            WriteNuspec(Nuspec, isDebug, nuspecIcon, nuspecPrefix);
+            WriteNuspec(Nuspec, isDebug, isAnalyzer, nuspecIcon, nuspecPrefix);
     }
 
     private static void CheckOutputDirectory(bool isDebug, out bool isDirectoryExisting, out string nugetDirectory)
