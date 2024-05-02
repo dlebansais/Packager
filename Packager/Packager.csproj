@@ -10,9 +10,9 @@
         <UseWPF>true</UseWPF>
 
         <RootNamespace>Packager</RootNamespace>
-        <Version>1.2.0</Version>
-        <AssemblyVersion>1.2.0.46</AssemblyVersion>
-        <FileVersion>1.2.0.46</FileVersion>
+        <Version>1.2.1</Version>
+        <AssemblyVersion>1.2.1.46</AssemblyVersion>
+        <FileVersion>1.2.1.46</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Product />
         <Description>A tool to package a project before deployment</Description>

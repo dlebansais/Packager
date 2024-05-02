@@ -144,42 +144,16 @@ public partial class Program
 
     private static void MergeProjects(bool isDebug, string solutionName, List<Project> projectList, string mergeName, string nuspecDescription, out Nuspec mergedNuspec, ref bool hasErrors)
     {
-        mergedNuspec = Nuspec.Empty;
-
-        Project? SelectedProject = null;
-
-        foreach (Project Project in projectList)
-            if (Project.ProjectName == mergeName)
-                SelectedProject = Project;
-
-        if (SelectedProject is null)
+        if (!FindSelectedProject(solutionName, projectList, mergeName, out Project SelectedProject) ||
+            !MergePackageDependencies(isDebug, projectList, out List<PackageReference> MergedPackageDependencies))
         {
-            if (solutionName.Length == 0 || projectList.Count == 0)
-            {
-                hasErrors = true;
-                return;
-            }
-
-            SelectedProject = projectList[0];
+            mergedNuspec = Nuspec.Empty;
+            hasErrors = true;
+            return;
         }
 
         string Description = nuspecDescription.Length > 0 ? nuspecDescription : SelectedProject.Description;
         Contract.RequireNotNull(SelectedProject.RepositoryUrl, out Uri RepositoryUrl);
-
-        List<PackageReference> MergedPackageDependencies = new();
-        Dictionary<string, List<PackageReference>> ConflictTable = new();
-        foreach (Project Project in projectList)
-        {
-            List<PackageReference> ProjectPackageDependencies = Nuspec.GetPackageDependencies(isDebug, Project);
-            MergePackageDependencies(MergedPackageDependencies, ProjectPackageDependencies, ConflictTable);
-        }
-
-        if (ConflictTable.Count > 0)
-        {
-            WriteConflicts(ConflictTable);
-            hasErrors = true;
-            return;
-        }
 
         mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, RepositoryUrl, SelectedProject.ApplicationIcon, SelectedProject.FrameworkList, MergedPackageDependencies);
 
@@ -190,6 +164,43 @@ public partial class Program
                     hasErrors = true;
                     return;
                 }
+    }
+
+    private static bool FindSelectedProject(string solutionName, List<Project> projectList, string mergeName, out Project selectedProject)
+    {
+        foreach (Project Project in projectList)
+            if (Project.ProjectName == mergeName)
+            {
+                selectedProject = Project;
+                return true;
+            }
+
+        if (solutionName.Length > 0 && projectList.Count > 0)
+        {
+            selectedProject = projectList[0];
+            return true;
+        }
+
+        Contract.Unused(out selectedProject);
+        return false;
+    }
+
+    private static bool MergePackageDependencies(bool isDebug, List<Project> projectList, out List<PackageReference> mergedPackageDependencies)
+    {
+        mergedPackageDependencies = new();
+
+        Dictionary<string, List<PackageReference>> ConflictTable = new();
+        foreach (Project Project in projectList)
+        {
+            List<PackageReference> ProjectPackageDependencies = Nuspec.GetPackageDependencies(isDebug, Project);
+            MergePackageDependencies(mergedPackageDependencies, ProjectPackageDependencies, ConflictTable);
+        }
+
+        if (ConflictTable.Count == 0)
+            return true;
+
+        WriteConflicts(ConflictTable);
+        return false;
     }
 
     private static void WriteConflicts(Dictionary<string, List<PackageReference>> conflictTable)
