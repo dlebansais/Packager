@@ -68,8 +68,7 @@ internal class Nuspec
     /// <returns>The created instance.</returns>
     public static Nuspec FromProject(bool isDebug, Project project)
     {
-        Contract.RequireNotNull(project.RepositoryUrl, out Uri ParsedUrl);
-
+        Uri ParsedUrl = Contract.AssertNotNull(project.RepositoryUrl);
         List<PackageReference> PackageDependencies = GetPackageDependencies(isDebug, project);
 
         return new Nuspec(project.ProjectName, project.RelativePath, project.Version, project.Author, project.Description, project.Copyright, ParsedUrl, project.ApplicationIcon, project.FrameworkList, PackageDependencies);

@@ -7,24 +7,23 @@ using Contracts;
 /// <summary>
 /// Writes text to the console.
 /// </summary>
-public static class ConsoleDebug
+public static partial class ConsoleDebug
 {
     /// <summary>
     /// Writes text to the console.
     /// </summary>
     /// <param name="text">The text to write.</param>
     /// <param name="isError">True if the text to write is an error message.</param>
-    public static void Write(string text, bool isError = false)
+    [RequireNotNull(nameof(text))]
+    private static void WriteVerified(string text, bool isError = false)
     {
-        Contract.RequireNotNull(text, out string Text);
-
         ConsoleColor OldColor = Console.ForegroundColor;
 
         if (isError)
             Console.ForegroundColor = ConsoleColor.Red;
 
-        Console.WriteLine(Text);
-        Debug.WriteLine(Text);
+        Console.WriteLine(text);
+        Debug.WriteLine(text);
 
         if (isError)
             Console.ForegroundColor = OldColor;

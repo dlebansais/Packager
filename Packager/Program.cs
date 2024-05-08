@@ -122,7 +122,7 @@ public partial class Program
             ConsoleDebug.Write($"    Assembly Version: {project.AssemblyVersion}");
         if (project.FileVersion.Length > 0)
             ConsoleDebug.Write($"    File Version: {project.FileVersion}");
-        if (project.RepositoryUrl is not null)
+        if (project.HasRepositoryUrl)
             ConsoleDebug.Write($"    Repository Url: {project.RepositoryUrl}");
         if (project.FrameworkList.Count > 0)
         {
@@ -153,7 +153,7 @@ public partial class Program
         }
 
         string Description = nuspecDescription.Length > 0 ? nuspecDescription : SelectedProject.Description;
-        Contract.RequireNotNull(SelectedProject.RepositoryUrl, out Uri RepositoryUrl);
+        Uri RepositoryUrl = Contract.AssertNotNull(SelectedProject.RepositoryUrl);
 
         mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, RepositoryUrl, SelectedProject.ApplicationIcon, SelectedProject.FrameworkList, MergedPackageDependencies);
 
