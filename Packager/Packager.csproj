@@ -10,9 +10,9 @@
         <UseWPF>true</UseWPF>
 
         <RootNamespace>Packager</RootNamespace>
-        <Version>1.2.2</Version>
-        <AssemblyVersion>1.2.2.47</AssemblyVersion>
-        <FileVersion>1.2.2.47</FileVersion>
+        <Version>1.2.3</Version>
+        <AssemblyVersion>1.2.3.47</AssemblyVersion>
+        <FileVersion>1.2.3.47</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Product />
         <Description>A tool to package a project before deployment</Description>
@@ -50,20 +50,20 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers-Debug" Version="1.4.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <PackageReference Include="Method.Contracts.Analyzers-Debug" Version="1.4.2" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers" Version="1.4.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
+        <PackageReference Include="Method.Contracts.Analyzers" Version="1.4.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
         <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
-        <PackageReference Include="Method.Contracts-Debug" Version="1.4.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="Method.Contracts" Version="1.4.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="1.4.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="VisualStudioSolutionExplorer" Version="1.4.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="Method.Contracts-Debug" Version="1.4.2" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="Method.Contracts" Version="1.4.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="1.4.2" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="VisualStudioSolutionExplorer" Version="1.4.2" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net481'">
