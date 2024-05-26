@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using Contracts;
 using NuGet.Configuration;
 
@@ -52,6 +53,8 @@ public static partial class Launcher
 
         Process Result = Contract.AssertNotNull(Process.Start(StartInfo));
         Result.WaitForExit();
+
+        Thread.Sleep(TimeSpan.FromSeconds(5));
 
         return Result;
     }
