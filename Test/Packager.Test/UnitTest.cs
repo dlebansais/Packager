@@ -162,9 +162,36 @@ public class UnitTest
     }
 
     [Test]
-    public void TestMergeMixedFrameworks()
+    public void TestMergeMixedFrameworks1()
     {
-        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010");
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010-1");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedFrameworks2()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010-2");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedFrameworks3()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010-3");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedFrameworks4()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010-4");
 
         Assert.That(TestedApp, Is.Not.Null);
         Assert.That(TestedApp.HasExited, Is.True);
@@ -198,9 +225,36 @@ public class UnitTest
     }
 
     [Test]
-    public void TestMergeMixedDependencyVersionMultiple()
+    public void TestMergeMixedDependencyVersionTwo()
     {
         Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-012");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedDependencyVersionMultiple1()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-013-1");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedDependencyVersionMultiple2()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-013-2");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedDependencyVersionMultiple3()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-013-3");
 
         Assert.That(TestedApp, Is.Not.Null);
         Assert.That(TestedApp.HasExited, Is.True);

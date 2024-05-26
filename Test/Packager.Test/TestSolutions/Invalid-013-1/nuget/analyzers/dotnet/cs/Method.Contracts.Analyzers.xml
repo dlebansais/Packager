@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Method.Contracts.Analyzers</name>
+    </assembly>
+    <members>
+        <member name="T:Contracts.Analyzers.AttributeArgumentModel">
+            <summary>
+            Represents the model of a contract attribute argument.
+            </summary>
+            <param name="Name">The argument name.</param>
+            <param name="Value">The argument value.</param>
+        </member>
+        <member name="M:Contracts.Analyzers.AttributeArgumentModel.#ctor(System.String,System.String)">
+            <summary>
+            Represents the model of a contract attribute argument.
+            </summary>
+            <param name="Name">The argument name.</param>
+            <param name="Value">The argument value.</param>
+        </member>
+        <member name="P:Contracts.Analyzers.AttributeArgumentModel.Name">
+            <summary>The argument name.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.AttributeArgumentModel.Value">
+            <summary>The argument value.</summary>
+        </member>
+        <member name="T:Contracts.Analyzers.AttributeGeneration">
+            <summary>
+            Describes how to handle a contract attribute.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.AttributeGeneration.Invalid">
+            <summary>
+            The attribute is invalid.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.AttributeGeneration.DebugOnly">
+            <summary>
+            The attribute is for debug only, ignore it for release.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.AttributeGeneration.Valid">
+            <summary>
+            The attribute is valid and should be generated.
+            </summary>
+        </member>
+        <member name="T:Contracts.Analyzers.AttributeModel">
+            <summary>
+            Represents the model of a contract attribute.
+            </summary>
+            <param name="Name">The attribute name.</param>
+            <param name="Arguments">The attribute arguments.</param>
+        </member>
+        <member name="M:Contracts.Analyzers.AttributeModel.#ctor(System.String,System.Collections.Generic.List{Contracts.Analyzers.AttributeArgumentModel})">
+            <summary>
+            Represents the model of a contract attribute.
+            </summary>
+            <param name="Name">The attribute name.</param>
+            <param name="Arguments">The attribute arguments.</param>
+        </member>
+        <member name="P:Contracts.Analyzers.AttributeModel.Name">
+            <summary>The attribute name.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.AttributeModel.Arguments">
+            <summary>The attribute arguments.</summary>
+        </member>
+        <member name="T:Contracts.Analyzers.ContractGenerator">
+            <summary>
+            Represents a code generator.
+            </summary>
+            <summary>
+            Represents a code generator.
+            </summary>
+            <summary>
+            Represents a code generator.
+            </summary>
+            <summary>
+            Represents a code generator.
+            </summary>
+            <summary>
+            Represents a code generator.
+            </summary>
+            <summary>
+            Represents a code generator.
+            </summary>
+            <summary>
+            Represents a code generator.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.ContractGenerator.ContractsNamespace">
+            <summary>
+            The namespace of the Method.Contracts assemblies.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.ContractGenerator.ContractClassName">
+            <summary>
+            The class name of Method.Contracts methods.
+            </summary>
+        </member>
+        <member name="M:Contracts.Analyzers.ContractGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext)">
+            <inheritdoc cref="M:Microsoft.CodeAnalysis.IIncrementalGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext)"/>
+        </member>
+        <member name="F:Contracts.Analyzers.ContractGenerator.VerifiedSuffixKey">
+            <summary>
+            The key in .csproj for the suffix that a method must have for code to be generated.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.ContractGenerator.DefaultVerifiedSuffix">
+            <summary>
+            The default value for the suffix that a method must have for code to be generated.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.ContractGenerator.TabLengthKey">
+            <summary>
+            The key in .csproj for the tab length in generated code.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.ContractGenerator.DefaultTabLength">
+            <summary>
+            The default value for the tab length in generated code.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.ContractGenerator.ResultIdentifierKey">
+            <summary>
+            The key in .csproj for the name of the result identifier in generated queries.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.ContractGenerator.DefaultResultIdentifier">
+            <summary>
+            The default value for the name of the result identifier in generated queries.
+            </summary>
+        </member>
+        <member name="F:Contracts.Analyzers.ContractGenerator.DisabledWarningsKey">
+            <summary>
+            The key in .csproj for the comma-separated list of disabled warnings in generated code.
+            </summary>
+        </member>
+        <member name="T:Contracts.Analyzers.ContractModel">
+            <summary>
+            Represents the model of a method contract.
+            </summary>
+            <param name="Namespace">The namespace containing the class that contains the method.</param>
+            <param name="UsingsBeforeNamespace">Using directives before the namespace declaration.</param>
+            <param name="UsingsAfterNamespace">Using directives after the namespace declaration.</param>
+            <param name="ClassName">The name of the class containing the method.</param>
+            <param name="FullClassName">The name of the class with type parameter and constraints.</param>
+            <param name="Documentation">The method documentation, if any.</param>
+            <param name="ShortMethodName">The method name, without the expected suffix.</param>
+            <param name="UniqueOverloadIdentifier">The unique identifier used to identify each overload of a multiply generated method.</param>
+            <param name="Attributes">The contract as attributes.</param>
+            <param name="GeneratedMethodDeclaration">The generated method.</param>
+            <param name="IsAsync">Whether the generated method is asynchronous.</param>
+        </member>
+        <member name="M:Contracts.Analyzers.ContractModel.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.Collections.Generic.List{Contracts.Analyzers.AttributeModel},System.String,System.Boolean)">
+            <summary>
+            Represents the model of a method contract.
+            </summary>
+            <param name="Namespace">The namespace containing the class that contains the method.</param>
+            <param name="UsingsBeforeNamespace">Using directives before the namespace declaration.</param>
+            <param name="UsingsAfterNamespace">Using directives after the namespace declaration.</param>
+            <param name="ClassName">The name of the class containing the method.</param>
+            <param name="FullClassName">The name of the class with type parameter and constraints.</param>
+            <param name="Documentation">The method documentation, if any.</param>
+            <param name="ShortMethodName">The method name, without the expected suffix.</param>
+            <param name="UniqueOverloadIdentifier">The unique identifier used to identify each overload of a multiply generated method.</param>
+            <param name="Attributes">The contract as attributes.</param>
+            <param name="GeneratedMethodDeclaration">The generated method.</param>
+            <param name="IsAsync">Whether the generated method is asynchronous.</param>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.Namespace">
+            <summary>The namespace containing the class that contains the method.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.UsingsBeforeNamespace">
+            <summary>Using directives before the namespace declaration.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.UsingsAfterNamespace">
+            <summary>Using directives after the namespace declaration.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.ClassName">
+            <summary>The name of the class containing the method.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.FullClassName">
+            <summary>The name of the class with type parameter and constraints.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.ShortMethodName">
+            <summary>The method name, without the expected suffix.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.UniqueOverloadIdentifier">
+            <summary>The unique identifier used to identify each overload of a multiply generated method.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.Documentation">
+            <summary>The method documentation, if any.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.Attributes">
+            <summary>The contract as attributes.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.GeneratedMethodDeclaration">
+            <summary>The generated method.</summary>
+        </member>
+        <member name="P:Contracts.Analyzers.ContractModel.IsAsync">
+            <summary>Whether the generated method is asynchronous.</summary>
+        </member>
+    </members>
+</doc>

@@ -266,6 +266,8 @@ public partial class Program
 
     private static bool IsPackageReferenceEqual(PackageReference package1, PackageReference package2)
     {
-        return package1.Name == package2.Name && package1.Version == package2.Version;
+        Contract.Assert(package1.Name == package2.Name);
+
+        return package1.Version == package2.Version;
     }
 }
