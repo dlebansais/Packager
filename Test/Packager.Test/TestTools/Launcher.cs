@@ -38,9 +38,9 @@ public static partial class Launcher
         else
             WorkingDirectory = Path.Combine(TestDirectory, $"..\\..\\..\\..\\{workingDirectory}");
 
-        Console.WriteLine($"{CoverageAppName}");
-        Console.WriteLine($"{CoverageAppArgs}");
-        Console.WriteLine($"{WorkingDirectory}");
+        // Console.WriteLine($"{CoverageAppName}");
+        // Console.WriteLine($"{CoverageAppArgs}");
+        // Console.WriteLine($"{WorkingDirectory}");
 
         ProcessStartInfo StartInfo = new()
         {

@@ -1,6 +1,8 @@
 ﻿namespace Packager.Test;
 
+using System;
 using System.Diagnostics;
+using System.IO;
 using NUnit.Framework;
 
 [TestFixture]
@@ -255,6 +257,132 @@ public class UnitTest
     public void TestMergeMixedDependencyVersionMultiple3()
     {
         Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-013-3");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestAnalyzer()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--analyzer", workingDirectory: @"TestSolutions\Method.Contracts");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestDebugAnalyzer()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--debug --analyzer", workingDirectory: @"TestSolutions\Method.Contracts");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestNuspecPrefix()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--prefix \"test\"", workingDirectory: @"TestSolutions\Method.Contracts");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    private static void BackupPgSearchIcon()
+    {
+        string TestDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string WorkingDirectory = Path.Combine(TestDirectory, $"..\\..\\..\\..\\TestSolutions\\PgSearch\\nuget");
+        File.Copy($"{WorkingDirectory}\\main.ico", $"{WorkingDirectory}\\copy.ico", overwrite: true);
+    }
+
+    private static void RestorePgSearchIcon()
+    {
+        string TestDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string WorkingDirectory = Path.Combine(TestDirectory, $"..\\..\\..\\..\\TestSolutions\\PgSearch\\nuget");
+        File.Copy($"{WorkingDirectory}\\copy.ico", $"{WorkingDirectory}\\main.ico", overwrite: true);
+        File.Delete($"{WorkingDirectory}\\copy.ico");
+    }
+
+    [Test]
+    public void TestDefaultAppIcon()
+    {
+        BackupPgSearchIcon();
+
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\PgSearch");
+
+        RestorePgSearchIcon();
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestAppIcon()
+    {
+        BackupPgSearchIcon();
+
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--icon \"Resources\\main.ico\"", workingDirectory: @"TestSolutions\PgSearch");
+
+        RestorePgSearchIcon();
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestAppPngIcon()
+    {
+        BackupPgSearchIcon();
+
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--icon \"Resources\\main.png\"", workingDirectory: @"TestSolutions\PgSearch");
+
+        RestorePgSearchIcon();
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMissingDetails()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments:null, workingDirectory: @"TestSolutions\Invalid-014");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestNoDependency()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-015");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestOtherFrameworks()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-016");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMissingIcon()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-017");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMissingPng()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-018");
 
         Assert.That(TestedApp, Is.Not.Null);
         Assert.That(TestedApp.HasExited, Is.True);

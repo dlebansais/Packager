@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
+using Contracts;
 using SlnExplorer;
 
 /// <summary>
@@ -96,10 +97,11 @@ public partial class Program
         string FrameworkName = FrameworkTypeToName(framework);
         string MonikerName = FrameworkMonikerToName(framework);
         string VersionString = FrameworkToVersion(framework);
-
         string TargetFrameworkName = $"{FrameworkName}{VersionString}{MonikerName}";
 
-        if (nuspec.FrameworkList.Count > 0 && nuspec.PackageDependencies.Count > 0)
+        Contract.Assert(nuspec.FrameworkList.Count > 0);
+
+        if (nuspec.PackageDependencies.Count > 0)
         {
             writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\">");
 
@@ -112,26 +114,39 @@ public partial class Program
             writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\"/>");
     }
 
-    private static string FrameworkTypeToName(Framework framework) => framework.Type switch
+    private static string FrameworkTypeToName(Framework framework)
     {
-        FrameworkType.NetStandard => ".NETStandard",
-        FrameworkType.NetCore => ".NETCoreApp",
-        FrameworkType.NetFramework => (framework.Major < 5) ? ".NETFramework" : "net",
-        _ or
-        FrameworkType.None => string.Empty,
-    };
+        Dictionary<FrameworkType, Func<string>> Table = new()
+        {
+            { FrameworkType.NetStandard, () => ".NETStandard" },
+            { FrameworkType.NetCore, () => ".NETCoreApp" },
+            { FrameworkType.NetFramework, () => (framework.Major < 5) ? ".NETFramework" : "net" },
+        };
 
-    private static string FrameworkMonikerToName(Framework framework) => framework.Moniker switch
+        bool IsKnown = Table.TryGetValue(framework.Type, out var Handler);
+        Contract.Assert(IsKnown);
+
+        return Contract.AssertNotNull(Handler)();
+    }
+
+    private static string FrameworkMonikerToName(Framework framework)
     {
-        FrameworkMoniker.android or
-        FrameworkMoniker.ios or
-        FrameworkMoniker.macos or
-        FrameworkMoniker.tvos or
-        FrameworkMoniker.watchos => $"-{framework.Moniker}",
-        FrameworkMoniker.windows => (framework.MonikerMajor >= 0 && framework.MonikerMinor >= 0) ? $"-{framework.Moniker}{framework.MonikerMajor}.{framework.MonikerMinor}" : $"-{framework.Moniker}",
-        _ or
-        FrameworkMoniker.none => string.Empty,
-    };
+        Dictionary<FrameworkMoniker, Func<string>> Table = new()
+        {
+            { FrameworkMoniker.none, () => string.Empty },
+            { FrameworkMoniker.android, () => $"-{framework.Moniker}" },
+            { FrameworkMoniker.ios, () => $"-{framework.Moniker}" },
+            { FrameworkMoniker.macos, () => $"-{framework.Moniker}" },
+            { FrameworkMoniker.tvos, () => $"-{framework.Moniker}" },
+            { FrameworkMoniker.watchos, () => $"-{framework.Moniker}" },
+            { FrameworkMoniker.windows, () => (framework.MonikerMajor >= 0 && framework.MonikerMinor >= 0) ? $"-{framework.Moniker}{framework.MonikerMajor}.{framework.MonikerMinor}" : $"-{framework.Moniker}" },
+        };
+
+        bool IsKnown = Table.TryGetValue(framework.Moniker, out var Handler);
+        Contract.Assert(IsKnown);
+
+        return Contract.AssertNotNull(Handler)();
+    }
 
     private static string FrameworkToVersion(Framework framework)
     {

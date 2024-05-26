@@ -1,6 +1,7 @@
 ﻿namespace Packager;
 
 using System;
+using System.Globalization;
 using McMaster.Extensions.CommandLineUtils;
 
 /// <summary>
@@ -92,9 +93,9 @@ public partial class Program
             ConsoleDebug.Write("***************");
             ConsoleDebug.Write(CurrentException.Message);
 
-            string? StackTrace = CurrentException.StackTrace;
-            if (StackTrace is not null)
-                ConsoleDebug.Write(StackTrace);
+            // If CurrentException.StackTrace is null, StackTrace is set to string.Empty.
+            string StackTrace = Convert.ToString((object?)CurrentException.StackTrace, CultureInfo.InvariantCulture)!;
+            ConsoleDebug.Write(StackTrace);
 
             CurrentException = CurrentException.InnerException;
         }
