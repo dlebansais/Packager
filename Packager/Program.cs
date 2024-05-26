@@ -116,12 +116,19 @@ public partial class Program
 
     private static void FilterProcessedProjectNoWarning(Project project, List<Project> processedProjectList)
     {
-        if (project.Version.Length > 0)
-            ConsoleDebug.Write($"    Version: {project.Version}");
-        if (project.AssemblyVersion.Length > 0)
-            ConsoleDebug.Write($"    Assembly Version: {project.AssemblyVersion}");
-        if (project.FileVersion.Length > 0)
-            ConsoleDebug.Write($"    File Version: {project.FileVersion}");
+        Contract.Assert(project.HasVersion);
+        Contract.Assert(project.IsAssemblyVersionValid);
+        Contract.Assert(project.IsFileVersionValid);
+
+        Contract.Assert(project.Version.Length > 0);
+        ConsoleDebug.Write($"    Version: {project.Version}");
+
+        Contract.Assert(project.AssemblyVersion.Length > 0);
+        ConsoleDebug.Write($"    Assembly Version: {project.AssemblyVersion}");
+
+        Contract.Assert(project.FileVersion.Length > 0);
+        ConsoleDebug.Write($"    File Version: {project.FileVersion}");
+
         if (project.HasRepositoryUrl)
             ConsoleDebug.Write($"    Repository Url: {project.RepositoryUrl}");
         if (project.FrameworkList.Count > 0)
@@ -138,7 +145,7 @@ public partial class Program
             ConsoleDebug.Write($"    Target Framework(s): {TargetFrameworks}");
         }
 
-        if (project.HasVersion && project.IsAssemblyVersionValid && project.IsFileVersionValid && project.HasRepositoryUrl && project.HasTargetFrameworks)
+        if (project.HasRepositoryUrl && project.HasTargetFrameworks)
             processedProjectList.Add(project);
     }
 
