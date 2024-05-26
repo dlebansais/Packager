@@ -58,7 +58,7 @@ before_test:
   - nuget install OpenCover -Version %opencover_version% -OutputDirectory packages
   - nuget install CodecovUploader -Version %codecov_uploader_version% -OutputDirectory packages
   - nuget install ReportGenerator -Version %report_generator_version% -OutputDirectory packages
-  - ps: $env:COVERAGE_RESULT_FILE=./Test/$env:APPVEYOR_PROJECT_NAME.Test/bin/x64/$env:CONFIGURATION/Coverage-$env:APPVEYOR_PROJECT_NAME.xml
+  - ps: $env:COVERAGE_RESULT_FILE="./Test/$env:APPVEYOR_PROJECT_NAME.Test/bin/x64/$env:CONFIGURATION/Coverage-$env:APPVEYOR_PROJECT_NAME.xml"
   - |-
     printf "dotnet test ./Test/%APPVEYOR_PROJECT_NAME%.Test/bin/x64/%CONFIGURATION%/net8.0-windows/%APPVEYOR_PROJECT_NAME%.Test.dll -l console;verbosity=detailed --environment RESULTFILENAME=""../Coverage-%APPVEYOR_PROJECT_NAME%.xml""\n" > run-tests.bat
   - |-
