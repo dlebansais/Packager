@@ -135,9 +135,54 @@ public class UnitTest
     }
 
     [Test]
+    public void TestMergeMixedAuthor()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-007");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedCopyright()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-008");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedRepositoryUrk()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-009");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedFrameworks()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
     public void TestDescription()
     {
-        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--desciption \"test\"", workingDirectory: @"TestSolutions\Method.Contracts");
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--description \"test\"", workingDirectory: @"TestSolutions\Method.Contracts");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeAndDescription()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge --description \"test\"", workingDirectory: @"TestSolutions\Method.Contracts");
 
         Assert.That(TestedApp, Is.Not.Null);
         Assert.That(TestedApp.HasExited, Is.True);
