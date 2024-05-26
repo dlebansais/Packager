@@ -10,7 +10,7 @@ public static partial class Launcher
 {
     private static bool IsFirstLaunch = true;
 
-    public static Process Launch(string demoAppName, string? arguments = null)
+    public static Process Launch(string demoAppName, string? arguments = null, string? workingDirectory = null)
     {
         string? OpenCoverBasePath = GetPackagePath("opencover");
 
@@ -31,13 +31,22 @@ public static partial class Launcher
         else
             CoverageAppArgs += " -mergeoutput";
 
+        string WorkingDirectory;
+
+        if (workingDirectory is null)
+            WorkingDirectory = string.Empty;
+        else
+            WorkingDirectory = Path.Combine(TestDirectory, $"..\\..\\..\\..\\{workingDirectory}");
+
         Console.WriteLine($"{CoverageAppName}");
         Console.WriteLine($"{CoverageAppArgs}");
+        Console.WriteLine($"{WorkingDirectory}");
 
         ProcessStartInfo StartInfo = new()
         {
             FileName = CoverageAppName,
             Arguments = CoverageAppArgs,
+            WorkingDirectory = WorkingDirectory,
             UseShellExecute = true,
         };
 
