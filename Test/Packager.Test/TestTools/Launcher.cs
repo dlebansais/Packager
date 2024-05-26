@@ -3,10 +3,13 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Contracts;
 using NuGet.Configuration;
 
 public static partial class Launcher
 {
+    private static bool IsFirstLaunch = true;
+
     public static Process Launch(string demoAppName, string? arguments = null)
     {
         string? OpenCoverBasePath = GetPackagePath("opencover");
@@ -16,14 +19,30 @@ public static partial class Launcher
 #if NETFRAMEWORK
         string AppDirectory = TestDirectory.Replace(@"\Test\", @"\").Replace(@".Test\", @"\");
 #else
-        string AppDirectory = TestDirectory.Replace(@"\Test\", @"\Demo\", StringComparison.InvariantCulture).Replace(@".Test\", @".Demo\", StringComparison.InvariantCulture);
+        string AppDirectory = TestDirectory.Replace(@"\Test\", @"\", StringComparison.InvariantCulture).Replace(@".Test\", @"\", StringComparison.InvariantCulture);
 #endif
-        string AppName = Path.Combine(AppDirectory, $"{demoAppName}.exe");
+        string AppName = Path.Combine(AppDirectory, "win-x64", $"{demoAppName}.exe");
         string ResultFileName = Environment.GetEnvironmentVariable("RESULTFILENAME") ?? "result.xml";
         string CoverageAppName = @$"{OpenCoverBasePath}\tools\OpenCover.Console.exe";
-        string CoverageAppArgs = @$"-register:user -target:""{AppName}"" -targetargs:""{arguments}"" ""-filter:+[*]* -[{demoAppName}*]*"" -output:""{TestDirectory}\{ResultFileName}""";
+        string CoverageAppArgs = @$"-register:user -target:""{AppName}"" -targetargs:""{arguments}"" ""-filter:+[*]*"" -output:""{TestDirectory}{ResultFileName}""";
 
-        Process Result = Process.Start(CoverageAppName, CoverageAppArgs);
+        if (IsFirstLaunch)
+            IsFirstLaunch = false;
+        else
+            CoverageAppArgs += " -mergeoutput";
+
+        Console.WriteLine($"{CoverageAppName}");
+        Console.WriteLine($"{CoverageAppArgs}");
+
+        ProcessStartInfo StartInfo = new()
+        {
+            FileName = CoverageAppName,
+            Arguments = CoverageAppArgs,
+            UseShellExecute = true,
+        };
+
+        Process Result = Contract.AssertNotNull(Process.Start(StartInfo));
+        Result.WaitForExit();
 
         return Result;
     }
