@@ -19,7 +19,7 @@ public static partial class Launcher
 #if NETFRAMEWORK
         string AppDirectory = TestDirectory.Replace(@"\Test\", @"\").Replace(@".Test\", @"\");
 #else
-        string AppDirectory = TestDirectory.Replace(@"\Test\", @"\", StringComparison.InvariantCulture).Replace(@".Test\", @"\", StringComparison.InvariantCulture);
+        string AppDirectory = TestDirectory.Replace(@"\Test\", @"\", StringComparison.InvariantCulture).Replace(@".Test\", @"\", StringComparison.InvariantCulture).Replace(@"net8.0-windows\", @"net8.0-windows7.0\", StringComparison.InvariantCulture);
 #endif
         string AppName = Path.Combine(AppDirectory, "win-x64", $"{demoAppName}.exe");
         string ResultFileName = Environment.GetEnvironmentVariable("RESULTFILENAME") ?? "result.xml";
