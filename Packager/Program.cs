@@ -182,10 +182,16 @@ public partial class Program
                 return true;
             }
 
-        if (solutionName.Length > 0 && projectList.Count > 0 && mergeName is null)
+        if (mergeName is null)
         {
-            selectedProject = projectList[0];
-            return true;
+            if (solutionName.Length > 0)
+            {
+                if (projectList.Count > 0)
+                {
+                    selectedProject = projectList[0];
+                    return true;
+                }
+            }
         }
 
         Contract.Unused(out selectedProject);

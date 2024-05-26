@@ -106,4 +106,22 @@ public class UnitTest
         Assert.That(TestedApp, Is.Not.Null);
         Assert.That(TestedApp.HasExited, Is.True);
     }
+
+    [Test]
+    public void TestMergeWithNoSolution()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-004");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeWithNoProjects()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-004");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
 }
