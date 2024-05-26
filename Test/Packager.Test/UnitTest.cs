@@ -187,4 +187,22 @@ public class UnitTest
         Assert.That(TestedApp, Is.Not.Null);
         Assert.That(TestedApp.HasExited, Is.True);
     }
+
+    [Test]
+    public void TestMergeMixedDependencyVersion()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-011");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
+
+    [Test]
+    public void TestMergeMixedDependencyVersionMultiple()
+    {
+        Process TestedApp = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-012");
+
+        Assert.That(TestedApp, Is.Not.Null);
+        Assert.That(TestedApp.HasExited, Is.True);
+    }
 }
