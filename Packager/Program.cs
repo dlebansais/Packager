@@ -12,7 +12,7 @@ using SlnExplorer;
 /// </summary>
 public partial class Program
 {
-    private static void ExecuteProgram(bool isDebug, bool isAnalyzer, bool isMerge, string mergeName, string nuspecDescription, string nuspecIcon, string nuspecPrefix, out bool hasErrors)
+    private static void ExecuteProgram(bool isDebug, bool isAnalyzer, bool isMerge, string? mergeName, string nuspecDescription, string nuspecIcon, string nuspecPrefix, out bool hasErrors)
     {
         ConsoleDebug.Write($"Current Directory: {Environment.CurrentDirectory}");
 
@@ -149,7 +149,7 @@ public partial class Program
             processedProjectList.Add(project);
     }
 
-    private static void MergeProjects(bool isDebug, string solutionName, List<Project> projectList, string mergeName, string nuspecDescription, out Nuspec mergedNuspec, ref bool hasErrors)
+    private static void MergeProjects(bool isDebug, string solutionName, List<Project> projectList, string? mergeName, string nuspecDescription, out Nuspec mergedNuspec, ref bool hasErrors)
     {
         if (!FindSelectedProject(solutionName, projectList, mergeName, out Project SelectedProject) ||
             !MergePackageDependencies(isDebug, projectList, out List<PackageReference> MergedPackageDependencies))
@@ -173,7 +173,7 @@ public partial class Program
                 }
     }
 
-    private static bool FindSelectedProject(string solutionName, List<Project> projectList, string mergeName, out Project selectedProject)
+    private static bool FindSelectedProject(string solutionName, List<Project> projectList, string? mergeName, out Project selectedProject)
     {
         foreach (Project Project in projectList)
             if (Project.ProjectName == mergeName)
@@ -182,7 +182,7 @@ public partial class Program
                 return true;
             }
 
-        if (solutionName.Length > 0 && projectList.Count > 0)
+        if (solutionName.Length > 0 && projectList.Count > 0 && mergeName is null)
         {
             selectedProject = projectList[0];
             return true;
