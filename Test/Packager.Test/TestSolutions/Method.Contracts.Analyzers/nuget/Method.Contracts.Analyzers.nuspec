@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Method.Contracts.Analyzers</id>
+    <version>1.4.4</version>
+    <title>Method.Contracts.Analyzers</title>
+    <authors>David Le Bansais</authors>
+    <description>A code generator companion for Method.Contracts</description>
+    <copyright>Copyright © 2024 David Le Bansais</copyright>
+    <projectUrl>https://github.com/dlebansais/Method.Contracts.Analyzers</projectUrl>
+    <repository type="git" url="https://github.com/dlebansais/Method.Contracts.Analyzers"/>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Method.Contracts" version="1.4.2"/>
+      </group>
+    </dependencies>
+  </metadata>
+</package>
