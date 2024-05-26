@@ -9,8 +9,6 @@ using NuGet.Configuration;
 
 public static partial class Launcher
 {
-    private static bool IsFirstLaunch = true;
-
     public static Process Launch(string demoAppName, string? arguments = null, string? workingDirectory = null)
     {
         string? OpenCoverBasePath = GetPackagePath("opencover");
@@ -25,12 +23,7 @@ public static partial class Launcher
         string AppName = Path.Combine(AppDirectory, "win-x64", $"{demoAppName}.exe");
         string ResultFileName = Environment.GetEnvironmentVariable("RESULTFILENAME") ?? "result.xml";
         string CoverageAppName = @$"{OpenCoverBasePath}\tools\OpenCover.Console.exe";
-        string CoverageAppArgs = @$"-register:user -target:""{AppName}"" -targetargs:""{arguments}"" ""-filter:+[*]*"" -output:""{TestDirectory}{ResultFileName}""";
-
-        if (IsFirstLaunch)
-            IsFirstLaunch = false;
-        else
-            CoverageAppArgs += " -mergeoutput";
+        string CoverageAppArgs = @$"-register:user -target:""{AppName}"" -targetargs:""{arguments}"" -output:""{TestDirectory}{ResultFileName}"" -mergeoutput -mergebyhash";
 
         string WorkingDirectory;
 
@@ -53,8 +46,6 @@ public static partial class Launcher
 
         Process Result = Contract.AssertNotNull(Process.Start(StartInfo));
         Result.WaitForExit();
-
-        Thread.Sleep(TimeSpan.FromSeconds(5));
 
         return Result;
     }

@@ -48,7 +48,7 @@ if exist .\Test\%TESTPROJECTNAME%\*.log del .\Test\%TESTPROJECTNAME%\*.log
 if exist %RESULTFILEPATH% del %RESULTFILEPATH%
 
 rem Execute tests that will call OpenCover.
-dotnet test ./Test/%TESTPROJECTNAME% /p:Platform=%PLATFORM% -c %CONFIGURATION% -f %FRAMEWORK% --no-build --environment RESULTFILENAME="%RESULTFILENAME%"
+dotnet test ./Test/%TESTPROJECTNAME% /p:Platform=%PLATFORM% -c %CONFIGURATION% -f %FRAMEWORK% -l console;verbosity=detailed --no-build --environment RESULTFILENAME="%RESULTFILENAME%"
 
 if not exist %RESULTFILEPATH% goto end
 %CODECOV_UPLOADER_EXE% -f %RESULTFILEPATH% -t %TOKEN%
