@@ -1,12 +1,11 @@
 ﻿namespace Packager.Test;
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using NUnit.Framework;
 
 [TestFixture]
-public class UnitTest
+public class UnitTest2
 {
     private const string TestedAppName = "Packager";
 
