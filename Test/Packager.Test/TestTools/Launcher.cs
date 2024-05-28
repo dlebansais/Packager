@@ -3,13 +3,14 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography.Xml;
 using System.Threading;
 using Contracts;
 using NuGet.Configuration;
 
 public static partial class Launcher
 {
-    public static Process Launch(string demoAppName, string? arguments = null, string? workingDirectory = null)
+    public static bool Launch(string demoAppName, string? arguments = null, string? workingDirectory = null)
     {
         string? OpenCoverBasePath = GetPackagePath("opencover");
 
@@ -41,13 +42,27 @@ public static partial class Launcher
             FileName = CoverageAppName,
             Arguments = CoverageAppArgs,
             WorkingDirectory = WorkingDirectory,
-            UseShellExecute = true,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            
         };
 
-        Process Result = Contract.AssertNotNull(Process.Start(StartInfo));
-        Result.WaitForExit();
+        using FileStream OutputStream = new("output.txt", FileMode.Append, FileAccess.Write);
+        using StreamWriter OutputWriter = new(OutputStream);
+        using Process TestProcess = new();
 
-        return Result;
+        TestProcess.StartInfo = StartInfo;
+        TestProcess.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+        {
+            if (e is not null && e.Data is not null)
+                OutputWriter.WriteLine(e.Data);
+        });
+
+        TestProcess.Start();
+        TestProcess.BeginOutputReadLine();
+        TestProcess.WaitForExit();
+
+        return true;
     }
 
     private static string? GetPackagePath(string packageName)
