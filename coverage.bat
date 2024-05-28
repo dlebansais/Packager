@@ -9,7 +9,7 @@ set TOKEN=%PACKAGER_CODECOV_TOKEN%
 set TESTPROJECTNAME=%PROJECTNAME%.Test
 set PLATFORM=x64
 set CONFIGURATION=Debug
-set FRAMEWORK=net481
+set FRAMEWORK=net8.0-windows7.0
 set RESULTFILENAME=Coverage-%PROJECTNAME%.xml
 set RESULTFILEPATH=".\Test\%TESTPROJECTNAME%\bin\%PLATFORM%\%CONFIGURATION%\%FRAMEWORK%\%RESULTFILENAME%"
 
@@ -48,7 +48,7 @@ if exist .\Test\%TESTPROJECTNAME%\*.log del .\Test\%TESTPROJECTNAME%\*.log
 if exist %RESULTFILEPATH% del %RESULTFILEPATH%
 
 rem Execute tests that will call OpenCover.
-dotnet test ./Test/%TESTPROJECTNAME% /p:Platform=%PLATFORM% -c %CONFIGURATION% -f %FRAMEWORK% -l console;verbosity=detailed --no-build --environment RESULTFILENAME="%RESULTFILENAME%"
+dotnet test ./Test/%TESTPROJECTNAME%/bin/%PLATFORM%/%CONFIGURATION%/%FRAMEWORK%/%TESTPROJECTNAME%.dll -l console;verbosity=detailed --environment RESULTFILENAME="%RESULTFILENAME%"
 
 if not exist %RESULTFILEPATH% goto end
 %CODECOV_UPLOADER_EXE% -f %RESULTFILEPATH% -t %TOKEN%
