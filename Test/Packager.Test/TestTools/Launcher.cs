@@ -3,9 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography.Xml;
 using System.Threading;
-using Contracts;
 using NuGet.Configuration;
 
 public static partial class Launcher
@@ -46,6 +44,8 @@ public static partial class Launcher
             RedirectStandardOutput = true,
         };
 
+        Thread.Sleep(TimeSpan.FromSeconds(1));
+
         using FileStream OutputStream = new("output.txt", FileMode.Append, FileAccess.Write);
         using StreamWriter OutputWriter = new(OutputStream);
         using Process TestProcess = new();
@@ -60,6 +60,8 @@ public static partial class Launcher
         TestProcess.Start();
         TestProcess.BeginOutputReadLine();
         TestProcess.WaitForExit();
+
+        OutputWriter.Flush();
 
         return true;
     }
