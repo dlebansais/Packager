@@ -52,7 +52,7 @@ dotnet test ./Test/%TESTPROJECTNAME%/bin/%PLATFORM%/%CONFIGURATION%/%FRAMEWORK%/
 
 if not exist %RESULTFILEPATH% goto end
 %CODECOV_UPLOADER_EXE% -f %RESULTFILEPATH% -t %TOKEN%
-%REPORTGENERATOR_EXE% -reports:%RESULTFILEPATH% -targetdir:.\CoverageReports "-assemblyfilters:-Microsoft*;+%PROJECTNAME%" "-filefilters:-*.g.cs"
+%REPORTGENERATOR_EXE% -reports:%RESULTFILEPATH% -targetdir:.\CoverageReports "-assemblyfilters:-Microsoft*" "-filefilters:-*.g.cs"
 goto end
 
 :error_console0
@@ -80,3 +80,5 @@ echo ERROR: %TESTPROJECTNAME%.dll not built.
 goto end
 
 :end
+if exist *.log del *.log
+if exist TestResult.xml del TestResult.xml

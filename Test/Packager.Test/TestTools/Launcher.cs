@@ -44,7 +44,6 @@ public static partial class Launcher
             WorkingDirectory = WorkingDirectory,
             UseShellExecute = false,
             RedirectStandardOutput = true,
-            
         };
 
         using FileStream OutputStream = new("output.txt", FileMode.Append, FileAccess.Write);
