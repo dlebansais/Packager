@@ -31,7 +31,7 @@ public partial class Program
         string ApplicationIcon = nuspecIcon.Length > 0 ? nuspecIcon : nuspec.ApplicationIcon;
 
         WriteMiscellaneousInfo(Writer, nuspec, isDebug, NuspecPath, ApplicationIcon, nuspecPrefix);
-        WriteDependencies(Writer, nuspec);
+        WriteDependencies(Writer, nuspec, isAnalyzer);
         WriteExtraContentFiles(Writer, isDebug, isAnalyzer);
 
         Writer.WriteLine("  </metadata>");
@@ -82,12 +82,13 @@ public partial class Program
         writer.WriteLine($"    <repository type=\"git\" url=\"{nuspec.RepositoryUrl}\"/>");
     }
 
-    private static void WriteDependencies(StreamWriter writer, Nuspec nuspec)
+    private static void WriteDependencies(StreamWriter writer, Nuspec nuspec, bool isAnalyzer)
     {
         writer.WriteLine("    <dependencies>");
 
         foreach (Framework Framework in nuspec.FrameworkList)
-            WriteFrameworkDependency(writer, nuspec, Framework);
+            if (!isAnalyzer || Framework.Name == "netstandard2.0")
+                WriteFrameworkDependency(writer, nuspec, Framework);
 
         writer.WriteLine("    </dependencies>");
     }
