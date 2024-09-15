@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using Contracts;
 using SlnExplorer;
@@ -145,7 +144,11 @@ public partial class Program
             ConsoleDebug.Write($"    Target Framework(s): {TargetFrameworks}");
         }
 
-        if (project.HasRepositoryUrl && project.HasTargetFrameworks)
+        if (project.IsTestProject)
+            ConsoleDebug.Write($"    Ignored by packager (test)");
+        else if (project.IsNotPackable)
+            ConsoleDebug.Write($"    Ignored by packager (not packable)");
+        else if (project.HasRepositoryUrl && project.HasTargetFrameworks)
             processedProjectList.Add(project);
     }
 
