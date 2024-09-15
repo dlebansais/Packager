@@ -31,7 +31,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-	<IsNotPackable>true</IsNotPackable>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(APPVEYOR)' == 'True'">
