@@ -347,4 +347,20 @@ public class UnitTest2
 
         Assert.That(IsSuccessful, Is.True);
     }
+
+    [Test]
+    public void TestNotPackable()
+    {
+        bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-019");
+
+        Assert.That(IsSuccessful, Is.True);
+    }
+
+    [Test]
+    public void TestIsTestProject()
+    {
+        bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-020");
+
+        Assert.That(IsSuccessful, Is.True);
+    }
 }
