@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading;
 using NuGet.Configuration;
 
-public static partial class Launcher
+internal static partial class Launcher
 {
     public static bool Launch(string demoAppName, string? arguments = null, string? workingDirectory = null)
     {
@@ -24,12 +24,9 @@ public static partial class Launcher
         string CoverageAppName = @$"{OpenCoverBasePath}\tools\OpenCover.Console.exe";
         string CoverageAppArgs = @$"-register:user -target:""{AppName}"" -targetargs:""{arguments}"" -output:""{TestDirectory}{ResultFileName}"" -mergeoutput -mergebyhash";
 
-        string WorkingDirectory;
-
-        if (workingDirectory is null)
-            WorkingDirectory = string.Empty;
-        else
-            WorkingDirectory = Path.Combine(TestDirectory, $"..\\..\\..\\..\\{workingDirectory}");
+        string WorkingDirectory = workingDirectory is null
+            ? string.Empty
+            : Path.Combine(TestDirectory, $"..\\..\\..\\..\\{workingDirectory}");
 
         // Console.WriteLine($"{CoverageAppName}");
         // Console.WriteLine($"{CoverageAppArgs}");

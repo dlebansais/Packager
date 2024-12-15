@@ -12,7 +12,7 @@ Generate the .nuspec file from .csproj project(s) to package a solution before d
 Use the first solution file in the current directory as input.
 Use either the first project from the solution, or merge all projects into one .nuspec file.
 ")]
-public partial class Program
+internal partial class Program
 {
     /// <summary>
     /// Program entry point.
@@ -39,10 +39,9 @@ public partial class Program
     [Option(CommandOptionType.SingleValue, Description = "A prefix in front of the output package file name.", ShortName = "p", LongName = "prefix", ValueName = "Package prefix")]
     private string NuspecPrefix { get; set; } = string.Empty;
 
-    private static int RunAndSetResult(int ignored)
-    {
-        return ExecuteResult;
-    }
+#pragma warning disable IDE0060 // Remove unused parameter
+    private static int RunAndSetResult(int ignored) => ExecuteResult;
+#pragma warning restore IDE0060 // Remove unused parameter
 
     private static int ExecuteResult = -1;
 

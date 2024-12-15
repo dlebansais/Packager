@@ -29,8 +29,8 @@ internal class Nuspec
         Copyright = string.Empty;
         RepositoryUrl = null;
         ApplicationIcon = string.Empty;
-        FrameworkList = new List<Framework>();
-        PackageDependencies = new List<PackageReference>();
+        FrameworkList = [];
+        PackageDependencies = [];
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ internal class Nuspec
     /// <param name="project">The project.</param>
     public static List<PackageReference> GetPackageDependencies(bool isDebug, Project project)
     {
-        List<PackageReference> Result = new();
+        List<PackageReference> Result = [];
 
         foreach (PackageReference Item in project.PackageReferenceList)
         {

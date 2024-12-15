@@ -7,7 +7,7 @@ using Contracts;
 /// <summary>
 /// Writes text to the console.
 /// </summary>
-public static partial class ConsoleDebug
+internal static partial class ConsoleDebug
 {
     /// <summary>
     /// Writes text to the console.

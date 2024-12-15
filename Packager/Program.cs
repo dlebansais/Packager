@@ -9,7 +9,7 @@ using SlnExplorer;
 /// <summary>
 /// Generates a .nuspec file based on project .csproj content.
 /// </summary>
-public partial class Program
+internal partial class Program
 {
     private static void ExecuteProgram(bool isDebug, bool isAnalyzer, bool isMerge, string? mergeName, string nuspecDescription, string nuspecIcon, string nuspecPrefix, out bool hasErrors)
     {
@@ -26,7 +26,7 @@ public partial class Program
         LoadSolutionAndProjectList(out string SolutionName, out List<Project> ProjectList);
         FilterProcessedProjects(ProjectList, out List<Project> ProcessedProjectList, out hasErrors);
 
-        List<Nuspec> NuspecList = new();
+        List<Nuspec> NuspecList = [];
 
         if (isMerge)
         {
@@ -40,7 +40,7 @@ public partial class Program
         }
         else
         {
-            NuspecList = new List<Nuspec>();
+            NuspecList = [];
             foreach (Project Project in ProcessedProjectList)
                 NuspecList.Add(Nuspec.FromProject(isDebug, Project));
         }
@@ -58,7 +58,7 @@ public partial class Program
     private static void LoadSolutionAndProjectList(out string solutionName, out List<Project> projectList)
     {
         solutionName = string.Empty;
-        projectList = new List<Project>();
+        projectList = [];
 
         string[] Files = Directory.GetFiles(Environment.CurrentDirectory, "*.sln");
         ConsoleDebug.Write($"Found {Files.Length} solution file(s)");
@@ -87,7 +87,7 @@ public partial class Program
 
     private static void FilterProcessedProjects(List<Project> projectList, out List<Project> processedProjectList, out bool hasErrors)
     {
-        processedProjectList = new List<Project>();
+        processedProjectList = [];
         hasErrors = false;
 
         foreach (Project Item in projectList)
@@ -168,6 +168,7 @@ public partial class Program
         mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, RepositoryUrl, SelectedProject.ApplicationIcon, SelectedProject.FrameworkList, MergedPackageDependencies);
 
         foreach (Project Project in projectList)
+        {
             if (Project.Version != mergedNuspec.Version ||
                 Project.Author != mergedNuspec.Author ||
                 Project.Copyright != mergedNuspec.Copyright ||
@@ -177,6 +178,7 @@ public partial class Program
                 hasErrors = true;
                 return;
             }
+        }
     }
 
     private static bool FindSelectedProject(string solutionName, List<Project> projectList, string? mergeName, out Project selectedProject)
@@ -200,9 +202,9 @@ public partial class Program
 
     private static bool MergePackageDependencies(bool isDebug, List<Project> projectList, out List<PackageReference> mergedPackageDependencies)
     {
-        mergedPackageDependencies = new();
+        mergedPackageDependencies = [];
 
-        Dictionary<string, List<PackageReference>> ConflictTable = new();
+        Dictionary<string, List<PackageReference>> ConflictTable = [];
         foreach (Project Project in projectList)
         {
             List<PackageReference> ProjectPackageDependencies = Nuspec.GetPackageDependencies(isDebug, Project);
@@ -244,11 +246,9 @@ public partial class Program
     private static void MergePackageDependencies(List<PackageReference> mergedList, List<PackageReference> list, Dictionary<string, List<PackageReference>> conflictTable)
     {
         foreach (PackageReference Package in list)
-        {
             if (mergedList.Find(p => Package.Name == p.Name) is PackageReference MatchingPackage)
             {
                 if (!IsPackageReferenceEqual(Package, MatchingPackage))
-                {
                     if (conflictTable.TryGetValue(Package.Name, out List<PackageReference>? ConflictTableValue))
                     {
                         List<PackageReference> ExistingConflicts = Contract.AssertNotNull(ConflictTableValue);
@@ -258,13 +258,13 @@ public partial class Program
                     }
                     else
                     {
-                        conflictTable.Add(Package.Name, new List<PackageReference>() { MatchingPackage, Package });
+                        conflictTable.Add(Package.Name, [MatchingPackage, Package]);
                     }
-                }
             }
             else
+            {
                 mergedList.Add(Package);
-        }
+            }
     }
 
     private static bool IsPackageReferenceEqual(PackageReference package1, PackageReference package2)

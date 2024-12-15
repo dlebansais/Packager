@@ -5,7 +5,7 @@ using System.IO;
 using NUnit.Framework;
 
 [TestFixture]
-public class UnitTest2
+internal class UnitTest2
 {
     private const string TestedAppName = "Packager";
 
@@ -20,7 +20,7 @@ public class UnitTest2
     [Test]
     public void TestSampleSolution()
     {
-        bool IsSuccessful = Launcher.Launch(TestedAppName, arguments:null, workingDirectory: @"TestSolutions\Method.Contracts");
+        bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Method.Contracts");
 
         Assert.That(IsSuccessful, Is.True);
     }
@@ -311,7 +311,7 @@ public class UnitTest2
     [Test]
     public void TestMissingDetails()
     {
-        bool IsSuccessful = Launcher.Launch(TestedAppName, arguments:null, workingDirectory: @"TestSolutions\Invalid-014");
+        bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-014");
 
         Assert.That(IsSuccessful, Is.True);
     }

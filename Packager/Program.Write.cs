@@ -11,7 +11,7 @@ using SlnExplorer;
 /// <summary>
 /// Generates a .nuspec file based on project .csproj content.
 /// </summary>
-public partial class Program
+internal partial class Program
 {
     private static void WriteNuspec(Nuspec nuspec, bool isDebug, bool isAnalyzer, string nuspecIcon, string nuspecPrefix)
     {
@@ -112,7 +112,9 @@ public partial class Program
             writer.WriteLine($"      </group>");
         }
         else
+        {
             writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\"/>");
+        }
     }
 
     private static string FrameworkTypeToName(Framework framework)
@@ -124,7 +126,7 @@ public partial class Program
             { FrameworkType.NetFramework, () => (framework.Major < 5) ? ".NETFramework" : "net" },
         };
 
-        bool IsKnown = Table.TryGetValue(framework.Type, out var Handler);
+        bool IsKnown = Table.TryGetValue(framework.Type, out Func<string>? Handler);
         Contract.Assert(IsKnown);
 
         return Contract.AssertNotNull(Handler)();
@@ -143,7 +145,7 @@ public partial class Program
             { FrameworkMoniker.windows, () => (framework.MonikerMajor >= 0 && framework.MonikerMinor >= 0) ? $"-{framework.Moniker}{framework.MonikerMajor}.{framework.MonikerMinor}" : $"-{framework.Moniker}" },
         };
 
-        bool IsKnown = Table.TryGetValue(framework.Moniker, out var Handler);
+        bool IsKnown = Table.TryGetValue(framework.Moniker, out Func<string>? Handler);
         Contract.Assert(IsKnown);
 
         return Contract.AssertNotNull(Handler)();
@@ -163,10 +165,9 @@ public partial class Program
             { "net481", "4.8.1" },
         };
 
-        if (ThreeVersionFrameworks.TryGetValue(framework.Name, out var Value))
-            return Value;
-        else
-            return $"{framework.Major}.{framework.Minor}";
+        return ThreeVersionFrameworks.TryGetValue(framework.Name, out string? Value)
+            ? Value
+            : $"{framework.Major}.{framework.Minor}";
     }
 
     private static void WriteExtraContentFiles(StreamWriter writer, bool isDebug, bool isAnalyzer)
@@ -184,15 +185,9 @@ public partial class Program
         }
     }
 
-    private static string GetDebugSuffix(bool isDebug)
-    {
-        return isDebug ? "-Debug" : string.Empty;
-    }
+    private static string GetDebugSuffix(bool isDebug) => isDebug ? "-Debug" : string.Empty;
 
-    private static string GetDebugTitle(bool isDebug)
-    {
-        return isDebug ? " (Debug)" : string.Empty;
-    }
+    private static string GetDebugTitle(bool isDebug) => isDebug ? " (Debug)" : string.Empty;
 
     private static string HtmlEncoded(string s)
     {
@@ -204,14 +199,11 @@ public partial class Program
         return s;
     }
 
-    private static void Replace(ref string s, string oldValue, string newValue)
-    {
 #if NET5_0_OR_GREATER
-        s = s.Replace(oldValue, newValue, StringComparison.InvariantCulture);
+    private static void Replace(ref string s, string oldValue, string newValue) => s = s.Replace(oldValue, newValue, StringComparison.InvariantCulture);
 #else
-        s = s.Replace(oldValue, newValue);
+    private static void Replace(ref string s, string oldValue, string newValue) => s = s.Replace(oldValue, newValue);
 #endif
-    }
 
     private static void ConvertIcoToPng(string nuspecPath, ref string fileName)
     {
