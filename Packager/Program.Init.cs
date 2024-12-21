@@ -2,6 +2,7 @@
 
 using System;
 using System.Globalization;
+using Contracts;
 using McMaster.Extensions.CommandLineUtils;
 
 /// <summary>
@@ -93,7 +94,7 @@ internal partial class Program
             ConsoleDebug.Write(CurrentException.Message);
 
             // If CurrentException.StackTrace is null, StackTrace is set to string.Empty.
-            string StackTrace = Convert.ToString((object?)CurrentException.StackTrace, CultureInfo.InvariantCulture)!;
+            string StackTrace = Contract.AssertNotNull(Convert.ToString((object?)CurrentException.StackTrace, CultureInfo.InvariantCulture));
             ConsoleDebug.Write(StackTrace);
 
             CurrentException = CurrentException.InnerException;

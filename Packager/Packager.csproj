@@ -38,7 +38,15 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="dlebansais.CSharpLatest" Version="1.1.2">
+        <PackageReference Include="Nullable.Extended.Analyzer" Version="1.15.6495">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="IDisposableAnalyzers" Version="4.0.8">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="dlebansais.CSharpLatest" Version="2.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -46,20 +54,20 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers-Debug" Version="1.9.3" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <PackageReference Include="Method.Contracts.Analyzers-Debug" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers" Version="1.9.3" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
+        <PackageReference Include="Method.Contracts.Analyzers" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
         <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
-        <PackageReference Include="Method.Contracts-Debug" Version="1.9.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="Method.Contracts" Version="1.9.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="1.4.4" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="VisualStudioSolutionExplorer" Version="1.4.4" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="Method.Contracts-Debug" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="Method.Contracts" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="VisualStudioSolutionExplorer" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net8.0-windows7.0'">
@@ -85,19 +93,31 @@
     <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(SolutionDir)'!='*Undefined*'">
         <Exec Command="if exist &quot;$(SolutionDir)updatecommit.bat&quot; call &quot;$(SolutionDir)updatecommit.bat&quot; &quot;$(SolutionDir)&quot; &quot;$(TargetPath)&quot;" />
         <Exec Command="if exist &quot;$(SolutionDir)signfile.bat&quot; call &quot;$(SolutionDir)signfile.bat&quot; &quot;$(SolutionDir)&quot; &quot;$(Configuration)-$(Platform)&quot; &quot;$(TargetPath)&quot;" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-        <Exec Command="if not exist &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)&quot; mkdir &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)&quot;" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <Exec Command="copy &quot;$(TargetDir)$(ProjectName).xml&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <Exec Command="copy &quot;$(TargetDir)$(ProjectName).pdb&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <Exec Command="copy &quot;$(TargetDir)McMaster*&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <Exec Command="copy &quot;$(TargetDir)Method.Contracts*&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <Exec Command="copy &quot;$(TargetDir)VisualStudioSolutionExplorer*&quot; &quot;$(SolutionDir)nuget-debug\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <Exec Command="if not exist &quot;$(SolutionDir)nuget\lib\$(TargetFramework)&quot; mkdir &quot;$(SolutionDir)nuget\lib\$(TargetFramework)&quot;" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-        <Exec Command="copy &quot;$(TargetPath)&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-        <Exec Command="copy &quot;$(TargetDir)$(ProjectName).xml&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-        <Exec Command="copy &quot;$(TargetDir)McMaster*&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-        <Exec Command="copy &quot;$(TargetDir)Method.Contracts*&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-        <Exec Command="copy &quot;$(TargetDir)VisualStudioSolutionExplorer*&quot; &quot;$(SolutionDir)nuget\lib\$(TargetFramework)\&quot; &gt; nul" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+
+        <ItemGroup>
+            <None Remove="@(None)" />
+        </ItemGroup>
+
+        <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+            <None Include="$(TargetPath)" />
+            <None Include="$(TargetDir)$(ProjectName).exe" />
+            <None Include="$(TargetDir)$(ProjectName).runtimeconfig*.json" />
+            <None Include="$(TargetDir)$(ProjectName).pdb" />
+            <None Include="$(TargetDir)McMaster*" />
+            <None Include="$(TargetDir)Method.Contracts*" />
+            <None Include="$(TargetDir)VisualStudioSolutionExplorer*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(None)" DestinationFolder="$(SolutionDir)nuget-debug\lib\$(TargetFramework)\" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+
+        <ItemGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+            <None Include="$(TargetPath)" />
+            <None Include="$(TargetDir)$(ProjectName).exe" />
+            <None Include="$(TargetDir)$(ProjectName).runtimeconfig*.json" />
+            <None Include="$(TargetDir)McMaster*" />
+            <None Include="$(TargetDir)Method.Contracts*" />
+            <None Include="$(TargetDir)VisualStudioSolutionExplorer*" />
+        </ItemGroup>
+        <Copy SourceFiles="@(None)" DestinationFolder="$(SolutionDir)nuget\lib\$(TargetFramework)\" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     </Target>
 
 </Project>

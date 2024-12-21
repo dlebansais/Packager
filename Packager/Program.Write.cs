@@ -210,7 +210,7 @@ internal partial class Program
         if (Path.GetExtension(fileName) != ".ico")
             return;
 
-        string NuspecFolder = Path.GetDirectoryName(nuspecPath)!;
+        string NuspecFolder = Contract.AssertNotNull(Path.GetDirectoryName(nuspecPath));
         string IconFileName = Path.Combine(NuspecFolder, Path.GetFileName(fileName));
         string PngFileName = Path.ChangeExtension(IconFileName, ".png");
 
