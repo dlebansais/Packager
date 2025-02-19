@@ -148,7 +148,11 @@ internal partial class Program
             ConsoleDebug.Write($"    Ignored by packager (test)");
         else if (project.IsNotPackable)
             ConsoleDebug.Write($"    Ignored by packager (not packable)");
-        else if (project.HasRepositoryUrl && project.HasTargetFrameworks)
+        else if (!project.HasTargetFrameworks)
+            ConsoleDebug.Write($"    Ignored by packager (no target framework)");
+        else if (!project.HasRepositoryUrl)
+            ConsoleDebug.Write($"    Ignored by packager (no repository URL)");
+        else
             processedProjectList.Add(project);
     }
 
