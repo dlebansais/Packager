@@ -363,4 +363,12 @@ internal class UnitTest1
 
         Assert.That(IsSuccessful, Is.True);
     }
+
+    [Test]
+    public void TestNorepository()
+    {
+        bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-021");
+
+        Assert.That(IsSuccessful, Is.True);
+    }
 }
