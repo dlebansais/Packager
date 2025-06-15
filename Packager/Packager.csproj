@@ -10,13 +10,13 @@
         <UseWPF>true</UseWPF>
 
         <RootNamespace>Packager</RootNamespace>
-        <Version>2.0.0</Version>
-        <AssemblyVersion>2.0.0.58</AssemblyVersion>
-        <FileVersion>2.0.0.58</FileVersion>
+        <Version>2.0.1</Version>
+        <AssemblyVersion>2.0.1.61</AssemblyVersion>
+        <FileVersion>2.0.1.61</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Product />
         <Description>A tool to package a project before deployment</Description>
-        <Copyright>Copyright © 2024 David Le Bansais</Copyright>
+        <Copyright>Copyright © 2025 David Le Bansais</Copyright>
         <RepositoryUrl>https://github.com/dlebansais/Packager</RepositoryUrl>
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
 
@@ -42,7 +42,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="dlebansais.IDisposableAnalyzers" Version="4.0.8.9">
+        <PackageReference Include="dlebansais.IDisposableAnalyzers" Version="4.0.8.10">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -54,18 +54,18 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers-Debug" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+        <PackageReference Include="Method.Contracts.Analyzers-Debug" Version="2.0.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Method.Contracts.Analyzers" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
+        <PackageReference Include="Method.Contracts.Analyzers" Version="2.0.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
         <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
-        <PackageReference Include="Method.Contracts-Debug" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="Method.Contracts" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="Method.Contracts-Debug" Version="2.0.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="Method.Contracts" Version="2.0.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
         <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="VisualStudioSolutionExplorer" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
