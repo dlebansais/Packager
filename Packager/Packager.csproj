@@ -10,9 +10,9 @@
         <UseWPF>true</UseWPF>
 
         <RootNamespace>Packager</RootNamespace>
-        <Version>2.0.1</Version>
-        <AssemblyVersion>2.0.1.61</AssemblyVersion>
-        <FileVersion>2.0.1.61</FileVersion>
+        <Version>2.0.2</Version>
+        <AssemblyVersion>2.0.2.62</AssemblyVersion>
+        <FileVersion>2.0.2.62</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Product />
         <Description>A tool to package a project before deployment</Description>
@@ -66,8 +66,8 @@
         <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
         <PackageReference Include="Method.Contracts-Debug" Version="2.0.1" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="Method.Contracts" Version="2.0.1" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="VisualStudioSolutionExplorer" Version="2.0.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="VisualStudioSolutionExplorer-Debug" Version="2.2.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="VisualStudioSolutionExplorer" Version="2.2.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net8.0-windows7.0'">

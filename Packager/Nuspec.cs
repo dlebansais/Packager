@@ -86,9 +86,17 @@ internal class Nuspec
         foreach (PackageReference Item in project.PackageReferenceList)
         {
             if (isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'=='Debug|x64'" || Item.Condition == "'$(Configuration)'=='Debug'"))
+            {
                 Result.Add(Item);
+            }
             else if (!isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'!='Debug|x64'" || Item.Condition == "'$(Configuration)'!='Debug'"))
+            {
                 Result.Add(Item);
+            }
+            else if (Item.Condition == string.Empty && !Item.IsAllPrivateAssets)
+            {
+                Result.Add(Item);
+            }
         }
 
         return Result;
