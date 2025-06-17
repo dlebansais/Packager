@@ -76,6 +76,8 @@
     <ItemGroup>
         <PackageReference Include="Method.Contracts-Debug" Version="1.5.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="Method.Contracts" Version="1.5.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="Old.Contracts-Debug" Version="1.5.0" Condition="'$(Configuration)'=='Debug'" />
+        <PackageReference Include="Old.Contracts" Version="1.5.0" Condition="'$(Configuration)'!='Debug'" />
     </ItemGroup>
 
     <ItemGroup>

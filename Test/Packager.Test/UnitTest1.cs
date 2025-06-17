@@ -365,7 +365,7 @@ internal class UnitTest1
     }
 
     [Test]
-    public void TestNorepository()
+    public void TestNoRepository()
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-021");
 

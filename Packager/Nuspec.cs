@@ -31,6 +31,9 @@ internal class Nuspec
         ApplicationIcon = string.Empty;
         FrameworkList = [];
         PackageDependencies = [];
+        PackageIcon = string.Empty;
+        PackageLicenseExpression = string.Empty;
+        PackageReadmeFile = string.Empty;
     }
 
     /// <summary>
@@ -46,7 +49,22 @@ internal class Nuspec
     /// <param name="applicationIcon">The nuspec application icon.</param>
     /// <param name="frameworkList">The list of nuspec frameworks.</param>
     /// <param name="packageDependencies">The list of nuspec package dependencies.</param>
-    public Nuspec(string name, string relativePath, string version, string author, string description, string copyright, Uri repositoryUrl, string applicationIcon, IReadOnlyList<Framework> frameworkList, List<PackageReference> packageDependencies)
+    /// <param name="packageIcon">The nuspec package icon.</param>
+    /// <param name="packageLicense">The nuspec package license.</param>
+    /// <param name="packageReadmeFile">The nuspec package readme file.</param>
+    public Nuspec(string name,
+                  string relativePath,
+                  string version,
+                  string author,
+                  string description,
+                  string copyright,
+                  Uri repositoryUrl,
+                  string applicationIcon,
+                  IReadOnlyList<Framework> frameworkList,
+                  List<PackageReference> packageDependencies,
+                  string packageIcon,
+                  string packageLicense,
+                  string packageReadmeFile)
     {
         Name = name;
         RelativePath = relativePath;
@@ -58,6 +76,9 @@ internal class Nuspec
         ApplicationIcon = applicationIcon;
         FrameworkList = frameworkList;
         PackageDependencies = packageDependencies;
+        PackageIcon = packageIcon;
+        PackageLicenseExpression = packageLicense;
+        PackageReadmeFile = packageReadmeFile;
     }
 
     /// <summary>
@@ -71,7 +92,19 @@ internal class Nuspec
         Uri ParsedUrl = Contract.AssertNotNull(project.RepositoryUrl);
         List<PackageReference> PackageDependencies = GetPackageDependencies(isDebug, project);
 
-        return new Nuspec(project.ProjectName, project.RelativePath, project.Version, project.Author, project.Description, project.Copyright, ParsedUrl, project.ApplicationIcon, project.FrameworkList, PackageDependencies);
+        return new Nuspec(project.ProjectName,
+                          project.RelativePath,
+                          project.Version,
+                          project.Author,
+                          project.Description,
+                          project.Copyright,
+                          ParsedUrl,
+                          project.ApplicationIcon,
+                          project.FrameworkList,
+                          PackageDependencies,
+                          project.PackageIcon,
+                          project.PackageLicenseExpression,
+                          project.PackageReadmeFile);
     }
 
     /// <summary>
@@ -153,5 +186,20 @@ internal class Nuspec
     /// Gets the list of nuspec package dependencies.
     /// </summary>
     public List<PackageReference> PackageDependencies { get; init; }
+
+    /// <summary>
+    /// Gets the nuspec package icon.
+    /// </summary>
+    public string PackageIcon { get; init; }
+
+    /// <summary>
+    /// Gets the nuspec package license.
+    /// </summary>
+    public string PackageLicenseExpression { get; init; }
+
+    /// <summary>
+    /// Gets the nuspec package readme file.
+    /// </summary>
+    public string PackageReadmeFile { get; init; }
     #endregion
 }

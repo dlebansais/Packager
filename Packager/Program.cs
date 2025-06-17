@@ -169,7 +169,19 @@ internal partial class Program
         string Description = nuspecDescription.Length > 0 ? nuspecDescription : SelectedProject.Description;
         Uri RepositoryUrl = Contract.AssertNotNull(SelectedProject.RepositoryUrl);
 
-        mergedNuspec = new Nuspec(solutionName, string.Empty, SelectedProject.Version, SelectedProject.Author, Description, SelectedProject.Copyright, RepositoryUrl, SelectedProject.ApplicationIcon, SelectedProject.FrameworkList, MergedPackageDependencies);
+        mergedNuspec = new Nuspec(solutionName,
+                                  string.Empty,
+                                  SelectedProject.Version,
+                                  SelectedProject.Author,
+                                  Description,
+                                  SelectedProject.Copyright,
+                                  RepositoryUrl,
+                                  SelectedProject.ApplicationIcon,
+                                  SelectedProject.FrameworkList,
+                                  MergedPackageDependencies,
+                                  SelectedProject.PackageIcon,
+                                  SelectedProject.PackageLicenseExpression,
+                                  SelectedProject.PackageReadmeFile);
 
         foreach (Project Project in projectList)
         {

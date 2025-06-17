@@ -77,6 +77,20 @@ internal partial class Program
             ConvertIcoToPng(nuspecPath, ref nuspecIcon);
             writer.WriteLine($"    <icon>{nuspecIcon}</icon>");
         }
+        else if (nuspec.PackageIcon.Length > 0)
+        {
+            writer.WriteLine($"    <icon>{nuspec.PackageIcon}</icon>");
+        }
+
+        if (nuspec.PackageLicenseExpression.Length > 0)
+        {
+            writer.WriteLine($"    <license type=\"expression\">{nuspec.PackageLicenseExpression}</license>");
+        }
+
+        if (nuspec.PackageReadmeFile.Length > 0)
+        {
+            writer.WriteLine($"    <readme>{nuspec.PackageReadmeFile}</readme>");
+        }
 
         writer.WriteLine($"    <projectUrl>{nuspec.RepositoryUrl}</projectUrl>");
         writer.WriteLine($"    <repository type=\"git\" url=\"{nuspec.RepositoryUrl}\"/>");

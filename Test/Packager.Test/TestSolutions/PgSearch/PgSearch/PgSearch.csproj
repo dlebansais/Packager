@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFrameworks>net481;net7.0-windows</TargetFrameworks>
+        <TargetFrameworks>net481;net7.0-windows;net8.0-windows7.0</TargetFrameworks>
         <UseWPF>true</UseWPF>
         <LangVersion>10</LangVersion>
         <Nullable>enable</Nullable>
