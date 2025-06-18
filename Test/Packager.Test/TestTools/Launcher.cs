@@ -58,11 +58,7 @@ internal static partial class Launcher
         TestProcess.BeginOutputReadLine();
         TestProcess.WaitForExit();
 
-        Thread.Sleep(TimeSpan.FromSeconds(0.1));
-
         OutputWriter.Flush();
-
-        Thread.Sleep(TimeSpan.FromSeconds(0.1));
 
         return true;
     }
