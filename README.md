@@ -51,11 +51,11 @@ With no condition and the `PrivateAssets` attribute not set to `all`. If `Privat
 
 ### Conditional, for a release build
 
-With a condition that is either `"'$(Configuration)'!='Debug'"` or `"'$(Configuration)|$(Platform)'!='Debug|x64'"` depending if you're generating x64 or Any CPU binaries.
+With a condition that is either `"'$(Configuration)'!='Debug'"` or `"'$(Configuration)|$(Platform)'!='Debug|x64'"` depending if you're generating Any CPU or x64 binaries.
 
 ### Conditional, for a debug build
 
-With a condition that is either `"'$(Configuration)'=='Debug'"` or `"'$(Configuration)|$(Platform)'=='Debug|x64'"` depending if you're generating x64 or Any CPU binaries.
+With a condition that is either `"'$(Configuration)'=='Debug'"` or `"'$(Configuration)|$(Platform)'=='Debug|x64'"` depending if you're generating Any CPU or x64 binaries.
 
 ### Excluding a dependency
 
