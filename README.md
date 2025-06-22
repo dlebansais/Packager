@@ -24,3 +24,41 @@ If you choose to download the latest version of the tool, the following PowerShe
 - ps: '& $fullpath --debug'                                                   # Execute the packager with --debug
 ````
 
+## Suuported tags
+
+The packager supports the following tags in the project file:
+
+| .csproj tag                | Description                                          | .nuspec tag   |
+| -------------------------- | ---------------------------------------------------- | ------------- |
+| `Authors`                  | The package authors.                                 | `authors`     |
+| `Description`              | The package description.                             | `description` |
+| `Copyright`                | The package copyright.                               | `copyright`   |
+| `RepositoryUrl`            | The project repository.                              | `projectUrl`  |
+| `PackageIcon`              | The package icon (can be overwritten with `--icon`). | `icon`        |
+| `PackageLicenseExpression` | The package license.                                 | `license`     |
+| `PackageReadmeFile`        | The package readme.                                  | `readme`      |
+
+## Dependencies
+
+The packager will declare as many dependencies as there are frameworks in the `<Framework>` or `<Frameworks>` tags.
+Currently, only identical dependencies per framework are supported. You cannot declare a dependency for a specific framework and not for others.
+
+To declare a dependency, specify a `PackageReference` in the project file, and use one the options listed below.
+
+### Unconditional
+
+With no condition and the `PrivateAssets` attribute not set to `all`. If `PrivateAssets` is `all` the reference is typically for an analyzer and will not be included.
+
+### Conditional, for a release build
+
+With a condition that is either `"'$(Configuration)'!='Debug'"` or `"'$(Configuration)|$(Platform)'!='Debug|x64'"` depending if you're generating x64 or Any CPU binaries.
+
+### Conditional, for a debug build
+
+With a condition that is either `"'$(Configuration)'=='Debug'"` or `"'$(Configuration)|$(Platform)'=='Debug|x64'"` depending if you're generating x64 or Any CPU binaries.
+
+### Excluding a dependency
+
+If you want to exclude a dependency to a `PackageReference` that is included in the project, just add a condition that will always be true when you build, such as `"'$(Configuration)'!='None'"`.
+
+The packager use conditions inside the `PackageReference` tag. You can play with conditions in the parent `ItemGroup` to include or exclude stuff separately than the packager.
