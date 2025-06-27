@@ -117,20 +117,21 @@ internal class Nuspec
         List<PackageReference> Result = [];
 
         foreach (PackageReference Item in project.PackageReferenceList)
-        {
-            if (isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'=='Debug|x64'" || Item.Condition == "'$(Configuration)'=='Debug'"))
+            if (!Item.IsAllPrivateAssets)
             {
-                Result.Add(Item);
+                if (isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'=='Debug|x64'" || Item.Condition == "'$(Configuration)'=='Debug'"))
+                {
+                    Result.Add(Item);
+                }
+                else if (!isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'!='Debug|x64'" || Item.Condition == "'$(Configuration)'!='Debug'"))
+                {
+                    Result.Add(Item);
+                }
+                else if (Item.Condition == string.Empty)
+                {
+                    Result.Add(Item);
+                }
             }
-            else if (!isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'!='Debug|x64'" || Item.Condition == "'$(Configuration)'!='Debug'"))
-            {
-                Result.Add(Item);
-            }
-            else if (Item.Condition == string.Empty && !Item.IsAllPrivateAssets)
-            {
-                Result.Add(Item);
-            }
-        }
 
         return Result;
     }

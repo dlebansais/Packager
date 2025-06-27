@@ -45,9 +45,11 @@ Currently, only identical dependencies per framework are supported. You cannot d
 
 To declare a dependency, specify a `PackageReference` in the project file, and use one the options listed below.
 
-### Unconditional
+### Private assets
 
-With no condition and the `PrivateAssets` attribute not set to `all`. If `PrivateAssets` is `all` the reference is typically for an analyzer and will not be included.
+If `PrivateAssets` is `all` the reference will not be included. This is typically the case for analyzers.
+
+If you still want to include the reference, you can use `compile;runtime;contentFiles;build;buildMultitargeting;buildTransitive;analyzers;native` which is the same as `all` for all purpose but this comparison.
 
 ### Conditional, for a release build
 
