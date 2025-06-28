@@ -116,11 +116,19 @@ internal partial class Program
 
         Contract.Assert(nuspec.FrameworkList.Count > 0);
 
-        if (nuspec.PackageDependencies.Count > 0)
+        PackageReferenceList FilteredDependencies = [];
+        foreach (KeyValuePair<Framework, PackageReferenceList> Entry in nuspec.PackageDependencies)
+        {
+            Framework DependencyFramework = Entry.Key;
+            if (DependencyFramework == Nuspec.AnyFramework || DependencyFramework == framework)
+                FilteredDependencies.AddRange(Entry.Value);
+        }
+
+        if (FilteredDependencies.Count > 0)
         {
             writer.WriteLine($"      <group targetFramework=\"{TargetFrameworkName}\">");
 
-            foreach (PackageReference Item in nuspec.PackageDependencies)
+            foreach (PackageReference Item in FilteredDependencies)
                 writer.WriteLine($"        <dependency id=\"{Item.Name}\" version=\"{Item.Version}\"/>");
 
             writer.WriteLine($"      </group>");

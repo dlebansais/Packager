@@ -41,9 +41,10 @@ The packager supports the following tags in the project file:
 ## Dependencies
 
 The packager will declare as many dependencies as there are frameworks in the `<Framework>` or `<Frameworks>` tags.
-Currently, only identical dependencies per framework are supported. You cannot declare a dependency for a specific framework and not for others.
 
-To declare a dependency, specify a `PackageReference` in the project file, and use one the options listed below.
+There is support for framework-specific depedencies, debug/release dependencies, and for excluding some dependencies.
+
+To declare a dependency, specify a `PackageReference` in the project file, and use one the options listed below, from highest to lowest priority.
 
 ### Private assets
 
@@ -59,8 +60,31 @@ With a condition that is either `"'$(Configuration)'!='Debug'"` or `"'$(Configur
 
 With a condition that is either `"'$(Configuration)'=='Debug'"` or `"'$(Configuration)|$(Platform)'=='Debug|x64'"` depending if you're generating Any CPU or x64 binaries.
 
+### Conditional, for a specific framework
+
+With a condition of the type `"'$(TargetFramework)'=='<Framework>'"` where `<Framework>` is one of the target frameworks in the project, the dependency will be added only for that frameork in the package.
+
+To specify a dependency for the .NET Framework 4.7.2 for instance, use `"'$(TargetFramework)'=='net472'"`.
+
+If a dependency is the same for several frameworks you must repeat the `PackageReference` tag for each framework, with the appropriate condition. For example, the following doesn't work:
+
+```csproj
+<ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="17.11.4" Condition="'$(TargetFramework)'=='net7.0-windows7.0' Or '$(TargetFramework)'=='net8.0-windows7.0'" />
+    <PackageReference Include="Microsoft.Build" Version="17.12.6" Condition="'$(TargetFramework)'=='net9.0-windows7.0'" />
+</ItemGroup>
+```
+But this does:
+```csproj
+<ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="17.11.4" Condition="'$(TargetFramework)'=='net7.0-windows7.0'" />
+    <PackageReference Include="Microsoft.Build" Version="17.11.4" Condition="'$(TargetFramework)'=='net8.0-windows7.0'" />
+    <PackageReference Include="Microsoft.Build" Version="17.12.6" Condition="'$(TargetFramework)'=='net9.0-windows7.0'" />
+</ItemGroup>
+```
+
 ### Excluding a dependency
 
 If you want to exclude a dependency to a `PackageReference` that is included in the project, just add a condition that will always be true when you build, such as `"'$(Configuration)'!='None'"`.
 
-The packager use conditions inside the `PackageReference` tag. You can play with conditions in the parent `ItemGroup` to include or exclude stuff separately than the packager.
+The packager use conditions inside the `PackageReference` tag. You can play with conditions in the parent `ItemGroup` to include or exclude stuff differently than the packager.

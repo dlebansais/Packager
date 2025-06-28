@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Contracts;
 using SlnExplorer;
 
@@ -159,7 +160,7 @@ internal partial class Program
     private static void MergeProjects(bool isDebug, string solutionName, List<Project> projectList, string? mergeName, string nuspecDescription, out Nuspec mergedNuspec, ref bool hasErrors)
     {
         if (!FindSelectedProject(solutionName, projectList, mergeName, out Project SelectedProject) ||
-            !MergePackageDependencies(isDebug, projectList, out List<PackageReference> MergedPackageDependencies))
+            !MergePackageDependencies(isDebug, projectList, out Dictionary<Framework, PackageReferenceList> MergedPackageDependencies))
         {
             mergedNuspec = Nuspec.Empty;
             hasErrors = true;
@@ -216,14 +217,14 @@ internal partial class Program
         return false;
     }
 
-    private static bool MergePackageDependencies(bool isDebug, List<Project> projectList, out List<PackageReference> mergedPackageDependencies)
+    private static bool MergePackageDependencies(bool isDebug, List<Project> projectList, out Dictionary<Framework, PackageReferenceList> mergedPackageDependencies)
     {
         mergedPackageDependencies = [];
 
-        Dictionary<string, List<PackageReference>> ConflictTable = [];
+        Dictionary<string, PackageReferenceList> ConflictTable = [];
         foreach (Project Project in projectList)
         {
-            List<PackageReference> ProjectPackageDependencies = Nuspec.GetPackageDependencies(isDebug, Project);
+            Dictionary<Framework, PackageReferenceList> ProjectPackageDependencies = Nuspec.GetPackageDependencies(isDebug, Project);
             MergePackageDependencies(mergedPackageDependencies, ProjectPackageDependencies, ConflictTable);
         }
 
@@ -234,11 +235,11 @@ internal partial class Program
         return false;
     }
 
-    private static void WriteConflicts(Dictionary<string, List<PackageReference>> conflictTable)
+    private static void WriteConflicts(Dictionary<string, PackageReferenceList> conflictTable)
     {
         ConsoleDebug.Write($"ERROR: {conflictTable.Count} {(conflictTable.Count == 1 ? "dependency" : "dependencies")} with conflicting versions.", isError: true);
 
-        foreach (KeyValuePair<string, List<PackageReference>> Entry in conflictTable)
+        foreach (KeyValuePair<string, PackageReferenceList> Entry in conflictTable)
         {
             ConsoleDebug.Write($"    {Entry.Key}");
 
@@ -259,17 +260,35 @@ internal partial class Program
         return true;
     }
 
-    private static void MergePackageDependencies(List<PackageReference> mergedList, List<PackageReference> list, Dictionary<string, List<PackageReference>> conflictTable)
+    private static void MergePackageDependencies(Dictionary<Framework, PackageReferenceList> mergedDependencies, Dictionary<Framework, PackageReferenceList> dependencies, Dictionary<string, PackageReferenceList> conflictTable)
+    {
+        foreach (KeyValuePair<Framework, PackageReferenceList> Entry in dependencies)
+        {
+            Framework Framework = Entry.Key;
+
+            if (mergedDependencies.TryGetValue(Framework, out PackageReferenceList? MergedList))
+            {
+                MergePackageDependencies(MergedList, Entry.Value, conflictTable);
+                mergedDependencies[Framework] = MergedList;
+            }
+            else
+            {
+                MergedList = [];
+                MergePackageDependencies(MergedList, Entry.Value, conflictTable);
+                mergedDependencies.Add(Framework, MergedList);
+            }
+        }
+    }
+
+    private static void MergePackageDependencies(PackageReferenceList mergedList, PackageReferenceList list, Dictionary<string, PackageReferenceList> conflictTable)
     {
         foreach (PackageReference Package in list)
             if (mergedList.Find(p => Package.Name == p.Name) is PackageReference MatchingPackage)
             {
                 if (!IsPackageReferenceEqual(Package, MatchingPackage))
-                    if (conflictTable.TryGetValue(Package.Name, out List<PackageReference>? ConflictTableValue))
+                    if (conflictTable.TryGetValue(Package.Name, out PackageReferenceList? ExistingConflicts))
                     {
-                        List<PackageReference> ExistingConflicts = Contract.AssertNotNull(ConflictTableValue);
-
-                        if (ExistingConflicts.Find(p => IsPackageReferenceEqual(Package, p)) is null)
+                        if (!ExistingConflicts.Any(p => IsPackageReferenceEqual(Package, p)))
                             ExistingConflicts.Add(Package);
                     }
                     else

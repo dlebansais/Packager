@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Contracts;
 using SlnExplorer;
 
@@ -15,6 +16,11 @@ internal class Nuspec
     /// Gets the empty nuspec.
     /// </summary>
     public static Nuspec Empty { get; } = new Nuspec();
+
+    /// <summary>
+    /// Gets the framework that represents any framework.
+    /// </summary>
+    public static Framework AnyFramework { get; } = new(string.Empty, FrameworkType.None, 0, 0, FrameworkMoniker.none, 0, 0);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Nuspec"/> class.
@@ -61,7 +67,7 @@ internal class Nuspec
                   Uri repositoryUrl,
                   string applicationIcon,
                   IReadOnlyList<Framework> frameworkList,
-                  List<PackageReference> packageDependencies,
+                  Dictionary<Framework, PackageReferenceList> packageDependencies,
                   string packageIcon,
                   string packageLicense,
                   string packageReadmeFile)
@@ -90,7 +96,7 @@ internal class Nuspec
     public static Nuspec FromProject(bool isDebug, Project project)
     {
         Uri ParsedUrl = Contract.AssertNotNull(project.RepositoryUrl);
-        List<PackageReference> PackageDependencies = GetPackageDependencies(isDebug, project);
+        Dictionary<Framework, PackageReferenceList> PackageDependencies = GetPackageDependencies(isDebug, project);
 
         return new Nuspec(project.ProjectName,
                           project.RelativePath,
@@ -112,28 +118,58 @@ internal class Nuspec
     /// </summary>
     /// <param name="isDebug">If true, gets debug dependencies; otherwise, get release dependencies.</param>
     /// <param name="project">The project.</param>
-    public static List<PackageReference> GetPackageDependencies(bool isDebug, Project project)
+    public static Dictionary<Framework, PackageReferenceList> GetPackageDependencies(bool isDebug, Project project)
     {
-        List<PackageReference> Result = [];
+        Dictionary<Framework, PackageReferenceList> Result = [];
 
         foreach (PackageReference Item in project.PackageReferenceList)
             if (!Item.IsAllPrivateAssets)
             {
-                if (isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'=='Debug|x64'" || Item.Condition == "'$(Configuration)'=='Debug'"))
+                if ((isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'=='Debug|x64'" || Item.Condition == "'$(Configuration)'=='Debug'")) ||
+                    (!isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'!='Debug|x64'" || Item.Condition == "'$(Configuration)'!='Debug'")))
                 {
-                    Result.Add(Item);
+                    AddPackageReference(AnyFramework, Item, Result);
                 }
-                else if (!isDebug && (Item.Condition == "'$(Configuration)|$(Platform)'!='Debug|x64'" || Item.Condition == "'$(Configuration)'!='Debug'"))
+                else if (TryParseFrameworkCondition(Item, project, out Framework? specificFramework))
                 {
-                    Result.Add(Item);
+                    AddPackageReference(specificFramework, Item, Result);
                 }
                 else if (Item.Condition == string.Empty)
                 {
-                    Result.Add(Item);
+                    AddPackageReference(AnyFramework, Item, Result);
                 }
             }
 
         return Result;
+    }
+
+    private static bool TryParseFrameworkCondition(PackageReference packageReference, Project project, [MaybeNullWhen(false)] out Framework framework)
+    {
+        foreach (Framework Item in project.FrameworkList)
+        {
+            string ExpectedCondition = $"'$(TargetFramework)'=='{Item.Name}'";
+
+            if (packageReference.Condition == ExpectedCondition)
+            {
+                framework = Item;
+                return true;
+            }
+        }
+
+        framework = null;
+        return false;
+    }
+
+    private static void AddPackageReference(Framework framework, PackageReference packageReference, Dictionary<Framework, PackageReferenceList> packageDependencies)
+    {
+        if (packageDependencies.TryGetValue(framework, out PackageReferenceList? ExistingList))
+        {
+            ExistingList.Add(packageReference);
+        }
+        else
+        {
+            packageDependencies[framework] = [packageReference];
+        }
     }
     #endregion
 
@@ -186,7 +222,7 @@ internal class Nuspec
     /// <summary>
     /// Gets the list of nuspec package dependencies.
     /// </summary>
-    public List<PackageReference> PackageDependencies { get; init; }
+    public Dictionary<Framework, PackageReferenceList> PackageDependencies { get; init; }
 
     /// <summary>
     /// Gets the nuspec package icon.
