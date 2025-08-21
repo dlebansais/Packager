@@ -87,7 +87,7 @@ artifacts:
     name: $(APPVEYOR_PROJECT_NAME)-Package-Release
   - path: ./Test/$(APPVEYOR_PROJECT_NAME).Test/bin/x64/$(CONFIGURATION)/net8.0-windows7.0/output.txt
     name: $(CONFIGURATION)-output-txt
-  - path: $(COVERAGE_RESULT_FILE)
+  - path: ./Test/$(APPVEYOR_PROJECT_NAME).Test/bin/x64/$(CONFIGURATION)/Coverage-$(APPVEYOR_PROJECT_NAME).xml
     name: $(CONFIGURATION)-Coverage-Xml
 
 deploy:
