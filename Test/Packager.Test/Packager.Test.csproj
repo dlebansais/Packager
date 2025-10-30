@@ -39,11 +39,11 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net8.0-windows7.0'">
-        <PackageReference Include="Microsoft.Build" Version="17.11.4" GeneratePathProperty="true" />
+        <PackageReference Include="Microsoft.Build" Version="17.11.48" GeneratePathProperty="true" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net9.0-windows7.0'">
-        <PackageReference Include="Microsoft.Build" Version="17.12.6" GeneratePathProperty="true" />
+        <PackageReference Include="Microsoft.Build" Version="17.12.50" GeneratePathProperty="true" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net8.0-windows7.0'">

@@ -76,8 +76,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Build" Version="17.11.4" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net8.0-windows7.0'" />
-        <PackageReference Include="Microsoft.Build" Version="17.12.6" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net9.0-windows7.0'" />
+        <PackageReference Include="Microsoft.Build" Version="17.11.48" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net8.0-windows7.0'" />
+        <PackageReference Include="Microsoft.Build" Version="17.12.50" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net9.0-windows7.0'" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net481'">
