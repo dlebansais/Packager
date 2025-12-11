@@ -22,7 +22,7 @@ internal static partial class Launcher
         string AppName = Path.Combine(AppDirectory, "win-x64", $"{demoAppName}.exe");
         string ResultFileName = Environment.GetEnvironmentVariable("RESULTFILENAME") ?? "result.xml";
         string CoverageAppName = @$"{OpenCoverBasePath}\tools\OpenCover.Console.exe";
-        string CoverageAppArgs = @$"-register:user -target:""{AppName}"" -targetargs:""{arguments}"" -output:""{TestDirectory}{ResultFileName}"" -mergeoutput -mergebyhash";
+        string CoverageAppArgs = @$"-register:user -target:""{AppName}"" -targetargs:""{arguments}"" -output:""{Path.Combine(TestDirectory, ResultFileName)}"" -mergeoutput -mergebyhash";
 
         string WorkingDirectory = workingDirectory is null
             ? string.Empty
