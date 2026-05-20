@@ -70,7 +70,7 @@
 
         <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
         <PackageReference Include="dlebansais.Method.Contracts-Debug" Version="2.0.5" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="dlebansais.Method.Contracts" Version="2.0.5" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="dlebansais.Method.Contracts" Version="2.0.6" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
         <PackageReference Include="dlebansais.VisualStudioSolutionExplorer-Debug" Version="2.2.4" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="dlebansais.VisualStudioSolutionExplorer" Version="2.2.4" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
