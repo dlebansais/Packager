@@ -13,7 +13,7 @@ skip_tags: true
 skip_commits:
   message: "*[skip ci]*"
 
-image: Visual Studio 2022
+image: Visual Studio 2026
 
 # scripts that are called at very beginning, before repo cloning
 init:
@@ -64,7 +64,7 @@ before_test:
   - nuget install ReportGenerator -Version %report_generator_version% -OutputDirectory packages
   - ps: $env:COVERAGE_RESULT_FILE="./Test/$env:APPVEYOR_PROJECT_NAME.Test/bin/x64/$env:CONFIGURATION/Coverage-$env:APPVEYOR_PROJECT_NAME.xml"
   - |-
-    printf "dotnet test ./Test/%APPVEYOR_PROJECT_NAME%.Test/bin/x64/%CONFIGURATION%/net8.0-windows7.0/%APPVEYOR_PROJECT_NAME%.Test.dll -l console;verbosity=detailed --environment RESULTFILENAME=""../Coverage-%APPVEYOR_PROJECT_NAME%.xml""\n" > run-tests.bat
+    printf "dotnet test ./Test/%APPVEYOR_PROJECT_NAME%.Test/bin/x64/%CONFIGURATION%/net10.0-windows7.0/%APPVEYOR_PROJECT_NAME%.Test.dll -l console;verbosity=detailed --environment RESULTFILENAME=""../Coverage-%APPVEYOR_PROJECT_NAME%.xml""\n" > run-tests.bat
   - |-
     printf "@echo ************************************************************** Starting Tests..\n" > run-tests1.bat
     printf "call run-tests.bat\n" >> run-tests1.bat
@@ -88,7 +88,7 @@ artifacts:
     name: $(APPVEYOR_PROJECT_NAME)-Package-Debug
   - path: $(PACKAGE_PREFIX).$(APPVEYOR_PROJECT_NAME).*.nupkg
     name: $(APPVEYOR_PROJECT_NAME)-Package-Release
-  - path: ./Test/$(APPVEYOR_PROJECT_NAME).Test/bin/x64/$(CONFIGURATION)/net8.0-windows7.0/output.txt
+  - path: ./Test/$(APPVEYOR_PROJECT_NAME).Test/bin/x64/$(CONFIGURATION)/net10.0-windows7.0/output.txt
     name: $(CONFIGURATION)-output-txt
   - path: ./Test/$(APPVEYOR_PROJECT_NAME).Test/bin/x64/$(CONFIGURATION)/Coverage-$(APPVEYOR_PROJECT_NAME).xml
     name: $(CONFIGURATION)-Coverage-Xml
