@@ -14,7 +14,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName);
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -22,7 +22,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Method.Contracts");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -30,7 +30,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--debug", workingDirectory: @"TestSolutions\Method.Contracts");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -38,7 +38,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-001");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -46,7 +46,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Method.Contracts.Analyzers");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -54,7 +54,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--debug", workingDirectory: @"TestSolutions\Method.Contracts.Analyzers");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -62,7 +62,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-002");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -70,7 +70,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Method.Contracts.Analyzers");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -78,7 +78,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-003");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -86,7 +86,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge:Helper", workingDirectory: @"TestSolutions\Method.Contracts.Analyzers");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -94,7 +94,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge:Invalid", workingDirectory: @"TestSolutions\Method.Contracts.Analyzers");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -102,7 +102,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-004");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -110,7 +110,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-005");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -118,7 +118,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-006");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -126,7 +126,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-007");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -134,7 +134,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-008");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -142,7 +142,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-009");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -150,7 +150,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010-1");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -158,7 +158,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010-2");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -166,7 +166,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010-3");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -174,7 +174,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-010-4");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -182,7 +182,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--description \"test\"", workingDirectory: @"TestSolutions\Method.Contracts");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -190,7 +190,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge --description \"test\"", workingDirectory: @"TestSolutions\Method.Contracts");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -198,7 +198,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-011");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -206,7 +206,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-012");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -214,7 +214,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-013-1");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -222,7 +222,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-013-2");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -230,7 +230,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--merge", workingDirectory: @"TestSolutions\Invalid-013-3");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -238,7 +238,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--analyzer", workingDirectory: @"TestSolutions\Method.Contracts");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -246,7 +246,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--debug --analyzer", workingDirectory: @"TestSolutions\Method.Contracts");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -254,7 +254,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: "--prefix \"test\"", workingDirectory: @"TestSolutions\Method.Contracts");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     private static void BackupPgSearchIcon()
@@ -281,7 +281,7 @@ internal class UnitTest2
 
         RestorePgSearchIcon();
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -293,7 +293,7 @@ internal class UnitTest2
 
         RestorePgSearchIcon();
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -305,7 +305,7 @@ internal class UnitTest2
 
         RestorePgSearchIcon();
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -313,7 +313,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-014");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -321,7 +321,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-015");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -329,7 +329,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-016");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -337,7 +337,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-017");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -345,7 +345,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-018");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -353,7 +353,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-019");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -361,7 +361,7 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-020");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 
     [Test]
@@ -369,6 +369,6 @@ internal class UnitTest2
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName, arguments: null, workingDirectory: @"TestSolutions\Invalid-021");
 
-        Assert.That(IsSuccessful, Is.True);
+        Assert.That(IsSuccessful);
     }
 }
