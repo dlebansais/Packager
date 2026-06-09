@@ -61,7 +61,7 @@ internal partial class Program
         solutionName = string.Empty;
         projectList = [];
 
-        string[] Files = Directory.GetFiles(Environment.CurrentDirectory, "*.sln");
+        string[] Files = Directory.GetFiles(Environment.CurrentDirectory, "*.sln|*.slnx");
         ConsoleDebug.Write($"Found {Files.Length} solution file(s)");
 
         foreach (string SolutionFileName in Files)
