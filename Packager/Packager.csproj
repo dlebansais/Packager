@@ -10,9 +10,9 @@
         <UseWPF>true</UseWPF>
 
         <RootNamespace>Packager</RootNamespace>
-        <Version>2.2.1</Version>
-        <AssemblyVersion>2.2.1.73</AssemblyVersion>
-        <FileVersion>2.2.1.73</FileVersion>
+        <Version>2.2.2</Version>
+        <AssemblyVersion>2.2.2.74</AssemblyVersion>
+        <FileVersion>2.2.2.74</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Product />
         <Description>A tool to package a project before deployment</Description>
@@ -108,6 +108,8 @@
             <None Include="$(TargetDir)$(ProjectName).pdb" />
             <None Include="$(TargetDir)McMaster*" />
             <None Include="$(TargetDir)Method.Contracts*" />
+            <None Include="$(TargetDir)Microsoft*" />
+            <None Include="$(TargetDir)System.Reflection*" />
             <None Include="$(TargetDir)VisualStudioSolutionExplorer*" />
         </ItemGroup>
         <Copy SourceFiles="@(None)" DestinationFolder="$(SolutionDir)nuget-debug\lib\$(TargetFramework)\" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
@@ -120,6 +122,8 @@
             <None Include="$(TargetDir)$(ProjectName).runtimeconfig*.json" />
             <None Include="$(TargetDir)McMaster*" />
             <None Include="$(TargetDir)Method.Contracts*" />
+            <None Include="$(TargetDir)Microsoft*" />
+            <None Include="$(TargetDir)System.Reflection*" />
             <None Include="$(TargetDir)VisualStudioSolutionExplorer*" />
         </ItemGroup>
         <Copy SourceFiles="@(None)" DestinationFolder="$(SolutionDir)nuget\lib\$(TargetFramework)\" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
