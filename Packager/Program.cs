@@ -61,8 +61,21 @@ internal partial class Program
         solutionName = string.Empty;
         projectList = [];
 
-        string[] Files = Directory.GetFiles(Environment.CurrentDirectory, "*.sln|*.slnx");
-        ConsoleDebug.Write($"Found {Files.Length} solution file(s)");
+        string[] AllFiles = Directory.GetFiles(Environment.CurrentDirectory, "*.sln*");
+        List<string> Files = [];
+        foreach (string File in AllFiles)
+        {
+#if NET10_0_OR_GREATER
+            // .slnx file are supported starting from .NET 10 only.
+            if (File.EndsWith(".sln", StringComparison.OrdinalIgnoreCase) || File.EndsWith(".slnx", StringComparison.OrdinalIgnoreCase))
+                Files.Add(File);
+#else
+            if (File.EndsWith(".sln", StringComparison.OrdinalIgnoreCase))
+                Files.Add(File);
+#endif
+        }
+
+        ConsoleDebug.Write($"Found {Files.Count} solution file(s)");
 
         foreach (string SolutionFileName in Files)
         {

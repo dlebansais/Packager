@@ -10,9 +10,9 @@
         <UseWPF>true</UseWPF>
 
         <RootNamespace>Packager</RootNamespace>
-        <Version>2.2.0</Version>
-        <AssemblyVersion>2.2.0.72</AssemblyVersion>
-        <FileVersion>2.2.0.72</FileVersion>
+        <Version>2.2.1</Version>
+        <AssemblyVersion>2.2.1.73</AssemblyVersion>
+        <FileVersion>2.2.1.73</FileVersion>
         <Authors>David Le Bansais</Authors>
         <Product />
         <Description>A tool to package a project before deployment</Description>
@@ -71,13 +71,14 @@
         <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="5.1.0" />
         <PackageReference Include="dlebansais.Method.Contracts-Debug" Version="2.0.7" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <PackageReference Include="dlebansais.Method.Contracts" Version="2.0.7" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
-        <PackageReference Include="dlebansais.VisualStudioSolutionExplorer-Debug" Version="2.2.6" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
-        <PackageReference Include="dlebansais.VisualStudioSolutionExplorer" Version="2.2.6" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
+        <PackageReference Include="dlebansais.VisualStudioSolutionExplorer-Debug" Version="2.3.0" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <PackageReference Include="dlebansais.VisualStudioSolutionExplorer" Version="2.3.0" Condition="'$(Configuration)|$(Platform)'!='Debug|x64'" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Build" Version="17.11.48" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net8.0-windows7.0'" />
         <PackageReference Include="Microsoft.Build" Version="18.6.3" GeneratePathProperty="true" Condition="'$(TargetFramework)'=='net10.0-windows7.0'" />
+        <PackageReference Include="Microsoft.VisualStudio.SolutionPersistence" Version="1.0.52" Condition="'$(TargetFramework)'=='net10.0-windows7.0'" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)'=='net481'">
