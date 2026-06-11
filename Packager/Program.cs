@@ -12,7 +12,15 @@ using SlnExplorer;
 /// </summary>
 internal partial class Program
 {
-    private static void ExecuteProgram(bool isDebug, bool isAnalyzer, bool isMerge, string? mergeName, string nuspecDescription, string nuspecIcon, string nuspecPrefix, out bool hasErrors)
+    private static void ExecuteProgram(bool isDebug,
+                                       bool isAnalyzer,
+                                       bool isMerge,
+                                       string? mergeName,
+                                       string nuspecDescription,
+                                       string nuspecIcon,
+                                       string nuspecPrefix,
+                                       out bool hasErrors,
+                                       out bool hasSolution)
     {
         ConsoleDebug.Write($"Current Directory: {Environment.CurrentDirectory}");
 
@@ -21,10 +29,11 @@ internal partial class Program
         {
             ConsoleDebug.Write($"WARNING: output folder {NugetDirectory} does not exist");
             hasErrors = false;
+            hasSolution = false;
             return;
         }
 
-        LoadSolutionAndProjectList(out string SolutionName, out List<Project> ProjectList);
+        hasSolution = LoadSolutionAndProjectList(out string SolutionName, out List<Project> ProjectList);
         FilterProcessedProjects(ProjectList, out List<Project> ProcessedProjectList, out hasErrors);
 
         List<Nuspec> NuspecList = [];
@@ -56,7 +65,7 @@ internal partial class Program
         isDirectoryExisting = Directory.Exists(nugetDirectory);
     }
 
-    private static void LoadSolutionAndProjectList(out string solutionName, out List<Project> projectList)
+    private static bool LoadSolutionAndProjectList(out string solutionName, out List<Project> projectList)
     {
         solutionName = string.Empty;
         projectList = [];
@@ -97,6 +106,8 @@ internal partial class Program
         }
 
         ConsoleDebug.Write($"Found {projectList.Count} project file(s)");
+
+        return projectList.Count > 0;
     }
 
     private static void FilterProcessedProjects(List<Project> projectList, out List<Project> processedProjectList, out bool hasErrors)

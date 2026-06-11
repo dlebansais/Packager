@@ -17,15 +17,20 @@ internal static partial class ConsoleDebug
     [RequireNotNull(nameof(text))]
     private static void WriteVerified(string text, bool isError = false)
     {
-        ConsoleColor OldColor = Console.ForegroundColor;
-
         if (isError)
+        {
+            ConsoleColor OldColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
 
-        Console.WriteLine(text);
-        Debug.WriteLine(text);
+            Console.Error.WriteLine(text);
+            Debug.WriteLine(text);
 
-        if (isError)
             Console.ForegroundColor = OldColor;
+        }
+        else
+        {
+            Console.WriteLine(text);
+            Debug.WriteLine(text);
+        }
     }
 }

@@ -40,6 +40,9 @@ internal partial class Program
     [Option(CommandOptionType.SingleValue, Description = "A prefix in front of the output package file name.", ShortName = "p", LongName = "prefix", ValueName = "Package prefix")]
     private string NuspecPrefix { get; set; } = string.Empty;
 
+    [Option(Description = "Fail with an error if no solution was processed.", LongName = "fail-if-none")]
+    private bool FailIfNone { get; set; }
+
 #pragma warning disable IDE0060 // Remove unused parameter
     private static int RunAndSetResult(int ignored) => ExecuteResult;
 #pragma warning restore IDE0060 // Remove unused parameter
@@ -53,9 +56,13 @@ internal partial class Program
         try
         {
             ShowCommandLineArguments();
-            ExecuteProgram(IsDebug, IsAnalyzer, Merge.HasValue, Merge.Name, NuspecDescription, NuspecIcon, NuspecPrefix, out bool HasErrors);
+            ExecuteProgram(IsDebug, IsAnalyzer, Merge.HasValue, Merge.Name, NuspecDescription, NuspecIcon, NuspecPrefix, out bool HasErrors, out bool HasSolution);
 
-            ExecuteResult = HasErrors ? -1 : 0;
+            ExecuteResult = HasErrors
+                ? -1
+                : FailIfNone && HasSolution
+                    ? -1
+                    : 0;
         }
         catch (Exception e)
         {
@@ -90,12 +97,12 @@ internal partial class Program
 
         do
         {
-            ConsoleDebug.Write("***************");
-            ConsoleDebug.Write(CurrentException.Message);
+            ConsoleDebug.Write("***************", isError: true);
+            ConsoleDebug.Write(CurrentException.Message, isError: true);
 
             // If CurrentException.StackTrace is null, StackTrace is set to string.Empty.
             string StackTrace = Contract.AssertNotNull(Convert.ToString((object?)CurrentException.StackTrace, CultureInfo.InvariantCulture));
-            ConsoleDebug.Write(StackTrace);
+            ConsoleDebug.Write(StackTrace, isError: true);
 
             CurrentException = CurrentException.InnerException;
         }
