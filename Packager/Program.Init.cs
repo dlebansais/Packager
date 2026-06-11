@@ -58,11 +58,13 @@ internal partial class Program
             ShowCommandLineArguments();
             ExecuteProgram(IsDebug, IsAnalyzer, Merge.HasValue, Merge.Name, NuspecDescription, NuspecIcon, NuspecPrefix, out bool HasErrors, out bool HasSolution);
 
-            ExecuteResult = HasErrors
-                ? -1
-                : FailIfNone && HasSolution
-                    ? -1
-                    : 0;
+            if (!HasErrors && FailIfNone && !HasSolution)
+            {
+                HasErrors = true;
+                ConsoleDebug.Write("No solution processed, failing.", isError: true);
+            }
+
+            ExecuteResult = HasErrors ? -1 : 0;
         }
         catch (Exception e)
         {
