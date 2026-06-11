@@ -112,7 +112,7 @@
             <None Include="$(TargetDir)System.Reflection*" />
             <None Include="$(TargetDir)VisualStudioSolutionExplorer*" />
         </ItemGroup>
-        <Copy SourceFiles="@(None)" DestinationFolder="$(SolutionDir)nuget-debug\lib\$(TargetFramework)\" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+        <Copy SourceFiles="@(None)" DestinationFolder="$(SolutionDir)nuget-debug\tools\$(TargetFramework)\" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <Copy SourceFiles="package-icon.png" DestinationFolder="$(SolutionDir)nuget-debug\" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
         <Copy SourceFiles="README-short.md" DestinationFolder="$(SolutionDir)nuget-debug\" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
 
@@ -126,7 +126,7 @@
             <None Include="$(TargetDir)System.Reflection*" />
             <None Include="$(TargetDir)VisualStudioSolutionExplorer*" />
         </ItemGroup>
-        <Copy SourceFiles="@(None)" DestinationFolder="$(SolutionDir)nuget\lib\$(TargetFramework)\" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+        <Copy SourceFiles="@(None)" DestinationFolder="$(SolutionDir)nuget\tools\$(TargetFramework)\" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
         <Copy SourceFiles="package-icon.png" DestinationFolder="$(SolutionDir)nuget\" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
         <Copy SourceFiles="README-short.md" DestinationFolder="$(SolutionDir)nuget\" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     </Target>
