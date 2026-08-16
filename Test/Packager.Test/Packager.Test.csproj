@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFrameworks>net10.0-windows7.0</TargetFrameworks>
-        <UseWPF>true</UseWPF>
         <LangVersion>14</LangVersion>
         <Nullable>enable</Nullable>
         <Platforms>x64</Platforms>
@@ -17,6 +16,9 @@
         <AnalysisLevel>latest-all</AnalysisLevel>
         <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+
+        <EnableNUnitRunner>true</EnableNUnitRunner>
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,14 +31,15 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+        <PackageReference Include="Microsoft.Build" Version="18.6.3" GeneratePathProperty="true" />
         <PackageReference Include="NuGet.Configuration" Version="7.3.1" />
-        <PackageReference Include="NUnit" Version="4.6.1" />
         <PackageReference Include="NUnit.Analyzers" Version="4.14.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+
+        <PackageReference Include="NUnit" Version="4.6.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
-        <PackageReference Include="Microsoft.Build" Version="18.6.3" GeneratePathProperty="true" />
     </ItemGroup>
 
     <ItemGroup>
