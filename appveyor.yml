@@ -30,7 +30,7 @@ matrix:
   fast_finish: true
 
 before_build:
-  - nuget restore %APPVEYOR_PROJECT_NAME%.sln
+  - nuget restore %APPVEYOR_PROJECT_NAME%.slnx
   - nuget install dlebansais.GitCommitId -DependencyVersion Highest -OutputDirectory packages
   - dotnet restore
 
@@ -39,7 +39,7 @@ configuration:
   - Release
 
 build:
-  project: $(APPVEYOR_PROJECT_NAME).sln
+  project: $(APPVEYOR_PROJECT_NAME).slnx
 
 after_build:
   - nuget install dlebansais.Packager -Version 2.1.2 -OutputDirectory packages # Install Packager
