@@ -12,6 +12,9 @@
   <Project Path="PreBuild/PreBuild.csproj">
     <Platform Project="x64" />
   </Project>
+  <Project Path="Test/Packager.Test.DotNetFramework/Packager.Test.DotNetFramework.csproj">
+    <Platform Project="x64" />
+  </Project>
   <Project Path="Test/Packager.Test/Packager.Test.csproj">
     <Platform Project="x64" />
   </Project>
