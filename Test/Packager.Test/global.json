@@ -1,8 +1,5 @@
 {
     "test": {
         "runner": "Microsoft.Testing.Platform"
-    },
-    "environmentVariables": {
-        "RESULTFILENAME": "Coverage-Packager.xml"
     }
 }
