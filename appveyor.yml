@@ -70,7 +70,7 @@ after_build:
   - echo Version is "%VERSION_TAG%"
 
 before_test:
-  - ps: $env:COVERAGE_RESULT_FILE="./Test/$env:APPVEYOR_PROJECT_NAME.Test/bin/x64/$env:CONFIGURATION/net10.0-windows7.0/result.xml"
+  - ps: $env:COVERAGE_RESULT_FILE="./Test/$env:APPVEYOR_PROJECT_NAME.Test/bin/x64/$env:CONFIGURATION/result.xml"
   - |-
     printf "pushd .\Test\%APPVEYOR_PROJECT_NAME%.Test && dotnet test --test-modules ./bin/x64/%CONFIGURATION%/net10.0-windows7.0/%APPVEYOR_PROJECT_NAME%.Test.dll --output:detailed && popd\n" > run-tests.bat
   - |-
