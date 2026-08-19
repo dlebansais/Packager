@@ -46,28 +46,34 @@ internal static partial class Launcher
 
         Thread.Sleep(TimeSpan.FromSeconds(0.01));
         Log("Slept");
+        File.Delete("output.txt");
 
-        using FileStream OutputStream = new("output.txt", FileMode.Append, FileAccess.Write);
-        using StreamWriter OutputWriter = new(OutputStream);
-        using Process TestProcess = new();
-
-        TestProcess.StartInfo = StartInfo;
-        TestProcess.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
         {
-            if (e is not null && e.Data is not null)
-                OutputWriter.WriteLine(e.Data);
-        });
+            using FileStream OutputStream = new("output.txt", FileMode.Append, FileAccess.Write);
+            using StreamWriter OutputWriter = new(OutputStream);
+            using Process TestProcess = new();
 
-        Log("Start");
-        TestProcess.Start();
-        Log("Started");
-        TestProcess.BeginOutputReadLine();
-        Log("First line");
-        TestProcess.WaitForExit();
-        Log("Waited");
+            TestProcess.StartInfo = StartInfo;
+            TestProcess.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+            {
+                if (e is not null && e.Data is not null)
+                    OutputWriter.WriteLine(e.Data);
+            });
 
-        OutputWriter.Flush();
-        Log("Flushed");
+            Log("Start");
+            TestProcess.Start();
+            Log("Started");
+            TestProcess.BeginOutputReadLine();
+            Log("First line");
+            TestProcess.WaitForExit();
+            Log("Waited");
+
+            OutputWriter.Flush();
+            Log("Flushed");
+        }
+
+        string output = File.ReadAllText("output.txt");
+        Console.WriteLine(output);
 
         Log($"Test: {callerName} done");
 

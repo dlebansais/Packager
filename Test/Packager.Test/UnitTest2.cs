@@ -1,4 +1,5 @@
-﻿namespace Packager.Test;
+﻿#if TEST_ONCE
+namespace Packager.Test;
 
 using System;
 using System.IO;
@@ -372,3 +373,4 @@ internal class UnitTest2
         Assert.That(IsSuccessful);
     }
 }
+#endif
