@@ -3,13 +3,16 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using NuGet.Configuration;
 
 internal static partial class Launcher
 {
-    public static bool Launch(string demoAppName, string? arguments = null, string? workingDirectory = null)
+    public static bool Launch(string demoAppName, string? arguments = null, string? workingDirectory = null, [CallerMemberName] string callerName = "")
     {
+        Log($"Test: {callerName}");
+
         string? OpenCoverBasePath = GetPackagePath("opencover");
 
         string TestDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -41,7 +44,8 @@ internal static partial class Launcher
             RedirectStandardOutput = true,
         };
 
-        Thread.Sleep(TimeSpan.FromSeconds(1));
+        Thread.Sleep(TimeSpan.FromSeconds(0.01));
+        Log("Slept");
 
         using FileStream OutputStream = new("output.txt", FileMode.Append, FileAccess.Write);
         using StreamWriter OutputWriter = new(OutputStream);
@@ -54,13 +58,26 @@ internal static partial class Launcher
                 OutputWriter.WriteLine(e.Data);
         });
 
+        Log("Start");
         TestProcess.Start();
+        Log("Started");
         TestProcess.BeginOutputReadLine();
+        Log("First line");
         TestProcess.WaitForExit();
+        Log("Waited");
 
         OutputWriter.Flush();
+        Log("Flushed");
+
+        Log($"Test: {callerName} done");
 
         return true;
+    }
+
+    public static void Log(string message)
+    {
+        DateTime now = DateTime.Now;
+        Console.WriteLine($"[{now:HH:mm:ss.fff}] {message}");
     }
 
     private static string? GetPackagePath(string packageName)

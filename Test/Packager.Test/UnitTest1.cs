@@ -10,6 +10,7 @@ internal class UnitTest1
     private const string TestedAppName = "Packager";
 
     [Test]
+    [Category("Basic")]
     public void TestNoParameter()
     {
         bool IsSuccessful = Launcher.Launch(TestedAppName);

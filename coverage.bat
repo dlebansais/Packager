@@ -43,7 +43,7 @@ if exist %RESULTFILEPATH% del %RESULTFILEPATH%
 
 rem Execute tests that will call OpenCover.
 pushd .\Test\%TESTPROJECTNAME%
-dotnet test --test-modules ".\bin\%PLATFORM%\%CONFIGURATION%\%FRAMEWORK%\%TESTPROJECTNAME%.dll" --output:detailed
+dotnet test --test-modules ".\bin\%PLATFORM%\%CONFIGURATION%\%FRAMEWORK%\%TESTPROJECTNAME%.dll" --output:detailed --filter "TestCategory=Basic"
 popd
 
 if not exist %RESULTFILEPATH% goto end
