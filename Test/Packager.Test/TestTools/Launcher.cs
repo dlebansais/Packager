@@ -3,16 +3,13 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using NuGet.Configuration;
 
 internal static partial class Launcher
 {
-    public static bool Launch(string demoAppName, string? arguments = null, string? workingDirectory = null, [CallerMemberName] string callerName = "")
+    public static bool Launch(string demoAppName, string? arguments = null, string? workingDirectory = null)
     {
-        Log($"Test: {callerName}");
-
         string? OpenCoverBasePath = GetPackagePath("opencover");
 
         string TestDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -23,9 +20,9 @@ internal static partial class Launcher
         string AppDirectory = TestDirectory.Replace(@"\Test\", @"\", StringComparison.InvariantCulture).Replace(@".Test\", @"\", StringComparison.InvariantCulture).Replace(@"net8.0-windows\", @"net8.0-windows7.0\", StringComparison.InvariantCulture);
 #endif
         string AppName = Path.Combine(AppDirectory, "win-x64", $"{demoAppName}.exe");
-        string ResultFileName = Environment.GetEnvironmentVariable("RESULTFILENAME") ?? "..\\result.xml";
+        string ResultFileName = Environment.GetEnvironmentVariable("RESULTFILENAME") ?? "result.xml";
         string CoverageAppName = @$"{OpenCoverBasePath}\tools\OpenCover.Console.exe";
-        string CoverageAppArgs = @$"-register:user -target:""{AppName}"" -targetargs:""{arguments}"" -output:""{Path.Combine(TestDirectory, ResultFileName)}"" -mergeoutput";
+        string CoverageAppArgs = @$"-register:user -target:""{AppName}"" -targetargs:""{arguments}"" -output:""{Path.Combine(TestDirectory, ResultFileName)}"" -mergeoutput -mergebyhash";
 
         string WorkingDirectory = workingDirectory is null
             ? string.Empty
@@ -44,46 +41,26 @@ internal static partial class Launcher
             RedirectStandardOutput = true,
         };
 
-        Thread.Sleep(TimeSpan.FromSeconds(0.01));
-        Log("Slept");
-        File.Delete("output.txt");
+        Thread.Sleep(TimeSpan.FromSeconds(1));
 
+        using FileStream OutputStream = new("output.txt", FileMode.Append, FileAccess.Write);
+        using StreamWriter OutputWriter = new(OutputStream);
+        using Process TestProcess = new();
+
+        TestProcess.StartInfo = StartInfo;
+        TestProcess.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
         {
-            using FileStream OutputStream = new("output.txt", FileMode.Append, FileAccess.Write);
-            using StreamWriter OutputWriter = new(OutputStream);
-            using Process TestProcess = new();
+            if (e is not null && e.Data is not null)
+                OutputWriter.WriteLine(e.Data);
+        });
 
-            TestProcess.StartInfo = StartInfo;
-            TestProcess.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
-            {
-                if (e is not null && e.Data is not null)
-                    OutputWriter.WriteLine(e.Data);
-            });
+        TestProcess.Start();
+        TestProcess.BeginOutputReadLine();
+        TestProcess.WaitForExit();
 
-            Log("Start");
-            TestProcess.Start();
-            Log("Started");
-            TestProcess.BeginOutputReadLine();
-            Log("First line");
-            TestProcess.WaitForExit();
-            Log("Waited");
-
-            OutputWriter.Flush();
-            Log("Flushed");
-        }
-
-        string output = File.ReadAllText("output.txt");
-        Console.WriteLine(output);
-
-        Log($"Test: {callerName} done");
+        OutputWriter.Flush();
 
         return true;
-    }
-
-    public static void Log(string message)
-    {
-        DateTime now = DateTime.Now;
-        Console.WriteLine($"[{now:HH:mm:ss.fff}] {message}");
     }
 
     private static string? GetPackagePath(string packageName)
