@@ -34,6 +34,7 @@
 	<PackageIcon>main.png</PackageIcon>
 	<PackageLicenseExpression>0BSD</PackageLicenseExpression>
 	<PackageReadmeFile>Readme.md</PackageReadmeFile>
+	<PackageTags>Contract;Verification</PackageTags>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(APPVEYOR)' == 'True'">

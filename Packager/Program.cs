@@ -198,6 +198,7 @@ internal partial class Program
                                   string.Empty,
                                   SelectedProject.Version,
                                   SelectedProject.Author,
+                                  SelectedProject.Title,
                                   Description,
                                   SelectedProject.Copyright,
                                   RepositoryUrl,
@@ -206,7 +207,8 @@ internal partial class Program
                                   MergedPackageDependencies,
                                   SelectedProject.PackageIcon,
                                   SelectedProject.PackageLicenseExpression,
-                                  SelectedProject.PackageReadmeFile);
+                                  SelectedProject.PackageReadmeFile,
+                                  SelectedProject.PackageTags);
 
         foreach (Project Project in projectList)
         {

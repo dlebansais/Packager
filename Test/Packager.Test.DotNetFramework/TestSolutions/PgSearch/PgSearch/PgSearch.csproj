@@ -9,6 +9,7 @@
         <Platforms>x64</Platforms>
         <Version>1.1.404</Version>
         <Authors>David Le Bansais</Authors>
+        <Title>Search</Title>
         <Company />
         <Product>PgSearch</Product>
         <Description>A tool to search through public data in the Project: Gorgon MMORPG</Description>

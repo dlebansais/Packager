@@ -32,7 +32,6 @@ internal partial class Program
 
         WriteMiscellaneousInfo(Writer, nuspec, isDebug, NuspecPath, ApplicationIcon, nuspecPrefix);
         WriteDependencies(Writer, nuspec, isAnalyzer);
-        WriteExtraContentFiles(Writer, isDebug, isAnalyzer);
 
         Writer.WriteLine("  </metadata>");
         Writer.Write("</package>");
@@ -61,7 +60,11 @@ internal partial class Program
 
         writer.WriteLine($"    <id>{Prefix}{nuspec.Name}{DebugSuffix}</id>");
         writer.WriteLine($"    <version>{nuspec.Version}</version>");
-        writer.WriteLine($"    <title>{nuspec.Name}{DebugTitle}</title>");
+
+        if (nuspec.Title.Length > 0)
+            writer.WriteLine($"    <title>{nuspec.Title}{DebugTitle}</title>");
+        else
+            writer.WriteLine($"    <title>{nuspec.Name}{DebugTitle}</title>");
 
         if (nuspec.Author.Length > 0)
             writer.WriteLine($"    <authors>{HtmlEncoded(nuspec.Author)}</authors>");
@@ -71,6 +74,9 @@ internal partial class Program
 
         if (nuspec.Copyright.Length > 0)
             writer.WriteLine($"    <copyright>{HtmlEncoded(nuspec.Copyright)}</copyright>");
+
+        if (nuspec.PackageTags.Length > 0)
+            writer.WriteLine($"    <tags>{HtmlEncoded(nuspec.PackageTags.Replace(';', ' '))}</tags>");
 
         if (nuspecIcon.Length > 0)
         {
@@ -190,21 +196,6 @@ internal partial class Program
         return ThreeVersionFrameworks.TryGetValue(framework.Name, out string? Value)
             ? Value
             : $"{framework.Major}.{framework.Minor}";
-    }
-
-    private static void WriteExtraContentFiles(StreamWriter writer, bool isDebug, bool isAnalyzer)
-    {
-        if (isDebug)
-        {
-            writer.WriteLine("    <contentFiles>");
-
-            if (isAnalyzer)
-                writer.WriteLine("      <files include=\"analyzers/**/*.pdb\"/>");
-            else
-                writer.WriteLine("      <files include=\"lib/**/*.pdb\"/>");
-
-            writer.WriteLine("    </contentFiles>");
-        }
     }
 
     private static string GetDebugSuffix(bool isDebug) => isDebug ? "-Debug" : string.Empty;

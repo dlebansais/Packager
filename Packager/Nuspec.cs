@@ -31,6 +31,7 @@ internal class Nuspec
         RelativePath = string.Empty;
         Version = string.Empty;
         Author = string.Empty;
+        Title = string.Empty;
         Description = string.Empty;
         Copyright = string.Empty;
         RepositoryUrl = null;
@@ -40,6 +41,7 @@ internal class Nuspec
         PackageIcon = string.Empty;
         PackageLicenseExpression = string.Empty;
         PackageReadmeFile = string.Empty;
+        PackageTags = string.Empty;
     }
 
     /// <summary>
@@ -49,6 +51,7 @@ internal class Nuspec
     /// <param name="relativePath">The nuspec relative path.</param>
     /// <param name="version">The nuspec version.</param>
     /// <param name="author">The nuspec author.</param>
+    /// <param name="title">The nuspec title.</param>
     /// <param name="description">The nuspec description.</param>
     /// <param name="copyright">The nuspec copyright text.</param>
     /// <param name="repositoryUrl">The nuspec repository URL.</param>
@@ -58,10 +61,12 @@ internal class Nuspec
     /// <param name="packageIcon">The nuspec package icon.</param>
     /// <param name="packageLicense">The nuspec package license.</param>
     /// <param name="packageReadmeFile">The nuspec package readme file.</param>
+    /// <param name="packageTags">The nuspec package tags.</param>
     public Nuspec(string name,
                   string relativePath,
                   string version,
                   string author,
+                  string title,
                   string description,
                   string copyright,
                   Uri repositoryUrl,
@@ -70,12 +75,14 @@ internal class Nuspec
                   Dictionary<Framework, PackageReferenceList> packageDependencies,
                   string packageIcon,
                   string packageLicense,
-                  string packageReadmeFile)
+                  string packageReadmeFile,
+                  string packageTags)
     {
         Name = name;
         RelativePath = relativePath;
         Version = version;
         Author = author;
+        Title = title;
         Description = description;
         Copyright = copyright;
         RepositoryUrl = repositoryUrl;
@@ -85,6 +92,7 @@ internal class Nuspec
         PackageIcon = packageIcon;
         PackageLicenseExpression = packageLicense;
         PackageReadmeFile = packageReadmeFile;
+        PackageTags = packageTags;
     }
 
     /// <summary>
@@ -102,6 +110,7 @@ internal class Nuspec
                           project.RelativePath,
                           project.Version,
                           project.Author,
+                          project.Title,
                           project.Description,
                           project.Copyright,
                           ParsedUrl,
@@ -110,7 +119,8 @@ internal class Nuspec
                           PackageDependencies,
                           project.PackageIcon,
                           project.PackageLicenseExpression,
-                          project.PackageReadmeFile);
+                          project.PackageReadmeFile,
+                          project.PackageTags);
     }
 
     /// <summary>
@@ -195,6 +205,11 @@ internal class Nuspec
     public string Author { get; init; }
 
     /// <summary>
+    /// Gets the nuspec title.
+    /// </summary>
+    public string Title { get; init; }
+
+    /// <summary>
     /// Gets the nuspec description.
     /// </summary>
     public string Description { get; init; }
@@ -238,5 +253,10 @@ internal class Nuspec
     /// Gets the nuspec package readme file.
     /// </summary>
     public string PackageReadmeFile { get; init; }
+
+    /// <summary>
+    /// Gets the nuspec package tags.
+    /// </summary>
+    public string PackageTags { get; init; }
     #endregion
 }
